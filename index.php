@@ -6,7 +6,7 @@
     <title>Test</title>
     <link href="reserve.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js"></script>
-    <link rel="stylesheet" href="fontawesome-5.14.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
     <script src="jquery.min.js" charset="utf-8"></script>
     <script src="reserve.js" charset="utf-8"></script>
     <script src="fetch.js" charset="utf-8"></script>
