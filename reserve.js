@@ -1,7 +1,7 @@
 $(document).ready(function(){
   tc=getTableParameter()
   if(tc != false){ viewTablewithCode(tc); }
-
+  //console.log("test");
   $.ajax({
     url: "sync.php",
     method: "POST",
