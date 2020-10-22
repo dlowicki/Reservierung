@@ -388,7 +388,7 @@ function viewAdminTable(id, src){
 
 			var tID = "'"+id+"'";
 			$('#viewAdminTable').append('<div class="form-table-submit"></div>');
-			$('.form-table-submit').append('<input type="button" onClick="tableClose()" id="acpClose" value="Schließen"><input type="submit" id="acpSubmit" onClick="acpSubmit('+tID+')" value="Bestätigen">');
+			$('.form-table-submit').append('<input type="button" onClick="tableClose()" id="acpClose" value="Schließen"><input type="submit" id="acpSubmit" onClick="acpSubmit('+tID+')" value="Erstellen">');
 
       $('#container-information').css("max-width","60%");
       $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
@@ -673,17 +673,19 @@ function r(t){
 
 function acpSubmit(tID) {
   // Wenn keine ID in INPUT HIDDEN ist
-  if(!$('#acpReserveID').val()){ alert("Sie müssen eine Reservierung zum bearbeiten auswählen!"); return; }
+  if(!$('#acpReserveID').val() && $('#acpSubmit').val() == "Bearbeiten"){ alert("Sie müssen eine Reservierung zum bearbeiten auswählen!"); return; }
   (async() => {
     const uc = await userCheck().then(function(result){
     if(result == true){
       var inputs = new Array();
       var haushalt = new Array();
+      const type = $('#acpSubmit').val();
       inputs[0] = $('#acpInputAmount').val();
       inputs[1] = $('#acpInputDate').val();
       inputs[2] = $('#acpInputTime').val();
       inputs[3] = $('#acpInputDuration').val();
       inputs[4] = $('#acpReserveID').val();
+      inputs[5] = $('#viewAdminTable h1').text().split(" ")[2];
       for (var i = 1; i < 6; i++) {
         const ci = $('.right-inputs-hh'+i+' .clientID').val();
         const cv = $('.right-inputs-hh'+i+' .clientVorname').val();
@@ -697,10 +699,10 @@ function acpSubmit(tID) {
           }
         }
       }
-      inputs[5] = haushalt;
+      inputs[6] = haushalt;
       if(haushalt.length > 0){
         $.ajax({
-          url: "sync.php", method: "POST", data: { acpReserve: inputs },
+          url: "sync.php", method: "POST", data: { acpReserve: inputs, acpSubmit: type },
           success: function(result) {
             console.log("ACP Result: " + result);
             if(result == "1"){

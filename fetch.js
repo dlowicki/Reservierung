@@ -33,6 +33,7 @@ $(document).on("click",".information-box-acp",function(){
     $('#bt-abgesagt').removeClass();
     $('#bt-no-show').removeClass();
     $('#acpReserveID').val("");
+    $('#acpSubmit').val("Erstellen");
     // Hier noch ACP leeren
 
     return;
@@ -73,7 +74,7 @@ $(document).on("click",".information-box-acp",function(){
           $('.right-inputs-hh'+count+' .clientAdresse').val(d['clients'][count]['clientAdresse']);
           $('.right-inputs-hh'+count+' .clientTNR').val(d['clients'][count]['clientTNR']);
         }
-
+        $('#acpSubmit').val("Bearbeiten");
       }
     }
   });

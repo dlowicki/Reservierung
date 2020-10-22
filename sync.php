@@ -191,8 +191,9 @@ if(isset($_POST['qrCode'])){
 
 /* ACP ISSET ABFRAGEN */
 
-if(isset($_POST['acpReserve'])){
+if(isset($_POST['acpReserve']) && isset($_POST['acpSubmit'])){
   $daten = $_POST['acpReserve'];
+  $type = $_POST['acpSubmit'];
 
   $con = connect();
   $cookie = htmlspecialchars($_COOKIE['rSession']);
@@ -203,12 +204,13 @@ if(isset($_POST['acpReserve'])){
     $time = $daten[2];
     $duration = $daten[3];
     $rID = $daten[4];
+    $tID = $daten[5];
 
     $hhExist = false;
     for ($i=0; $i < 5; $i++) {
-      if(array_key_exists($i,$daten[5])==false){ continue; }
-      if(strlen($daten[5][$i]) > 10){
-        $exp = explode(";",$daten[5][$i]);
+      if(array_key_exists($i,$daten[6])==false){ continue; }
+      if(strlen($daten[6][$i]) > 10){
+        $exp = explode(";",$daten[6][$i]);
         if(strlen($exp[0])>0 && strlen($exp[1])>0 && strlen($exp[2])>0 && strlen($exp[3])>0 && strlen($exp[4])>0){
           $hhExist = true;
         }
@@ -225,17 +227,35 @@ if(isset($_POST['acpReserve'])){
         break;
     }
 
-    if($hhExist == true){
-      foreach ($daten[5] as $key => $value) {
-        if($value){
-            $exp = explode(";",$value);
-            $vorname = $exp[0]; $name = $exp[1]; $mail = $exp[2]; $adresse = $exp[3]; $tnr = $exp[4]; $cID = $exp[5];
-            acpUpdateClient($cID,$rID,$vorname,$name,$mail,$adresse,$tnr,echoDateTime(),uniqid());
-        }
-      }
+    $clientID = uniqid();
+    if($type == 'Bearbeiten'){
+      acpUpdateReserve($rID,$date,$time,createReserveEnd($time,$duration),$duration,$amount);
+    } elseif($type == 'Erstellen') {
+      $rID = reserveTable($tID,$clientID,$date,$time . ":00",$duration,$amount,uniqid());
     }
 
-    echo acpUpdateReserve($rID,$date,$time,createReserveEnd($time,$duration),$duration,$amount);
+    if($hhExist == true){
+      $count = 0;
+      foreach ($daten[6] as $key => $value) {
+        if($value){
+            if($count != 0){ $clientID = uniqid(); }
+            $exp = explode(";",$value);
+            $dateTime = echoDateTime();
+            $vorname = $exp[0]; $name = $exp[1]; $mail = $exp[2]; $adresse = $exp[3]; $tnr = $exp[4]; $cID = $exp[5];
+            if($type == 'Bearbeiten'){
+              acpUpdateClient($cID,$rID,$vorname,$name,$mail,$adresse,$tnr,$dateTime,uniqid());
+            } elseif($type == 'Erstellen'){
+              $cf = uniqid();
+              $sqlStatement = "INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientAdresse, clientTNR, clientDate, clientConfirm) VALUES ('$clientID','$rID','$vorname','$name','$mail','$adresse','$tnr','$dateTime','$cf');";
+              $query = $con -> query($sqlStatement) or die();
+              if($query === TRUE){
+                echo "1";
+              }
+            }
+        }
+        $count++;
+      }
+    }
     echo "1";
     return;
   }
