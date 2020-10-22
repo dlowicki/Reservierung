@@ -1,5 +1,4 @@
 <?php
-
 if(isset($_POST['loadTables'])){
   $data = getTableData();
   echo json_encode($data);
