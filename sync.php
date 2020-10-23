@@ -91,13 +91,6 @@ if(isset($_POST['createReserve'])){
       }
       echo "1";
       return;
-      /*if (sanitize_mail("dlowicki@ibs-ka.de") == true) {
-        $message = "Hiermit bestätigen wir die Reservierung für Tisch " . $d[17] . " ab " . $d[15] . " Uhr. Falls Sie die Reservierung nicht wahrnehmen können, bitten wir um eine telefonische absagen.";
-        mail("dlowicki@ibs-ka.de","Hubraum Reservierung Tisch ".$d[17],,"noreply@hubraum.com");
-        echo "1";
-      } else {
-        echo "2";
-      }*/
     }
   }
   echo "0";
@@ -217,7 +210,6 @@ if(isset($_POST['acpReserve']) && isset($_POST['acpSubmit'])){
       }
     }
 
-    $clientID = uniqid();
     switch($duration){
       case "1":
         $duration = "2:30";
@@ -227,7 +219,7 @@ if(isset($_POST['acpReserve']) && isset($_POST['acpSubmit'])){
         break;
     }
 
-    $clientID = uniqid();
+    $clientID = uniqid(); // Falls Reservierung neu erstellt werden muss
     if($type == 'Bearbeiten'){
       acpUpdateReserve($rID,$date,$time,createReserveEnd($time,$duration),$duration,$amount);
     } elseif($type == 'Erstellen') {
@@ -249,7 +241,9 @@ if(isset($_POST['acpReserve']) && isset($_POST['acpSubmit'])){
               $sqlStatement = "INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientAdresse, clientTNR, clientDate, clientConfirm) VALUES ('$clientID','$rID','$vorname','$name','$mail','$adresse','$tnr','$dateTime','$cf');";
               $query = $con -> query($sqlStatement) or die();
               if($query === TRUE){
-                echo "1";
+                // Hier eventuell Reservierung wieder entfernen
+                echo "0";
+                return;
               }
             }
         }
@@ -267,14 +261,17 @@ if(isset($_POST['acpButton']) && isset($_POST['acpReserveID']) && isset($_POST['
   $func = false;
   switch ($_POST['acpButton']) {
     case '1':
-      // update reserveTime
-      if(updateReserveStart($_POST['acpReserveID'], $_POST['acpDate'])){ $func = true; }
+      // Zeit wird nicht aktualisiert sondern nur State auf eingetroffen gesetzt
+      //if(updateReserveStart($_POST['acpReserveID'], $_POST['acpDate'])){ $func = true; }
+      $func = true;
       break;
     case '2':
-      // Hierfür muss checkTime usw. angepasst werden
+      // Setze ReserveEnd auf jetzige Uhrzeit
+      if(updateReserveEnd($_POST['acpReserveID'])){ $func = true; }
       break;
     case '3':
       // Hierfür muss checkTime usw. angepasst werden
+      $func = true;
       break;
     case '4':
       // Hierfür muss checkTime usw. angepasst werden und NoShow eintragen
@@ -344,9 +341,8 @@ function acpUpdateClient($cID,$rID,$vn,$nn,$ma,$adr,$tnr,$date,$cc) {
   $iClient = uniqid();
   if(strlen($cID)<=0){ $cID = uniqid(); }
   $temp = "clientID,reserveID,clientVorname,clientName,clientMail,clientAdresse,clientTNR,clientDate,clientConfirm";
-  $temp2 = "'$iClient','$rID','$vn','$nn','$ma','$adr','$tnr','$date','$cc'";
+  $temp2 = "'$cID','$rID','$vn','$nn','$ma','$adr','$tnr','$date','$cc'";
   $statement = "INSERT INTO rClient ($temp) VALUES ($temp2) ON DUPLICATE KEY UPDATE clientVorname = '$vn', clientName = '$nn', clientMail = '$ma', clientAdresse = '$adr', clientTNR='$tnr'";
-
   $query = $con -> query($statement);
   if($query===TRUE){
     return true;
@@ -384,9 +380,20 @@ function updateReserveState($state, $rID) {
   return false;
 }
 
-function updateReserveTime($rID, $datetime) {
+function updateReserveStart($rID, $datetime) {
   $con = connect();
   $statement = "UPDATE rReserve SET reserveStart = '$datetime' WHERE reserveID = '$rID'";
+  $query = $con -> query($statement);
+  if($query === TRUE){
+    return true;
+  }
+  return false;
+}
+
+function updateReserveEnd($rID) {
+  $con = connect();
+  $datetime = echoTime();
+  $statement = "UPDATE rReserve SET reserveEnd = '$datetime' WHERE reserveID = '$rID'";
   $query = $con -> query($statement);
   if($query === TRUE){
     return true;
