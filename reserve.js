@@ -339,8 +339,6 @@ function viewAdminTable(id, src){
 			$('#viewAdminTable').append("<div class='acp-top'></div>");
       $('#viewAdminTable').append("<div class='acp-bottom'></div>");
 
-      $('.acp-top').append("<div id='acp-table'><img src='"+src+"'></div>");
-
       getTableACP(id);
 
       $('.acp-top').append("<div id='container-information'><h3>Reservierungen</h3><div id='container-information-content'></div></div>");
@@ -353,8 +351,10 @@ function viewAdminTable(id, src){
 
       var str = "'" + id + "'";
 			$('.acp-bottom-content').append('<div id="acp-bottom-reservierung"></div>');
+
+      $('#acp-bottom-reservierung').append('<div id="acp-table"><img src="'+src+'"></div>');
       $('#acp-bottom-reservierung').append('<input type="hidden" id="acpReserveID">');
-			$('#acp-bottom-reservierung').append('<label id="acpTimeLabel">Reservieren ab <input type="time" class="setting" id="acpInputTime" min="17:00" max="21:00"></label>');
+			$('#acp-bottom-reservierung').append('<label id="acpTimeLabel">Reservieren ab <input type="time" value="17:00" class="setting" id="acpInputTime" min="17:00" max="21:00"></label>');
       $('#acp-bottom-reservierung').append('<label id="acpDateLabel">Datum auswählen <input type="date" id="acpInputDate" onChange="getReservierungenACP('+str+')"></label>');
       $('#acp-bottom-reservierung').append('<label id="acpDurationLabel">Dauer auswählen <select class="setting" id="acpInputDuration"><option value="1">2:30h</option><option value="2">Ganztags</option></select></label>');
 			$('#acp-bottom-reservierung').append('<label id="acpAmountLabel">Anzahl <input type="text" class="setting" id="acpInputAmount" placeholder="z.B. 10"></label>');

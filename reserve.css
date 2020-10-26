@@ -128,23 +128,29 @@ html,body {
 }
 
 #acp-table {
-  float: left;
+  width: 50%;
+  height: auto;
+  max-height: 150px;
+  margin-left: 40%;
   text-align: center;
-  width: 150px;
+  float: right;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
-.acp-top img {
+#acp-table img {
   width: 100px;
-  max-height: 150px;
-  margin-left: 3%;
+  max-height: 100px;
 }
 
 .switch {
   position: relative;
   display: inline-block;
-  width: 60px;
-  height: 34px;
+  width: 50px;
+  height: 24px;
   margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .switch input {
@@ -200,17 +206,13 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-.acp-top #container-information {
-  margin-right: 10%;
-}
-
 .acp-settings-buttons {
   margin-left: auto;
   margin-right: auto;
-  width: 70%;
+  width: 100%;
+  margin-top: 5%;
   text-align: center;
   float: right;
-  margin: 5% 5% 0% 0%;
 }
 
 .acp-settings-buttons button {
@@ -947,7 +949,7 @@ color: darkgray;
 
 .table-right-inputs-nav {
   display: flex;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
   list-style: none;
   width: 100%;
   padding: 0px;
@@ -955,11 +957,12 @@ color: darkgray;
   margin-left: auto;
   margin-right: auto;
   text-align: center;
+  overflow-x: auto;
 }
 
 .table-right-inputs-nav li {
   padding: 10px;
-  min-width: 100px;
+  min-width: 90px;
   border-right: 1px solid darkgray;
   border-bottom: 1px solid darkgray;
   border-top: 1px solid darkgray;
