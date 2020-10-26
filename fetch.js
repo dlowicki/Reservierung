@@ -119,12 +119,13 @@ $(document).on("click",".acp-settings-buttons button",function(){
   }
 
   var inputDate = $('#acpInputDate').val();
-
+  
   $.ajax({
     url: "sync.php",
     method: "POST",
     data: { acpButton: dataType, acpReserveID: reserveID, acpDate: inputDate},
     success: function(result) {
+      console.log(result);
       if(result){
         $('#'+reserveID).css("background-color",color);
         return;

@@ -180,7 +180,7 @@ function checkTimeFrom(t) {
         for (var i = 0; i < d.length; i++) {
           // Wenn Reservierung Datenbank GANZTAGS und INPUT GANZTAGS
           if(d[i]['rD'] == "gz" && duration == 2){ $('#timeDuration').css("color","red"); return false; }
-
+          if(d[i]['rState'] == 3 && d[i]['rState'] == 4){ continue; }
           dateStart = new Date(d[i]['rDate']+" "+d[i]['rS']); // Startzeit in Datenbank
           dateEnd = new Date(d[i]['rDate']+" "+d[i]['rE']);   // Endzeit in Datenbank
 
@@ -254,14 +254,18 @@ function getReservierungen(t,dt) {
       if(result != false){
         var d = JSON.parse(result);
         d.forEach((item, i) => {
-          var colorNum = item['rState'];
-          if(item['rD'] == "gz"){
-            $('#container-information-content').append("<div class='information-box' style='background-color: "+colors[colorNum]+"'>Reserviert<br>Bis 22 Uhr</div>");
-            return;
-          } else {
-            dateStart = new Date(item['rDate']+" "+item['rS']);
-            dateEnd = new Date(item['rDate']+" "+item['rE']);
-            $('#container-information-content').append("<div class='information-box' style='background-color: "+colors[colorNum]+"'>Reserviert<br>"+dateStart.getHours()+":"+dateStart.getMinutes()+" Uhr bis "+dateEnd.getHours()+":"+dateEnd.getMinutes()+" Uhr</div>");
+          if(item['rState'] != 3 && item['rState'] != 4){
+            var colorNum = item['rState'];
+            if(item['rD'] == "gz"){
+              $('#container-information-content').append("<div class='information-box' style='background-color: "+colors[colorNum]+"'>Reserviert<br>Bis 22 Uhr</div>");
+              return;
+            } else {
+              dateStart = new Date(item['rDate']+" "+item['rS']);
+              var dateStartMinutes = dateStart.toTimeString().slice(3, 5);
+              dateEnd = new Date(item['rDate']+" "+item['rE']);
+              var dateEndMinutes = dateEnd.toTimeString().slice(3, 5);
+              $('#container-information-content').append("<div class='information-box' style='background-color: "+colors[colorNum]+"'>Reserviert<br>"+dateStart.getHours()+":"+dateStartMinutes+" Uhr bis "+dateEnd.getHours()+":"+dateEndMinutes+" Uhr</div>");
+            }
           }
         });
       }
@@ -459,11 +463,11 @@ function getReservierungenACP(t){
             $('#container-information-content').append("<div class='information-box-acp' id='"+item['rID']+"' style='background-color: "+colors[colorNum]+"'>Reserviert<br>Bis 22 Uhr</div>");
             return;
           } else {
-            dateStart = new Date(item['rDate']+" "+item['rS']); dsHours = dateStart.getHours(); dsMinutes = dateStart.getMinutes();
-            if(dsMinutes.toString().length == 1){dsMinutes = "0"+dsMinutes;}
-            dateEnd = new Date(item['rDate']+" "+item['rE']); deHours = dateEnd.getHours(); deMinutes = dateEnd.getMinutes();
-            if(deMinutes.toString().length == 1){deMinutes = "0"+deMinutes;}
-            $('#container-information-content').append("<div class='information-box-acp' id='"+item['rID']+"' style='background-color: "+colors[colorNum]+"'>Reserviert<br>"+dsHours+":"+dsMinutes+" Uhr bis "+deHours+":"+deMinutes+" Uhr</div>");
+            dateStart = new Date(item['rDate']+" "+item['rS']);
+            var dateStartMinutes = dateStart.toTimeString().slice(3, 5);
+            dateEnd = new Date(item['rDate']+" "+item['rE']);
+            var dateEndMinutes = dateEnd.toTimeString().slice(3, 5);
+            $('#container-information-content').append("<div class='information-box-acp' id='"+item['rID']+"' style='background-color: "+colors[colorNum]+"'>Reserviert<br>"+dateStart.getHours()+":"+dateStartMinutes+" Uhr bis "+dateEnd.getHours()+":"+dateEndMinutes+" Uhr</div>");
           }
         });
       } else {
@@ -531,8 +535,6 @@ function viewReserveOverviewWeek(dt) {
       $('.ov-Navigation').append('<ul style="list-style: none;"><li onClick="viewReserveOverviewDay('+temp+')">Tagesbericht</li><li style="color: darkgray;">Wochenbericht<input type="date" id="oInputDate" value="'+dt+'"></li></ul>');
       $('.ov-Data').append('<table id="data-table"><tr><th>Tisch ID</th><th>Name</th><th>Datum</th><th>Uhrzeit</th><th>Dauer</th><th>Anzahl</th><th>Telefon</th></tr></table>');
       $('#oInputDate').change(function(){ viewReserveOverviewWeek(this.value); });
-
-
 
       var date = new Date(dt);
       date.setDate(date.getDate() + 8);
@@ -704,9 +706,11 @@ function acpSubmit(tID) {
         $.ajax({
           url: "sync.php", method: "POST", data: { acpReserve: inputs, acpSubmit: type },
           success: function(result) {
-            console.log("ACP Result: " + result);
+            console.log(result);
             if(result == "1"){
-
+              location.reload();
+            } else {
+              alert("Ein Fehler ist aufgetreten!\n"+result);
             }
           }
         });
