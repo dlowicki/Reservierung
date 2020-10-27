@@ -35,7 +35,7 @@ $(document).on("click",".information-box-acp",function(){
     $('#acpReserveID').val("");
     $('#acpSubmit').val("Erstellen");
     // Hier noch ACP leeren
-
+    clearACP();
     return;
   }
 
@@ -119,7 +119,7 @@ $(document).on("click",".acp-settings-buttons button",function(){
   }
 
   var inputDate = $('#acpInputDate').val();
-  
+
   $.ajax({
     url: "sync.php",
     method: "POST",
@@ -134,3 +134,20 @@ $(document).on("click",".acp-settings-buttons button",function(){
     }
   });
 });
+
+function clearACP() {
+  $('#acpInputTime').val("17:00");
+  //$('#acpInputDate').val("");
+  $('#acpInputDuration').val(1);
+  $('#acpInputAmount').val("");
+
+  for (var count = 1; count <= 6; count++) {
+    $('.right-inputs-hh'+count+' .clientID').val("");
+    $('.right-inputs-hh'+count+' .clientVorname').val("");
+    $('.right-inputs-hh'+count+' .clientName').val("");
+    $('.right-inputs-hh'+count+' .clientMail').val("");
+    $('.right-inputs-hh'+count+' .clientAdresse').val("");
+    $('.right-inputs-hh'+count+' .clientTNR').val("");
+  }
+  $('#acpSubmit').val("Erstellen");
+}

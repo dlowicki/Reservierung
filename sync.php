@@ -240,7 +240,7 @@ if(isset($_POST['acpReserve']) && isset($_POST['acpSubmit'])){
               $cf = uniqid();
               $sqlStatement = "INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientAdresse, clientTNR, clientDate, clientConfirm) VALUES ('$clientID','$rID','$vorname','$name','$mail','$adresse','$tnr','$dateTime','$cf');";
               $query = $con -> query($sqlStatement) or die();
-              if($query === TRUE){
+              if($query === FALSE){
                 // Hier eventuell Reservierung wieder entfernen
                 echo "0";
                 return;
