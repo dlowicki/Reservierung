@@ -336,7 +336,7 @@ function viewAdminTable(id, src){
 		if(result == true){
 
       // Wenn schon geöffnet
-      if($('#acpSettings').length > 0){ return; }
+      if($('.acp-settings-buttons').length > 0){ return; }
 
 			$('#viewAdminTable').append('<i class="fa fa-times fa-2x" onClick="tableClose()"></i>');
 			$('#viewAdminTable').append("<h1>Bearbeitung Tisch "+id+"</h1>");
@@ -388,6 +388,15 @@ function viewAdminTable(id, src){
         $('.right-inputs-hh'+(i+1)).css("display","none");
       }
       $('.right-inputs-hh1').css("display","block");
+
+      // Damit Tisch bearbeitet werden kann. Freigabe für 5/15/30 Minuten, damit Haushalte eingetragen werden können
+      // Link wird in E-Mail eingebunden für Bearbeitung und muss vor Bearbeitung vom Personal freigeschaltet werden
+      /*$('.acp-bottom-content').append('<div id="acp-bottom-freigabe"></div>');
+      $('#acp-bottom-freigabe').append('<img src="'+src+'">');
+      $('#acp-bottom-freigabe').append('<div class="freigabe-settings"></div>');
+      $('.freigabe-settings').append('<select><option value="1">5 Minuten</option><option value="2">10 Minuten</option><option value="3">30 Minuten</option></select>');
+      $('.freigabe-settings').append('');*/
+
 
 
 			var tID = "'"+id+"'";

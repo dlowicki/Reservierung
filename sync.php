@@ -181,6 +181,27 @@ if(isset($_POST['qrCode'])){
   echo "0"; return;
 }
 
+if(isset($_POST['changeReserve'])){
+  $id = $_POST['changeReserve'];
+  $con = connect();
+  $query = $con->query("SELECT reserveID, tableID, reserveStart, reserveEnd FROM rReserve WHERE reservecookie = '$id'");
+  $data = array();
+
+  if($query){
+    $r = 0;
+    foreach ($query as $key) {
+      $data[$r]['reserveID'] = $key['reserveID'];
+      $data[$r]['tableID'] = $key['tableID'];
+      $data[$r]['reserveStart'] = $key['reserveStart'];
+      $data[$r]['reserveEnd'] = $key['reserveEnd'];
+      $data[$r]['clients'] = getClientsFromReserve($key['reserveID']);
+    }
+    echo json_encode($data);
+    return;
+  }
+  return false;
+}
+
 
 /* ACP ISSET ABFRAGEN */
 

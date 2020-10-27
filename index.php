@@ -24,6 +24,16 @@
     Online Tische Reservieren & Corona Registrierung  mit Name und Adresse
     -->
 
+    <?php
+    if(isset($_GET['change'])){
+      $change = $_GET['change'];
+      if(strlen($change) >= 1 && strlen($change) <= 15){
+        echo "<div id='viewChangeReserve' class='$change'> </div>";
+        return;
+      }
+    }
+    ?>
+
     <div class="container-reserve">
       <i class="fa fa-user-circle fa-3x icon-user"></i>
       <div class="reserve-top-left">
