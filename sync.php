@@ -77,7 +77,7 @@ if(isset($_POST['createReserve'])){
         if($count != 0){ $clientID = uniqid(); }
         if($value){
           $exp = explode(";",$value);
-          $cf = uniqid();
+          $cf = uniqid()."".uniqid();
           $vorname = $exp[0]; $name = $exp[1]; $mail = $exp[2]; $adresse = $exp[3]; $tnr = $exp[4];
           // $cID,$rID,$tID,$vorname,$name,$mail,$adresse,$tnr,$cf
           $sqlStatement = "INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientAdresse, clientTNR, clientDate, clientConfirm) VALUES ('$clientID','$rID','$vorname','$name','$mail','$adresse','$tnr','$date','$cf');";
@@ -202,6 +202,49 @@ if(isset($_POST['changeReserve'])){
   return false;
 }
 
+if(isset($_POST['crSubmit']) && isset($_POST['crID'])){
+  $rID = $_POST['crID'];
+  $data = $_POST['crSubmit']; // Hier Einträge von CHANGE RESERVE
+  $base = getClientsFromReserve($rID); // Clients von Reserverierung
+  $dateTime = echoDateTime();
+
+  foreach ($data as $key => $value) { // value beinhaltet Array mit Input;Input;Input;Input
+    if(is_string($value)){ // Wenn value == string
+      $inside = false; // Boolean, falls ID in $base
+      $exp = explode(";",$value); // Aufteilen bei Semikolon
+      $vorname = $exp[0]; $name = $exp[1]; $mail = $exp[2]; $adresse = $exp[3]; $tnr = $exp[4]; $cID = $exp[5];
+      foreach ($base as $key2) { // Für jeden Client in Reservierung
+        if($key2['clientID'] == $cID){ // Wenn ClientID von jetzigem Client == $cID
+          $inside = true; // Dann ist der Client schon in Datenbank
+          // Wenn Vorname und Name gesetzt sind
+          acpUpdateClient($cID,$rID,$vorname,$name,$mail,$adresse,$tnr,$dateTime,uniqid());
+        }
+      }
+      if($inside == false){ // Wenn Client nicht in Datenbank --> hinzufügen
+        $cf = uniqid();
+        $con = connect(); // Baue Verbindung auf
+        $sqlStatement = "INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientAdresse, clientTNR, clientDate, clientConfirm) VALUES ('$cID','$rID','$vorname','$name','$mail','$adresse','$tnr','$dateTime','$cf');";
+        $query = $con -> query($sqlStatement) or die(); // Führe Query aus
+        if($query === FALSE){ // Wenn INSERT Fehler hat
+          echo "0";
+          return;
+        }
+      }
+    }
+  }
+  echo "1";
+  return false;
+}
+
+if(isset($_POST['crDelete'])){
+  if(acpDeleteClient($_POST['crDelete'])){
+    echo "1";
+    return;
+  }
+  echo "0";
+  return;
+}
+
 
 /* ACP ISSET ABFRAGEN */
 
@@ -256,9 +299,9 @@ if(isset($_POST['acpReserve']) && isset($_POST['acpSubmit'])){
             $dateTime = echoDateTime();
             $vorname = $exp[0]; $name = $exp[1]; $mail = $exp[2]; $adresse = $exp[3]; $tnr = $exp[4]; $cID = $exp[5];
             if($type == 'Bearbeiten'){
-              acpUpdateClient($cID,$rID,$vorname,$name,$mail,$adresse,$tnr,$dateTime,uniqid());
+              acpUpdateClient($cID,$rID,$vorname,$name,$mail,$adresse,$tnr,$dateTime,uniqid()."".uniqid());
             } elseif($type == 'Erstellen'){
-              $cf = uniqid();
+              $cf = uniqid()."".uniqid();
               $sqlStatement = "INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientAdresse, clientTNR, clientDate, clientConfirm) VALUES ('$clientID','$rID','$vorname','$name','$mail','$adresse','$tnr','$dateTime','$cf');";
               $query = $con -> query($sqlStatement) or die();
               if($query === FALSE){
@@ -364,6 +407,16 @@ function acpUpdateClient($cID,$rID,$vn,$nn,$ma,$adr,$tnr,$date,$cc) {
   $temp = "clientID,reserveID,clientVorname,clientName,clientMail,clientAdresse,clientTNR,clientDate,clientConfirm";
   $temp2 = "'$cID','$rID','$vn','$nn','$ma','$adr','$tnr','$date','$cc'";
   $statement = "INSERT INTO rClient ($temp) VALUES ($temp2) ON DUPLICATE KEY UPDATE clientVorname = '$vn', clientName = '$nn', clientMail = '$ma', clientAdresse = '$adr', clientTNR='$tnr'";
+  $query = $con -> query($statement);
+  if($query===TRUE){
+    return true;
+  }
+  return false;
+}
+
+function acpDeleteClient($cID) {
+  $con = connect();
+  $statement = "DELETE FROM rClient WHERE clientID = '$cID'";
   $query = $con -> query($statement);
   if($query===TRUE){
     return true;
