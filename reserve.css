@@ -2,6 +2,145 @@ html,body {
   width: 99%;
   height: 98%;
 }
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+  .reserve-top-left {
+    max-height: 200px;
+    max-width: 40px;
+  }
+  .reserve-top-left .object-t-right {
+    margin-bottom: 40px;
+  }
+  .table h3 {
+    font-size: 10px;
+  }
+
+  .reserve-top-middle {
+    width: 50%;
+  }
+  .reserve-top-middle img {
+    width: 90%;
+  }
+  .reserve-top-middle .table {
+    margin-left: -5px;
+  }
+
+  /*------------------------------*/
+
+  .reserve-bottom-left {
+    max-width: 120px;
+    margin-left: -15px;
+  }
+  .reserve-bottom {
+    background-color: yellow;
+  }
+  .reserve-bottom-left-row {
+    max-width: 100px;
+    max-height: 20px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .reserve-bottom-left-row h3 {
+    margin-left: -5px;
+  }
+  .reserve-bottom-left .row {
+    width: 60px;
+    height: 20px;
+  }
+  .reserve-bottom-left-row .pillar {
+    width: 22.5px;
+  }
+
+  /*------------------------------*/
+
+  .reserve-bottom-middle {
+    max-width: 120px;
+    margin-left: 2%;
+  }
+  .reserve-bottom-middle-row:last-of-type {
+    margin-top: 80px;
+  }
+  .reserve-bottom-middle .pillar {
+    background-color: orange;
+    width: 25px;
+    max-height: 20px;
+  }
+  .reserve-bottom-middle .pillar {
+    width: 25px;
+    height: 20px;
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+  .object-t-left {
+    max-width: 50px;
+    height: 50px;
+    float: right;
+  }
+  .object-t-right {
+    max-width: 50px;
+    height: 50px;
+    float: left;
+  }
+
+  /*------------------------------*/
+
+  .reserve-bottom-right {
+    background-color: red;
+    max-width: 120px;
+  }
+
+  .reserve-bottom-right-row {
+    background-color: blue;
+    margin-top: 5px;
+  }
+  .reserve-bottom-right-row .pillar {
+    background-color: orange;
+    max-width: 20px;
+    margin-left: 5px;
+  }
+  .reserve-bottom-right-row .big {
+    background-color: orange;
+    max-width: 40px;
+    margin-left: 5px;
+  }
+  .reserve-bottom-right-row .bottom {
+    background-color: orange;
+    max-width: 20px;
+    margin-left: 5px;
+  }
+}
+
+
+
+
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+
+}
+
+
+
+
+
+
+
 .container-reserve {
   width: 91.5%;
   height: 100%;
@@ -643,20 +782,13 @@ input:checked + .slider:before {
 .reserve-bottom-middle {
   width: 30%;
   height: 250px;
-  padding-left: 10%;
 }
 .reserve-bottom-middle-row {
   width: 100%;
   height: 30px;
   margin-top: 5px;
 }
-.reserve-bottom-middle-row .pillar {
-  margin-left: 15%;
-}
-.reserve-bottom-middle-row .table {
-  margin-left: 10%;
-  margin-bottom: 15px;
-}
+
 .reserve-bottom-middle-row .bottom {
   margin-left: 10%;
 }
@@ -670,28 +802,12 @@ input:checked + .slider:before {
 .reserve-bottom-right-row {
   width: 100%;
   height: 90px;
-  margin-top: 5px;
   text-align: center;
-}
-.reserve-bottom-right-row .pillar {
-  margin-left: 4.5%;
-  margin-right: 4.5%;
-  margin-bottom: 10px;
-}
-.reserve-bottom-right-row .big {
-  margin-left: 5%;
-  margin-right: 5%;
-  margin-bottom: 10px;
-}
-.reserve-bottom-right-row .bottom {
-  margin-left: 10%;
-  margin-right: 10%;
 }
 
 
 
 .table  {
-  width: 100px;
   cursor: pointer;
   transition: 0.5s;
   color: white;
@@ -699,7 +815,6 @@ input:checked + .slider:before {
 
 .table h3 {
   transition: 0.5s;
-  font-size: 1.2rem;
   position: absolute;
   text-align: center;
   display: block;
@@ -749,8 +864,9 @@ color: darkgray;
 }
 
 .row-h3 {
-  margin-top: 13px;
   width: 130px;
+  font-size: 30px;
+  margin-top: 15px;
 }
 
 .big-h3 {
@@ -1141,14 +1257,6 @@ color: darkgray;
 
 
 
-
-
-
-
-
-
-
-
 @media only screen and (min-width: 200px) and (max-width: 1200px) {
   .container-reserve {
     width: 100%;
@@ -1169,8 +1277,7 @@ color: darkgray;
 
 
   .reserve-top-left {
-    max-width: 15%;
-    max-height: 200px;
+    width: 15%;
     float: left;
     margin-left: 0%;
   }
@@ -1183,29 +1290,16 @@ color: darkgray;
   }
 
   .reserve-bottom-left {
-    min-width: 130px;
     margin-left: 2%;
-    max-width: 100px;
     height: 300px;
   }
   .reserve-bottom-middle {
-    max-width: 150px;
-    min-width: 150px;
+    width: 150px;
   }
-  .reserve-bottom-right {
-    min-width: 320px;
-    max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 0px;
-  }
+
 
   .reserve-bottom-middle-row .bottom-h3 {
     padding-top: 47.5px;
-  }
-  .reserve-bottom-right-row .bottom-h3 {
-    padding-top: 0px;
-    margin-top: 40px;
   }
   .reserve-bottom-left-row:first-of-type {
     margin-top: 5px;
@@ -1215,11 +1309,10 @@ color: darkgray;
   }
 
   .table {
-    max-width: 50px;
+    width: 50px;
   }
   .table h3 {
     max-width: 50px;
-    font-size: 1rem;
   }
   .pillar {
     max-width: 30px;
@@ -1366,11 +1459,6 @@ color: darkgray;
     from { opacity: 0; }
     to   { opacity: 1; }
 }
-
-
-
-
-
 
 
 

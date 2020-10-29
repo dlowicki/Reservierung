@@ -37,7 +37,7 @@
     <div class="container-reserve">
       <i class="fa fa-user-circle fa-3x icon-user"></i>
       <div class="reserve-top-left">
-        <div class="table" id="99">
+        <div class="table object-t-right" id="99">
           <h3 class="table-h3" id="99-h3">99</h3>
           <img src="img/t-right-transparent.png" id="99-img" width="100%">
         </div>
@@ -92,8 +92,8 @@
 
 
       <div class="reserve-bottom">
-        <div class="reserve-bottom-left">
 
+        <div class="reserve-bottom-left">
           <div class="reserve-bottom-left-row">
             <div class="table pillar" id="8" style="float: right;">
               <h3 class="pillar-h3" id="8-h3">8</h3>
@@ -106,7 +106,7 @@
               <h3 class="row-h3" id="9-h3">9</h3>
               <img src="img/t-row-transparent.png" id="9-img" width="100%">
             </div>
-            <div class="table pillar" id="1" style="float: right; margin-right: 40px;">
+            <div class="table pillar" id="1">
               <h3 class="pillar-h3" id="1-h3">1</h3>
               <img src="img/t-one-transparent.png" id="1-img" width="100%">
             </div>
@@ -124,7 +124,7 @@
               <h3 class="row-h3" id="11-h3">11</h3>
               <img src="img/t-row-transparent.png" id="11-img" width="100%">
             </div>
-            <div class="table pillar" id="2" style="float: right; margin-right: 40px;">
+            <div class="table pillar" id="2">
               <h3 class="pillar-h3" id="2-h3">2</h3>
               <img src="img/open/t-one-transparent.png" id="2-img" width="100%">
             </div>
@@ -135,7 +135,7 @@
               <h3 class="row-h3" id="12-h3">12</h3>
               <img src="img/closed/t-row-transparent.png" id="12-img" width="100%">
             </div>
-            <div class="table pillar" id="3" style="float: right; margin-right: 40px;">
+            <div class="table pillar" id="3">
               <h3 class="pillar-h3" id="3-h3">3</h3>
               <img src="img/t-one-transparent.png" id="3-img" width="100%">
             </div>
@@ -158,29 +158,27 @@
             </div>
           </div>
 
+          <div class="reserve-bottom-middle-row">
+            <div class="table object-t-right" id="37">
+              <h3 class="table-h3" id="37-h3">37</h3>
+              <img src="img/t-right-transparent.png" id="37-img" width="100%">
+            </div>
+            <div class="table object-t-left" id="34">
+              <h3 class="table-h3" id="34-h3">34</h3>
+              <img src="img/t-left-transparent.png" id="34-img" width="100%">
+            </div>
+          </div>
 
-        <div class="reserve-bottom-middle-row">
-          <div class="table" id="37" style="float: left;">
-            <h3 class="table-h3" id="37-h3">37</h3>
-            <img src="img/t-right-transparent.png" id="37-img" width="100%">
+          <div class="reserve-bottom-middle-row">
+            <div class="table object-t-left" id="36" style="float: left;">
+              <h3 class="bottom-h3 h3-bottom" id="36-h3">36</h3>
+              <img src="img/t-left-transparent.png" id="36-img" width="100%" style="transform: scale(-1);">
+            </div>
+            <div class="table pillar" id="35" style="float: left;  margin-left: 25%;">
+              <h3 class="pillar-h3" id="35-h3">35</h3>
+              <img src="img/t-one-transparent.png" id="35-img" width="100%">
+            </div>
           </div>
-          <div class="table" id="34" style="float: left;">
-            <h3 class="table-h3" id="34-h3">34</h3>
-            <img src="img/t-left-transparent.png" id="34-img" width="100%">
-          </div>
-        </div>
-
-
-        <div class="reserve-bottom-middle-row">
-          <div class="table" id="36" style="float: left;">
-            <h3 class="bottom-h3 h3-bottom" id="36-h3">36</h3>
-            <img src="img/t-left-transparent.png" id="36-img" width="100%" style="transform: scale(-1);">
-          </div>
-          <div class="table pillar" id="35" style="float: left;  margin-left: 25%;">
-            <h3 class="pillar-h3" id="35-h3">35</h3>
-            <img src="img/t-one-transparent.png" id="35-img" width="100%">
-          </div>
-        </div>
 
         </div>
 
