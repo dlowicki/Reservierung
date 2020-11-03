@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test</title>
+    <link rel="stylesheet" href="table.css">
     <link href="reserve.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
@@ -37,8 +38,8 @@
     <div class="container-reserve">
       <i class="fa fa-user-circle fa-3x icon-user"></i>
       <div class="reserve-top-left">
-        <div class="table" id="99">
-          <h3 class="pillar-h3" id="99-h3">99</h3>
+        <div class="table object-t-right" id="99">
+          <h3 class="table-h3" id="99-h3">99</h3>
           <img src="img/t-right-transparent.png" id="99-img" width="100%">
         </div>
         <div class="table" id="98">
@@ -94,14 +95,14 @@
 
         <div class="reserve-bottom-left">
           <div class="reserve-bottom-left-row">
-            <div class="table" id="8">
+            <div class="table object-small" id="8">
               <h3 class="table-h3" id="8-h3">8</h3>
               <img src="img/t-one-transparent.png" id="8-img" width="100%">
             </div>
           </div>
 
           <div class="reserve-bottom-left-row">
-            <div class="table" id="1">
+            <div class="table object-small" id="1">
               <h3 class="table-h3" id="1-h3">1</h3>
               <img src="img/t-one-transparent.png" id="1-img" width="100%">
             </div>
@@ -111,8 +112,6 @@
             </div>
           </div>
 
-
-
           <div class="reserve-bottom-left-row">
             <div class="table object-row" id="10">
               <h3 class="table-h3" id="10-h3">10</h3>
@@ -121,7 +120,7 @@
           </div>
 
           <div class="reserve-bottom-left-row">
-            <div class="table" id="2">
+            <div class="table object-small" id="2">
               <h3 class="table-h3" id="2-h3">2</h3>
               <img src="img/open/t-one-transparent.png" id="2-img" width="100%">
             </div>
@@ -132,7 +131,7 @@
         </div>
 
           <div class="reserve-bottom-left-row">
-            <div class="table" id="3">
+            <div class="table object-small" id="3">
               <h3 class="table-h3" id="3-h3">3</h3>
               <img src="img/t-one-transparent.png" id="3-img" width="100%">
             </div>
@@ -182,7 +181,7 @@
           <div class="reserve-bottom-middle-row">
             <div class="table object-t-left" id="36" style="float: left;">
               <h3 class="bottom-h3" id="36-h3">36</h3>
-              <img src="img/t-left-transparent.png" id="36-img" width="100%">
+              <img src="img/open/t-right-bottom-transparent.png" id="36-img" width="100%">
             </div>
             <div class="table" id="35" style="float: right;">
               <h3 class="table-h3" id="35-h3">35</h3>
@@ -198,7 +197,7 @@
           <div class="reserve-bottom-right-row">
             <div class="table object-pillar" id="41">
               <h3 class="table-h3" id="41-h3">41</h3>
-              <img src="img/t-transparent.png" id="41-img" width="100%">
+              <img src="img/t-pillar-transparent.png" id="41-img" width="100%">
             </div>
             <div class="table object-pillar" id="43">
               <h3 class="table-h3" id="43-h3">43</h3>
@@ -267,7 +266,7 @@
           <div class="reserve-bottom-right-row">
             <div class="table object-layer" id="57">
               <h3 class="table-h3" id="57-h3">57</h3>
-              <img src="img/t-right-transparent.png" id="57-img" width="100%">
+              <img src="img/open/t-right-layed-transparent.png" id="57-img" width="100%">
             </div>
             <div class="table object-big" id="56">
               <h3 class="table-h3" id="56-h3">56</h3>
