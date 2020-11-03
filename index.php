@@ -36,50 +36,48 @@
 
     <div class="container-reserve">
       <i class="fa fa-user-circle fa-3x icon-user"></i>
-
       <div class="reserve-top-left">
-        <div class="table object-t-right" id="99">
-          <h3 class="table-h3" id="99-h3">99</h3>
+        <div class="table" id="99">
+          <h3 class="pillar-h3" id="99-h3">99</h3>
           <img src="img/t-right-transparent.png" id="99-img" width="100%">
         </div>
-        <br>
-        <div class="table pillar" id="98">
-          <h3 class="pillar-h3" id="98-h3">98</h3>
+        <div class="table" id="98">
+          <h3 class="table-h3" id="98-h3">98</h3>
           <img src="img/t-pillar-transparent.png" id="98-img" width="100%">
         </div>
       </div>
 
       <div class="reserve-top-middle">
         <div class="reserve-top-middle-top">
-          <div class="table pillar" id="21">
-            <h3 class="pillar-h3" id="21-h3">21</h3>
+          <div class="table" id="21">
+            <h3 class="table-h3" id="21-h3">21</h3>
             <img src="img/t-pillar-transparent.png" id="21-img" width="100%">
           </div>
-          <div class="table pillar" id="22">
-            <h3 class="pillar-h3" id="22-h3">22</h3>
+          <div class="table" id="22">
+            <h3 class="table-h3" id="22-h3">22</h3>
             <img src="img/t-pillar-transparent.png" id="22-img" width="100%">
           </div>
-          <div class="table pillar" id="23">
-            <h3 class="pillar-h3" id="23-h3">23</h3>
+          <div class="table" id="23">
+            <h3 class="table-h3" id="23-h3">23</h3>
             <img src="img/t-pillar-transparent.png" id="23-img" width="100%">
           </div>
-          <div class="table pillar" id="24">
-            <h3 class="pillar-h3" id="24-h3">24</h3>
+          <div class="table" id="24">
+            <h3 class="table-h3" id="24-h3">24</h3>
             <img src="img/t-pillar-transparent.png" id="24-img" width="100%">
           </div>
         </div>
 
         <div class="reserve-top-middle-bottom">
-          <div class="table pillar" id="27">
-            <h3 class="pillar-h3" id="27-h3">27</h3>
+          <div class="table" id="27">
+            <h3 class="table-h3" id="27-h3">27</h3>
             <img src="img/t-one-transparent.png" id="27-img" width="100%">
           </div>
-          <div class="table pillar" id="26">
-            <h3 class="pillar-h3" id="26-h3">26</h3>
+          <div class="table" id="26">
+            <h3 class="table-h3" id="26-h3">26</h3>
             <img src="img/t-one-transparent.png" id="26-img" width="100%">
           </div>
-          <div class="table pillar" id="25">
-            <h3 class="pillar-h3" id="25-h3">25</h3>
+          <div class="table" id="25">
+            <h3 class="table-h3" id="25-h3">25</h3>
             <img src="img/t-one-transparent.png" id="25-img" width="100%">
           </div>
         </div>
@@ -95,57 +93,59 @@
       <div class="reserve-bottom">
 
         <div class="reserve-bottom-left">
-
-          
           <div class="reserve-bottom-left-row">
-            <div class="table pillar" id="8">
-              <h3 class="pillar-h3" id="8-h3">8</h3>
+            <div class="table" id="8">
+              <h3 class="table-h3" id="8-h3">8</h3>
               <img src="img/t-one-transparent.png" id="8-img" width="100%">
             </div>
           </div>
 
           <div class="reserve-bottom-left-row">
-            <div class="table row" id="9">
-              <h3 class="row-h3" id="9-h3">9</h3>
-              <img src="img/t-row-transparent.png" id="9-img" width="100%">
-            </div>
-            <div class="table pillar" id="1">
-              <h3 class="pillar-h3" id="1-h3">1</h3>
+            <div class="table" id="1">
+              <h3 class="table-h3" id="1-h3">1</h3>
               <img src="img/t-one-transparent.png" id="1-img" width="100%">
             </div>
+            <div class="table object-row" id="9">
+              <h3 class="table-h3" id="9-h3">9</h3>
+              <img src="img/t-row-transparent.png" id="9-img" width="100%">
+            </div>
           </div>
 
 
 
           <div class="reserve-bottom-left-row">
-            <div class="table" id="10" style="float: right;">
-              <h3 class="row-h3" id="10-h3">10</h3>
-              <img src="img/t-row-transparent.png" id="10-img" width="100%">
+            <div class="table object-row" id="10">
+              <h3 class="table-h3" id="10-h3">10</h3>
+              <img src="img/t-row-transparent.png" id="10-img" class="object-row" width="100%">
             </div>
           </div>
 
           <div class="reserve-bottom-left-row">
-            <div class="table row" id="11" style="float: right;">
-              <h3 class="row-h3" id="11-h3">11</h3>
-              <img src="img/t-row-transparent.png" id="11-img" width="100%">
-            </div>
-            <div class="table pillar" id="2">
-              <h3 class="pillar-h3" id="2-h3">2</h3>
+            <div class="table" id="2">
+              <h3 class="table-h3" id="2-h3">2</h3>
               <img src="img/open/t-one-transparent.png" id="2-img" width="100%">
             </div>
+            <div class="table object-row" id="11">
+              <h3 class="table-h3" id="11-h3">11</h3>
+              <img src="img/t-row-transparent.png" id="11-img" class="object-row" width="100%">
+            </div>
         </div>
 
           <div class="reserve-bottom-left-row">
-            <div class="table row" id="12" style="float: right;">
-              <h3 class="row-h3" id="12-h3">12</h3>
-              <img src="img/closed/t-row-transparent.png" id="12-img" width="100%">
-            </div>
-            <div class="table pillar" id="3">
-              <h3 class="pillar-h3" id="3-h3">3</h3>
+            <div class="table" id="3">
+              <h3 class="table-h3" id="3-h3">3</h3>
               <img src="img/t-one-transparent.png" id="3-img" width="100%">
+            </div>
+            <div class="table object-row" id="12">
+              <h3 class="table-h3" id="12-h3">12</h3>
+              <img src="img/t-row-transparent.png" id="12-img" class="object-row" width="100%">
             </div>
           </div>
         </div>
+
+
+
+
 
 
 
@@ -194,7 +194,7 @@
 
 
 
-        <div class="reserve-bottom-right">
+        <!--<div class="reserve-bottom-right">
           <div class="reserve-bottom-right-row">
             <div class="table pillar" id="41" style="float: left;">
               <h3 class="pillar-h3" id="41-h3">41</h3>
@@ -280,7 +280,7 @@
           </div>
 
 
-        </div>
+        </div>-->
       </div>
 
       <div id="viewAdminTable"></div>

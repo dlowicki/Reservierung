@@ -10,7 +10,8 @@ $(document).ready(function(){
       var d = JSON.parse(result);
       for (var i = 0; i < d.length; i++) {
         var h3 = "#"+d[i]['tableID']+"-h3"; var img = "#"+d[i]['tableID']+"-img";
-        $(h3).text(d[i]['tableID']); $(img).attr("src","img/"+d[i]['tableActive']+"/t-"+d[i]['tableType']+"-transparent.png");
+        $(h3).text(d[i]['tableID']);
+        $(img).attr("src","img/"+d[i]['tableActive']+"/t-"+d[i]['tableType']+"-transparent.png");
       }
     }
   });
