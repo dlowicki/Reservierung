@@ -36,8 +36,9 @@
     ?>
 
     <div class="container-reserve">
-      <i class="fa fa-user-circle fa-3x icon-user"></i>
+
       <div class="reserve-top">
+
         <div class="reserve-top-left">
           <div class="table object-t-right" id="99">
             <h3 class="table-h3" id="99-h3">99</h3>
@@ -67,6 +68,7 @@
               <h3 class="table-h3" id="24-h3">24</h3>
               <img src="img/t-pillar-transparent.png" id="24-img" width="100%">
             </div>
+            <i class="fa fa-user-circle fa-3x icon-user"></i>
           </div>
 
           <div class="reserve-top-middle-bottom">
@@ -181,11 +183,11 @@
           </div>
 
           <div class="reserve-bottom-middle-row">
-            <div class="table object-t-left" id="36" style="float: left;">
+            <div class="table object-t-right-bottom" id="36">
               <h3 class="bottom-h3" id="36-h3">36</h3>
               <img src="img/open/t-right-bottom-transparent.png" id="36-img" width="100%">
             </div>
-            <div class="table object-small" id="35" style="float: right;">
+            <div class="table object-small" id="35">
               <h3 class="table-h3" id="35-h3">35</h3>
               <img src="img/t-one-transparent.png" id="35-img" width="100%">
             </div>
