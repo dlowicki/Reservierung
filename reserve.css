@@ -1,4 +1,4 @@
-*{
+* {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
@@ -9,108 +9,136 @@ html,body {
   height: 95%;
 }
 
+.reserve-top .fa-user-circle {
+  position: absolute;
+  right:0.5%;
+  top: 1%;
+}
+
+.container-reserve {
+  width: 100%;
+  height: 100%;
+}
+
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
-  .container-reserve {
-    display: block;
+
+  .reserve-top {
     width: 100%;
-    height: 100%;
-    background-color: purple;
+    height: 210px;
+    padding-top: 2%;
+    display: flex;
+    flex-wrap: nowrap;
   }
-
-  .table {
-    max-width: 30px;
-    max-height: 50px;
-  }
-  .table h3 {
-    font-size: 10px;
-  }
-  .pillar {
-    background-color: blue;
-  }
-  .pillar img {
-    width: 50%;
-  }
-  .pillar-h3 {
-    width: 50%;
-  }
-
-  /*------------------------------*/
-
   .reserve-top-left {
-    max-height: 150px;
-    max-width: 30px;
+    width: 10%;
+    min-height: 120px;
+    height: 30vh;
+    max-height: 200px;
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 5%;
+  }
+  .reserve-top-left .table {
+    height: auto;
+    margin-right: 50%;
+    height: 6vw;
   }
   .reserve-top-left img {
-    width: 30px;
+    min-width: 25px;
+    width: 2.5vw;
+    height: 8vw;
+    min-height: 100px;
   }
-  .reserve-top-left h3 {
-    display: block;
-    width: 30px;
-    margin-top: 2.5px;
+
+  .reserve-top-left .table:first-of-type img {
+    min-width: 30px;
+    width: 5vw;
+    height: 6vw;
+    min-height: 50px;
+  }
+
+  .reserve-top-left .table-h3 {
+    width: 20px;
     text-align: center;
-  }
-  .reserve-top-left .table:first-of-type {
-    margin-bottom: 10%;
+    position: absolute;
+    margin-top: 1%;
+    margin-left: 0.5vw;
+    font-size: 0.7rem;
   }
 
   /*------------------------------*/
 
   .reserve-top-middle {
-    max-width: 40%;
-    max-height: 150px;
+    width: 55%;
+    min-height: 120px;
+    height: 30vh;
+    max-height: 200px;
+    margin-right: auto;
+    margin-left: 10%;
   }
-  .reserve-top-middle img {
-    width: 20px;
-  }
-  .reserve-top-middle h3 {
-    display: block;
-    width: 20px;
-    margin-top: 2px;
-  }
+
   .reserve-top-middle-top {
     display: flex;
     flex-wrap: nowrap;
+    width: 100%;
+
+    height: 50vw;
+    max-height: 62.5%;
   }
 
   .reserve-top-middle-bottom {
     display: flex;
     flex-wrap: nowrap;
-    margin-top: 10px;
-  }
-  .reserve-top-middle-bottom .table {
-    margin-left: 7.5%;
-    margin-top: 5px;
+    width: 100%;
+    height: 25%;
   }
 
+
+  .reserve-top-middle-bottom .table {
+    margin-left: 10%;
+  }
 
   /*------------------------------*/
 
   .reserve-bottom {
     width: 100%;
     max-height: 300px;
+    background-color: red;
+    display: flex;
+    flex-wrap: nowrap;
   }
-
+  .object-pillar {
+    margin-left: 7.5%;
+  }
   .object-pillar img {
-    width: 20px;
+    min-width: 20px;
+    width: 6vw;
+    height: 10vw;
+    min-height: 60px;
   }
   .object-pillar h3 {
-    display: block;
-    width: 20px;
-    margin-top: 2px;
+    position: absolute;
+    width: 6vw;
+    min-width: 20px;
+    margin-top: 5px;
+    font-size: 0.7rem;
+    text-align: center;
   }
-
-  .object-pillar {
-    margin-left: 5%;
-  }
-
   .object-small img {
-    max-width: 20px;
+    min-width: 25px;
+    width: 2.5vw;
   }
   .object-small h3 {
-    width: 20px;
-    margin-top: 2.5px;
+    min-width: 25px;
+    width: 2.5vw;
+    text-align: center;
+    margin-top: 5px;
+    font-size: 0.7rem;
+    position: absolute;
   }
+
+
   .object-big img {
     max-width: 30px;
   }
@@ -135,14 +163,17 @@ html,body {
   /*------------------------------*/
 
   .reserve-bottom-left {
-    min-width: 60px;
-    max-width: 15%;
+    min-width: 90px;
+    width: 20vw;
+    max-height: 100%;
     margin-right: auto;
   }
 
   .reserve-bottom-left-row {
-    max-width: 100%;
-    max-height: 20px;
+    width: 100%;
+    height: auto;
+    min-height: 40px;
+    margin-bottom: 2vw;
     display: flex;
     flex-wrap: nowrap;
   }
@@ -151,88 +182,108 @@ html,body {
     margin-left: auto;
   }
 
-  .reserve-bottom-left-row .object-row {
+  .object-row {
     margin-left: auto;
-    width: 30px;
+    height: 25px;
+  }
+  .object-row img {
+    width: 12vw;
+    min-width: 50px;
+    height: 25px;
   }
 
-  .reserve-bottom-left-row .object-row h3 {
-    width: 30px;
-    margin-top: 3px;
-  }
-  .reserve-bottom-left-row h3 {
-    width: 20px;
-    margin-top: 3px;
-  }
-
-  .reserve-bottom-left-row .object-row img {
-    max-width: 30px;
-  }
-
-  .reserve-bottom-left-row img {
-    max-width: 20px;
+  .object-row h3 {
+    position: absolute;
+    width: 12vw;
+    min-width: 50px;
+    margin-top: 0.75vw;
+    text-align: center;
+    font-size: 0.7rem;
   }
 
 
   /*------------------------------*/
 
   .reserve-bottom-middle {
-    min-width: 120px;
-    max-width: 30%;
+    width: 25vw;
+    min-width: 100px;
     margin-left: auto;
     margin-right: auto;
   }
-  .reserve-bottom-middle-row:first-of-type {
+  .reserve-bottom-middle-row:first-of-type .table {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 2vw;
+  }
+  .reserve-bottom-middle-row:last-of-type {
+    margin-top: 4vw;
+  }
+  .reserve-bottom-middle-row {
     display: flex;
     flex-wrap: nowrap;
   }
-  .reserve-bottom-middle-row:first-of-type .table {
-    margin-left: 7.5%;
-  }
-  .reserve-bottom-middle-row:last-of-type {
-    margin-top: 80px;
-
-  }
-
   .object-t-left {
-    max-width: 50px;
-    height: 50px;
-    float: right;
-    z-index: 0;
+    margin-left:auto;
+  }
+  .object-t-left img {
+    min-width: 35px;
+    width: 6vw;
+    height: 8vw;
+    min-height: 60px;
+  }
+  .object-t-right img {
+    min-width: 35px;
+    width: 6vw;
+    height: 8vw;
+    min-height: 60px;
+  }
+  .object-t-right-bottom {
+    margin-right: auto;
+  }
+  .object-t-right-bottom img {
+    min-width: 35px;
+    width: 6vw;
+    height: 8vw;
+    min-height: 60px;
+  }
+
+  .object-t-right h3 {
+    position: absolute;
+    margin-left: 1vw;
+    margin-top: 5px;
+    font-size: 0.7rem;
   }
   .object-t-left h3 {
-    width: 25px;
-    z-index: 1;
+    position: absolute;
+    width: 5vw;
+    text-align: right;
     margin-top: 5px;
+    font-size: 0.7rem;
   }
-  .object-t-right {
-    max-width: 50px;
-    height: 50px;
-    float: left;
-    z-index: 0;
-  }
-  .object-t-right h3 {
-    width: 25px;
-    z-index: 1;
+  .object-t-right-bottom h3 {
+    position: absolute;
+    margin-left: 0.75vw;
     margin-top: 5px;
+    font-size: 0.7rem;
   }
 
   /*------------------------------*/
 
   .reserve-bottom-right {
-    min-width: 140px;
-    width: 30%;
+    min-width: 100px;
+    width: 30vw;
+    height: 100%;
     margin-left: auto;
-    max-height: 300px;
+    background-color: purple;
   }
 
   .reserve-bottom-right-row {
-    margin-top: 5px;
-    max-height: 65px;
-    max-width: 80%;
+    margin-bottom: 5px;
+    width: 100%;
+    height: auto;
+    min-height: 60px;
     min-width: 135px;
-    margin-left: auto;
-    margin-right: auto;
+
     display: flex;
     flex-wrap: nowrap;
   }
@@ -244,6 +295,27 @@ html,body {
   .reserve-bottom-right-row .table {
     margin-left: 2.5%;
     margin-right: 2.5%;
+  }
+  .object-big img {
+    width: 4vw;
+    min-width: 50px;
+  }
+  .object-big h3 {
+    position: absolute;
+    margin-top: 15px;
+    width: 4vw;
+    min-width: 50px;
+    text-align: center;
+  }
+
+  .object-layer img {
+    width: 8vw;
+    min-width: 90px;
+  }
+  .object-layer h3 {
+    position: absolute;
+    margin-top: 5px;
+    margin-left: 0.5vw;
   }
 
 }
@@ -266,16 +338,7 @@ html,body {
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
   .container-reserve {
-    display: block;
-    width: 100%;
-    height: 100%;
     min-height: 900px;
-  }
-
-  .reserve-top .fa-user-circle {
-    position: absolute;
-    right:0.5%;
-    top:1%;
   }
 
 
