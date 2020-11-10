@@ -36,7 +36,10 @@
     ?>
 
     <div class="container-reserve">
-
+      <div id="viewAdminTable"></div>
+      <div id="viewTable"></div>
+      <div id="viewLogin"></div>
+      <div id="viewOverview"></div>
       <div class="reserve-top">
 
         <div class="reserve-top-left">
@@ -285,11 +288,6 @@
 
         </div>
       </div>
-
-      <div id="viewAdminTable"></div>
-      <div id="viewTable"></div>
-      <div id="viewLogin"></div>
-      <div id="viewOverview"></div>
     </div>
   </body>
 </html>
