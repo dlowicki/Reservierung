@@ -1,0 +1,130 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+html,body {
+  width: 100%;
+  height: 100%;
+}
+
+.admin-container {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  height: 100%;
+}
+
+.sidebar {
+  width: 15%;
+  min-width: 120px;
+  height: 100%;
+  background-color: rgba(192,95,95,0.8);
+  color: white;
+}
+
+.sidebar ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 100%;
+}
+
+.sidebar ul li {
+  width: 100%;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  padding: 5% 0% 5% 0%;
+  border-bottom: 1px solid white;
+  text-align: center;
+  font-size: calc(12px + 0.5vw);
+  transition: 0.5s;
+  color: white;
+}
+
+.sidebar ul li:first-of-type {
+  border-top: 1px solid white;
+}
+
+.sidebar ul li a:hover {
+  background-color: rgba(192,95,95,1);
+  cursor: pointer;
+}
+
+.main {
+  width: 85%;
+  height: 100%;
+}
+
+
+
+
+
+
+
+/*VIEW OVERVIEW */
+/* Übersicht Overview Reservierungen */
+
+.ow-nav {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 40%;
+  min-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 4%;
+  list-style: none;
+}
+
+.ow-nav li {
+  width: 40%;
+  font-size: 1.2rem;
+  padding: 2%;
+}
+
+.ow-nav li input {
+  padding: 5px;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+#ow-table-container {
+  width: 80%;
+  height: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: auto;
+}
+
+#ow-table {
+  table-layout: fixed;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#ow-table tr {
+  width: 120px;
+  text-align: center;
+}
+
+#ow-table td {
+  font-size: 1rem;
+  padding: 5px;
+}
+
+
+#ow-table td i {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+#ow-table td:first-of-type {
+  display: flex;
+  flex-wrap: nowrap;
+}

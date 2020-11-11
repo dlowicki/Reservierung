@@ -85,8 +85,6 @@ $(document).ready(function(){
     window.location.href = "index.php";
   });
 
-
-
   $(document).on("click",".cr-main .fa-user-times",function(){
     if(confirm("Dieser Haushalt wird aus der Reservierung gelöscht, fortfahren?")){
       var id = $('.cr-current .clientID').val();
@@ -102,7 +100,13 @@ $(document).ready(function(){
       });
     }
   });
-  
+  $(document).on("click","#acp-bottom-haushalt-select",function(){
+    var hhNumber = $(this).val();
+    $('.hh').css("display","none");
+    $('.right-inputs-hh'+hhNumber+' h3').text("Haushalt "+hhNumber);
+    $('.right-inputs-hh'+hhNumber).css("display","block");
+  });
+
   $(document).on("click","#cr-change",function(){
     var haushalt = new Array();
     for (var i = 1; i < 11; i++) {
@@ -124,7 +128,6 @@ $(document).ready(function(){
       $.ajax({
         url: "sync.php", method: "POST", data: { crSubmit: haushalt, crID: rID },
         success: function(result) {
-          console.log(result);
           if(result == "1"){
             window.location.href = "index.php";
           } else {
@@ -263,6 +266,12 @@ $(document).on("click",".acp-settings-buttons button",function(){
     }
   });
 });
+
+
+$(document).on("click","#login-NoShow",function(){
+  window.location.href = "admin.php";
+});
+
 
 function clearACP() {
   $('#acpInputTime').val("17:00");

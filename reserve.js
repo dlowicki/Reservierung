@@ -306,8 +306,7 @@ async function viewLogin() {
         var dd = String(today.getDate()).padStart(2, '0'); var mm = String(today.getMonth() + 1).padStart(2, '0'); var yyyy = today.getFullYear();
         today = "'" + yyyy + "-" + mm + "-" + dd + "'";
 
-        $('#viewLogin').append('<button onClick="viewReserveOverviewDay('+today+')">Übersicht</button>');
-        $('#viewLogin').append('<button onClick="">No-Show Liste</button>');
+        $('#viewLogin').append('<button id="login-NoShow">Übersicht</button>');
 				$('#viewLogin').append('<button onClick="submitLogoff()">Abmelden</button>');
 			} else {
 				submitLogoff();
@@ -371,14 +370,14 @@ function viewAdminTable(id, src){
       $('.acp-bottom-content').append('<div id="acp-bottom-haushalt"></div>');
 
       $('#acp-bottom-haushalt').append('<div class="acp-bottom-haushalt-container">');
-      $('.acp-bottom-haushalt-container').append('<select size="3"></select>');
+      $('.acp-bottom-haushalt-container').append('<select size="3" id="acp-bottom-haushalt-select"></select>');
       var hcount = 1;
       do {
         $('.acp-bottom-haushalt-container select').append('<option value="'+hcount+'">'+hcount+'</option>');
         hcount++;
       } while (hcount <= 20);
 
-      for (var i = 0; i < 5; i++) {
+      for (var i = 0; i < 20; i++) {
         $('.acp-bottom-haushalt-container').append('<div class="right-inputs-hh'+(i+1)+' hh">');
         $('.right-inputs-hh'+(i+1)).append('<h3>Haushalt 1</h3>');
         $('.right-inputs-hh'+(i+1)).append('<input type="hidden" class="clientID">');
