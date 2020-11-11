@@ -351,29 +351,35 @@ function viewAdminTable(id, src){
       // Aktivieren | Deaktivieren | Löschen | Bearbeiten // Tisch verlängern |
       $('.acp-settings-buttons').append("<button id='bt-eingetroffen'><i class='fas fa-check'></i> Eingetroffen</button><button id='bt-freigeben'><i class='fas fa-unlock'></i> Wieder freigeben</button><button id='bt-abgesagt'><i class='fas fa-user-slash'></i> Abgesagt</button><button id='bt-no-show'><i class='fas fa-user-times'></i> No-Show</button>");
 
-      $('.acp-bottom').append("<div class='acp-bottom-content'></div>");
       $('.acp-bottom').append("<ul class='acp-bottom-nav'><li class='acp-bottom-nav-current'>Reservierung</li><li>Haushalt</li></ul>");
+      $('.acp-bottom').append("<div class='acp-bottom-content'></div>");
 
       var str = "'" + id + "'";
 			$('.acp-bottom-content').append('<div id="acp-bottom-reservierung"></div>');
 
       $('#acp-bottom-reservierung').append('<div id="acp-table"><img src="'+src+'"></div>');
-      $('#acp-bottom-reservierung').append('<input type="hidden" id="acpReserveID">');
-			$('#acp-bottom-reservierung').append('<label id="acpTimeLabel">Reservieren ab <input type="time" value="17:00" class="setting" id="acpInputTime" min="17:00" max="21:00"></label>');
-      $('#acp-bottom-reservierung').append('<label id="acpDateLabel">Datum auswählen <input type="date" id="acpInputDate" onChange="getReservierungenACP('+str+')"></label>');
-      $('#acp-bottom-reservierung').append('<label id="acpDurationLabel">Dauer auswählen <select class="setting" id="acpInputDuration"><option value="1">2:30h</option><option value="2">Ganztags</option></select></label>');
-			$('#acp-bottom-reservierung').append('<label id="acpAmountLabel">Anzahl <input type="text" class="setting" id="acpInputAmount" placeholder="z.B. 10"></label>');
+      $('#acp-bottom-reservierung').append('<div id="acp-bottom-reservierung-inputs"></div>');
+      $('#acp-bottom-reservierung-inputs').append('<input type="hidden" id="acpReserveID">');
+			$('#acp-bottom-reservierung-inputs').append('<label id="acpTimeLabel">Reservieren ab <input type="time" value="17:00" class="setting" id="acpInputTime" min="17:00" max="21:00"></label>');
+      $('#acp-bottom-reservierung-inputs').append('<label id="acpDateLabel">Datum auswählen <input type="date" id="acpInputDate" onChange="getReservierungenACP('+str+')"></label>');
+      $('#acp-bottom-reservierung-inputs').append('<label id="acpDurationLabel">Dauer auswählen <select class="setting" id="acpInputDuration"><option value="1">2:30h</option><option value="2">Ganztags</option></select></label>');
+			$('#acp-bottom-reservierung-inputs').append('<label id="acpAmountLabel">Anzahl <input type="text" class="setting" id="acpInputAmount" placeholder="z.B. 10"></label>');
       document.querySelector("#acpInputDate").valueAsDate = new Date();
 
       getReservierungenACP(id);
 
       $('.acp-bottom-content').append('<div id="acp-bottom-haushalt"></div>');
 
-      $('#acp-bottom-haushalt').append("<div class='form-table-right-inputs'><ul class='table-right-inputs-nav'></ul><div class='table-right-inputs-con'></div></div>");
-      $('.table-right-inputs-nav').append('<li class="right-input-nav" id="1" style="border-bottom:1px solid #c05f5f; color: #c05f5f">Haushalt 1</li><li class="right-input-nav" id="2">Haushalt 2</li><li class="right-input-nav" id="3">Haushalt 3</li><li class="right-input-nav" id="4">Haushalt 4</li><li class="right-input-nav" id="5">Haushalt 5</li>');
+      $('#acp-bottom-haushalt').append('<div class="acp-bottom-haushalt-container">');
+      $('.acp-bottom-haushalt-container').append('<select size="3"></select>');
+      var hcount = 1;
+      do {
+        $('.acp-bottom-haushalt-container select').append('<option value="'+hcount+'">'+hcount+'</option>');
+        hcount++;
+      } while (hcount <= 20);
 
       for (var i = 0; i < 5; i++) {
-        $('#acp-bottom-haushalt').append('<div class="right-inputs-hh'+(i+1)+' hh">');
+        $('.acp-bottom-haushalt-container').append('<div class="right-inputs-hh'+(i+1)+' hh">');
         $('.right-inputs-hh'+(i+1)).append('<h3>Haushalt 1</h3>');
         $('.right-inputs-hh'+(i+1)).append('<input type="hidden" class="clientID">');
         var t = "'clientVorname'";
@@ -401,8 +407,8 @@ function viewAdminTable(id, src){
 
 
 			var tID = "'"+id+"'";
-			$('#viewAdminTable').append('<div class="form-table-submit"></div>');
-			$('.form-table-submit').append('<input type="button" onClick="tableClose()" id="acpClose" value="Schließen"><input type="submit" id="acpSubmit" onClick="acpSubmit('+tID+')" value="Erstellen">');
+			$('#viewAdminTable').append('<div class="acp-submit-container"></div>');
+			$('.acp-submit-container').append('<input type="button" onClick="tableClose()" id="acpClose" value="Schließen"><input type="submit" id="acpSubmit" onClick="acpSubmit('+tID+')" value="Erstellen">');
 
       $('#container-information').css("max-width","60%");
       $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");

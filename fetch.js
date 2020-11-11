@@ -141,7 +141,7 @@ $(document).on("click",".acp-bottom-nav li", function(){
   $('#acp-bottom-reservierung').css("display","none");
   $('#acp-bottom-haushalt').css("display","none");
   if(type == "Reservierung") {
-    $('#acp-bottom-reservierung').css("display","block");
+    $('#acp-bottom-reservierung').css("display","flex");
   } else if(type == "Haushalt"){
     $('#acp-bottom-haushalt').css("display","block");
   }

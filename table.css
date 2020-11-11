@@ -1,3 +1,11 @@
+.table {
+  transition: 0.5s;
+}
+.table:hover {
+  cursor: pointer;
+  color: darkgray;
+}
+
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
 
@@ -61,8 +69,9 @@
     flex-wrap: nowrap;
     width: 100%;
 
-    height: 50vw;
-    max-height: 62.5%;
+    min-height: 35%;
+    height: 20vw;
+    max-height: 52.5%;
   }
 
   .reserve-top-middle-bottom {
@@ -85,6 +94,7 @@
     display: flex;
     flex-wrap: nowrap;
   }
+
   .object-pillar {
     margin-left: 7.5%;
   }
@@ -119,7 +129,7 @@
   /*------------------------------*/
 
   .reserve-bottom-left {
-    min-width: 90px;
+    min-width: 80px;
     width: 20vw;
     max-height: 100%;
     margin-right: auto;
@@ -140,18 +150,18 @@
 
   .object-row {
     margin-left: auto;
-    height: 25px;
+    height: 20px;
   }
   .object-row img {
     width: 12vw;
-    min-width: 50px;
-    height: 25px;
+    min-width: 45px;
+    height: 20px;
   }
 
   .object-row h3 {
     position: absolute;
     width: 12vw;
-    min-width: 50px;
+    min-width: 45px;
     margin-top: 0.75vw;
     text-align: center;
     font-size: 0.7rem;
@@ -162,8 +172,7 @@
 
   .reserve-bottom-middle {
     width: 25vw;
-    min-width: 100px;
-    margin-left: auto;
+    min-width: 60px;
     margin-right: auto;
   }
   .reserve-bottom-middle-row:first-of-type .table {
@@ -226,8 +235,8 @@
   /*------------------------------*/
 
   .reserve-bottom-right {
-    min-width: 100px;
-    width: 30vw;
+    min-width: 140px;
+    width: 33vw;
     height: 100%;
     margin-left: auto;
   }
@@ -411,7 +420,7 @@
     position: absolute;
     width: 3vw;
     min-width: 30px;
-    margin-top: 20px;
+    margin-top: 10px;
     font-size: 1rem;
     text-align: center;
   }
