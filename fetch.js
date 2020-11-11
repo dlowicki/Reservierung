@@ -84,6 +84,9 @@ $(document).ready(function(){
   $(document).on("click","#cr-back",function(){
     window.location.href = "index.php";
   });
+
+
+
   $(document).on("click",".cr-main .fa-user-times",function(){
     if(confirm("Dieser Haushalt wird aus der Reservierung gelöscht, fortfahren?")){
       var id = $('.cr-current .clientID').val();
@@ -99,6 +102,7 @@ $(document).ready(function(){
       });
     }
   });
+  
   $(document).on("click","#cr-change",function(){
     var haushalt = new Array();
     for (var i = 1; i < 11; i++) {
@@ -266,7 +270,7 @@ function clearACP() {
   $('#acpInputDuration').val(1);
   $('#acpInputAmount').val("");
 
-  for (var count = 1; count <= 6; count++) {
+  for (var count = 1; count <= 20; count++) {
     $('.right-inputs-hh'+count+' .clientID').val("");
     $('.right-inputs-hh'+count+' .clientVorname').val("");
     $('.right-inputs-hh'+count+' .clientName').val("");
