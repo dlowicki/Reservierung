@@ -18,7 +18,7 @@ class Overview
     return $conn;
   }
 
-  function getOverview($type, $day) {
+  public function getOverview($type, $day) {
     $con = $this->connectDatabase();
     $para = "rReserve.reserveID,rReserve.tableID,reserveDate,reserveStart,reserveEnd,reserveDuration,reserveAmount,clientName,clientTNR";
     if($type == "Day"){
@@ -47,6 +47,27 @@ class Overview
         }
         return $data;
       }
+    return false;
+  }
+
+  public function getNoShow() {
+    $con = $this->connectDatabase();
+    $statement = "SELECT nsID, clientID, nsMail, nsAmount, nsDate FROM rnoshow";
+    $query = $con->query($statement) or die();
+
+    if($query){
+      $data = array();
+      $r=0;
+      foreach ($query as $key) {
+        $data[$r]['id'] = $key['nsID'];
+        $data[$r]['client'] = $key['clientID'];
+        $data[$r]['mail'] = $key['nsMail'];
+        $data[$r]['amount'] = $key['nsAmount'];
+        $data[$r]['time'] = $key['nsDate'];
+        $r++;
+      }
+      return $data;
+    }
     return false;
   }
 

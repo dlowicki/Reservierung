@@ -80,6 +80,7 @@ html,body {
   margin-left: auto;
   margin-right: auto;
   list-style: none;
+
 }
 
 .ow-nav li {
@@ -89,6 +90,7 @@ html,body {
   margin-left: auto;
   margin-right: auto;
   transition: 0.5s;
+  text-align: center;
 }
 
 .ow-nav li:hover {
@@ -99,7 +101,7 @@ html,body {
 #oInputDate {
   padding: 5px;
   font-size: 1rem;
-  margin-top: 10px;
+  margin-top: 5%;
   width: 10%;
   display: block;
   margin-left: auto;
@@ -222,11 +224,11 @@ html,body {
 }
 
 
-/*NoShow Edit */
+/* NoShow Edit */
 
 
 .noShow-edit-container {
-  background-color: rgba(50,50,50,0.95);
+  background-color: rgba(192,95,95,1);
   position: fixed;
   width: 68%;
   height: 200px;

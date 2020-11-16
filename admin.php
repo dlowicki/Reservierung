@@ -29,15 +29,14 @@ require_once("script/script.admin.php");
           return;
         }
 
-
+        $admin = new Overview();
         // Wenn overview gesetzt ist = Überischt Reservierungen
         if(isset($_GET['overview'])){
           // Wenn Anfangstag gesetzt ist
           if(isset($_GET['day'])){
             $type = $_GET['overview']; // $type = Day oder $type = Week
             $day = $_GET['day'];
-            $overview = new Overview();
-            $data = $overview->getOverview($type, $day);
+            $data = $admin->getOverview($type, $day);
           }
 
           echo '<input type="date" id="oInputDate" value="'.$day.'">';
@@ -81,21 +80,15 @@ require_once("script/script.admin.php");
             echo '</div>';
 
             echo '<ul class="noShow-content">';
-
-              /*echo '<div class="noShow-edit-container">';
-                echo '<form>';
-                  echo '<input type="text" id="ns-amount">';
-                  echo '<input type="text" id="ns-mail">';
-                  echo '<input type="text" id="ns-time">';
-                  echo '<div class="edit-container-bottom">';
-                    echo '<button class="edit-button" onClick="closeEdit()">Schließen</button>';
-                    echo '<button class="edit-button"id="ns-submit">Speichern</button>';
-                  echo '</div>';
-                echo '</form>';
-              echo '</div>';*/
-
-              echo '<li id="4"><p>2</p><p>5f8d41d624334</p><p>flowicki@web.de</p><p>2020-10-19 11:00:26</p></li>';
-              echo '<li><p>2</p><p>5f8d41d624334</p><p>flowicki@web.de</p><p>2020-10-19 11:00:26</p></li>';
+              $data = $admin->getNoShow();
+              foreach ($data as $key) {
+                echo '<li id="ns-list'.$key["id"].'">';
+                  echo '<p class="ns-amount">'.$key["amount"].'</p>';
+                  echo '<p>'.$key["client"].'</p>';
+                  echo '<p class="ns-mail">'.$key["mail"].'</p>';
+                  echo '<p class="ns-time">'.$key["time"].'</p>';
+                echo '</li>';
+              }
             echo '</ul>';
           echo '</div>';
 
@@ -126,10 +119,16 @@ require_once("script/script.admin.php");
 
     $(document).on("click",".noShow-content li",function(){
       var id = $(this).attr("id");
-      $('.noShow-content').append('<div class="noShow-edit-container"></div>');
-      $('.noShow-edit-container').append('<div class="edit-form"><input type="text" id="ns-amount"><input type="text" id="ns-mail"><input type="text" id="ns-time"></div>');
-      $('.edit-form').append('<div class="edit-container-bottom"></div>');
-      $('.edit-container-bottom').append('<button class="edit-button" onClick="closeEdit()">Schließen</button><button class="edit-button"id="ns-submit">Speichern</button>');
+      if($('.noShow-edit-container').length<=0){
+        var idAmount = $('#ns-list14 .ns-amount').val();
+        var idMail = $('#'+id+' #ns-mail').val();
+        var idTime = $('#'+id+' #ns-time').val();
+        alert(idAmount);
+        $('#'+id).append('<div class="noShow-edit-container"></div>');
+        $('.noShow-edit-container').append('<div class="edit-form"><input type="text" id="ns-amount" value="'+idAmount+'"><input type="text" id="ns-mail" value="'+idMail+'"><input type="text" id="ns-time" value="'+idTime+'"></div>');
+        $('.edit-form').append('<div class="edit-container-bottom"></div>');
+        $('.edit-container-bottom').append('<button class="edit-button" onClick="closeEdit()">Schließen</button><button class="edit-button"id="ns-submit">Speichern</button>');
+      }
     });
 
     $('.edit-form').submit(function(event){
@@ -160,7 +159,8 @@ require_once("script/script.admin.php");
     }
 
     function closeEdit() {
-      $('.noShow-edit-container').css("display","none");
+      $('.noShow-edit-container').empty();
+      $('.noShow-edit-container').remove();
     }
     </script>
   </body>
