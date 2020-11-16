@@ -502,81 +502,7 @@ function viewReserved(table, time, date, duration, amount){
   $('#viewReserved').append('<button onClick="reservedClose()" id="viewReservedButton">Verstanden</button>');
 }
 
-function viewReserveOverviewDay(date) {
-  $('#viewOverview').empty();
-  loginClose();
-  (async() => {
-    const uc = await userCheck().then(function(result){
-		if(result == true){
-      $('#viewOverview').append('<i class="fa fa-times fa-2x" onClick="overviewClose()"></i>');
-      $('#viewOverview').append("<div class='ov-Navigation'></div><div class='ov-Data'></div>");
-      var temp = "'"+date+"'";
-      $('.ov-Navigation').append('<ul style="list-style: none;"><li style="color: darkgray;">Tagesbericht<input type="date" id="oInputDate" value="'+date+'"></li><li onClick="viewReserveOverviewWeek('+temp+')">Wochenbericht</li></ul>');
-      $('.ov-Data').append('<table id="data-table"><tr><th>Tisch ID</th><th>Name</th><th>Datum</th><th>Uhrzeit</th><th>Dauer</th><th>Anzahl</th><th>Telefon</th></tr></table>');
-      $('#oInputDate').change(function(){ viewReserveOverviewDay(this.value); });
-      $.ajax({
-        url: "sync.php",
-        method: "POST",
-        data: { getOverview: 'day', oDate: $('#oInputDate').val() },
-        success: function(res) {
-          if(res){
-            var data = JSON.parse(res);
-            data.forEach((d, i) => {
-              let id = "'"+d['tID']+"'";
-              let dt = d['rTime'].split(" ");
-              $('#data-table').append('<tr><td><i class="fa fa-table fa-2x" onClick="viewAdminTable('+id+')"></i> Tisch '+d["tID"]+'</td><td>'+d["cName"]+'</td><td>'+dt[0]+'</td><td>'+dt[1]+' Uhr</td><td>'+d["rDuration"]+'</td><td>'+d["rA"]+'</td><td>'+d["cTNR"]+'</td></tr>');
-            });
-          }
-        }
-      });
-      $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
-      $('#viewOverview').css("display","block");
-		} else {
-			submitLogoff();
-		}
-	});
-  })();
-}
 
-function viewReserveOverviewWeek(dt) {
-  $('#viewOverview').empty();
-  loginClose();
-  (async() => {
-    const uc = await userCheck().then(function(result){
-		if(result == true){
-      $('#viewOverview').append('<i class="fa fa-times fa-2x" onClick="overviewClose()"></i>');
-      $('#viewOverview').append("<div class='ov-Navigation'></div><div class='ov-Data'></div>");
-      var temp = "'"+dt+"'";
-      $('.ov-Navigation').append('<ul style="list-style: none;"><li onClick="viewReserveOverviewDay('+temp+')">Tagesbericht</li><li style="color: darkgray;">Wochenbericht<input type="date" id="oInputDate" value="'+dt+'"></li></ul>');
-      $('.ov-Data').append('<table id="data-table"><tr><th>Tisch ID</th><th>Name</th><th>Datum</th><th>Uhrzeit</th><th>Dauer</th><th>Anzahl</th><th>Telefon</th></tr></table>');
-      $('#oInputDate').change(function(){ viewReserveOverviewWeek(this.value); });
-
-      var date = new Date(dt);
-      date.setDate(date.getDate() + 8);
-
-      $.ajax({
-        url: "sync.php",
-        method: "POST",
-        data: { getOverview: 'week', oDate: dt, o7Date: dateToSQL(date) },
-        success: function(res) {
-          if(res){
-            var data = JSON.parse(res);
-            data.forEach((d, i) => {
-              let id = "'"+d['tID']+"'";
-              let dt = d['rTime'].split(" ");
-              $('#data-table').append('<tr><td><i class="fa fa-table fa-2x" onClick="viewAdminTable('+id+')"></i> Tisch '+d["tID"]+'</td><td>'+d["cName"]+'</td><td>'+dt[0]+'</td><td>'+dt[1]+' Uhr</td><td>'+d["rDuration"]+'</td><td>'+d["rA"]+'</td><td>'+d["cTNR"]+'</td></tr>');
-            });
-          }
-        }
-      });
-      $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
-      $('#viewOverview').css("display","block");
-		} else {
-			submitLogoff();
-		}
-	});
-  })();
-}
 
 
 
@@ -585,12 +511,6 @@ function viewReserveOverviewWeek(dt) {
 function loginClose() {
   $('#viewLogin').empty();
   $("#viewLogin").css("display","none");
-  $('.container-reserve').css("background-color","transparent");
-}
-
-function overviewClose() {
-  $('#viewOverview').empty();
-  $("#viewOverview").css("display","none");
   $('.container-reserve').css("background-color","transparent");
 }
 

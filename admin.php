@@ -1,5 +1,5 @@
 <?php
-require_once("script/table.script.php");
+require_once("script/script.admin.php");
 ?>
 <!DOCTYPE html>
 <html lang="ger" dir="ltr">
@@ -30,31 +30,74 @@ require_once("script/table.script.php");
         }
 
 
-
-
-
+        // Wenn overview gesetzt ist = Überischt Reservierungen
         if(isset($_GET['overview'])){
-          $type = $_GET['overview'];
-          $duration = "";
-          if($type == "Day" && isset($_GET['day'])){
-            $duration = $_GET['day'];
-          } elseif ($type == "Day" && isset($_GET['week'])) {
-            $duration = $_GET['day'];
+          // Wenn Anfangstag gesetzt ist
+          if(isset($_GET['day'])){
+            $type = $_GET['overview']; // $type = Day oder $type = Week
+            $day = $_GET['day'];
+            $overview = new Overview();
+            $data = $overview->getOverview($type, $day);
           }
+
+          echo '<input type="date" id="oInputDate" value="'.$day.'">';
           echo "<ul class='ow-nav'>";
-            echo '<li>Tagesbericht<input type="date" id="oInputDate"></li>';
-            echo '<li>Wochenbericht<input type="date" id="oInputDate"></li>';
+            if($type == "Day"){
+              echo '<li class="ow-nav-current">Tagesbericht</li>';
+              echo '<li>Wochenbericht</li>';
+            } else {
+              echo '<li>Tagesbericht</li>';
+              echo '<li class="ow-nav-current">Wochenbericht</li>';
+            }
           echo "</ul>";
 
-          echo '<div id="ow-table-container">';
-          echo '<table id="ow-table">';
-          echo '<tr><th>Tisch ID</th><th>Name</th><th>Datum</th><th>Uhrzeit</th><th>Dauer</th><th>Anzahl</th><th>Telefon</th></tr>';
-          echo '<tr><td><i class="fa fa-table fa-1x" onClick="viewAdminTable()"></i> Tisch 12</td><td>Lowicki</td><td>Test</td><td>10 Uhr</td><td>2:30</td><td>10</td><td>Nummer</td></tr>';
-          echo '</table>';
-          echo '</div>';
 
+          if($data != false && count($data) >= 1){
+            echo '<div id="ow-table-container">';
+            echo '<table id="ow-table">';
+            echo '<tr><th>Tisch ID</th><th>Name</th><th>Datum</th><th>Uhrzeit</th><th>Dauer</th><th>Anzahl</th><th>Telefon</th></tr>';
+            foreach ($data as $key) {
+              echo '<tr>';
+              echo '<td><i class="fa fa-table fa-1x" onClick="viewAdminTable()"></i> Tisch ' . $key["tID"] . '</td>';
+              echo '<td>'.$key["cName"].'</td>';
+              echo '<td>'.$key["rDate"].'</td>';
+              echo '<td>'.$key["rStart"].' - '.$key["rEnd"].'</td>';
+              echo '<td>'.$key["rDuration"].'</td>';
+              echo '<td>'.$key["rA"].'</td>';
+              echo '<td>'.$key["cTNR"].'</td>';
+              echo '</tr>';
+            }
+            echo '</table>';
+            echo '</div>';
+          } else {
+            echo "<h2 style='width: 100%; text-align: center;'>Keine Daten vorhanden</h2>";
+          }
 
         } elseif(isset($_GET['noShow'])) {
+          echo '<div class="noShow-container">';
+            echo '<div class="noShow-top">';
+              echo '<h2>NoShow-Liste</h2>';
+              echo '<i class="fas fa-user-plus fa-2x"></i>';
+            echo '</div>';
+
+            echo '<ul class="noShow-content">';
+
+              /*echo '<div class="noShow-edit-container">';
+                echo '<form>';
+                  echo '<input type="text" id="ns-amount">';
+                  echo '<input type="text" id="ns-mail">';
+                  echo '<input type="text" id="ns-time">';
+                  echo '<div class="edit-container-bottom">';
+                    echo '<button class="edit-button" onClick="closeEdit()">Schließen</button>';
+                    echo '<button class="edit-button"id="ns-submit">Speichern</button>';
+                  echo '</div>';
+                echo '</form>';
+              echo '</div>';*/
+
+              echo '<li id="4"><p>2</p><p>5f8d41d624334</p><p>flowicki@web.de</p><p>2020-10-19 11:00:26</p></li>';
+              echo '<li><p>2</p><p>5f8d41d624334</p><p>flowicki@web.de</p><p>2020-10-19 11:00:26</p></li>';
+            echo '</ul>';
+          echo '</div>';
 
         } elseif(isset($_GET['reservierungen'])) {
 
@@ -64,7 +107,61 @@ require_once("script/table.script.php");
       </div>
     </div>
     <script type="text/javascript">
+    $(document).on("change","#oInputDate", function(){
+      var date = $(this).val();
+      var ow = getOverviewParameter()
+      if(ow != false){
+        window.location.href = "admin.php?overview="+ow+"&day="+date;
+      }
+    });
 
+    $(document).on("click",".ow-nav li", function(){
+      var type = $(this).text();
+      if(type == "Tagesbericht"){
+        window.location.href = "admin.php?overview=Day&day="+$('#oInputDate').val();
+      } else {
+        window.location.href = "admin.php?overview=Week&day="+$('#oInputDate').val();
+      }
+    });
+
+    $(document).on("click",".noShow-content li",function(){
+      var id = $(this).attr("id");
+      $('.noShow-content').append('<div class="noShow-edit-container"></div>');
+      $('.noShow-edit-container').append('<div class="edit-form"><input type="text" id="ns-amount"><input type="text" id="ns-mail"><input type="text" id="ns-time"></div>');
+      $('.edit-form').append('<div class="edit-container-bottom"></div>');
+      $('.edit-container-bottom').append('<button class="edit-button" onClick="closeEdit()">Schließen</button><button class="edit-button"id="ns-submit">Speichern</button>');
+    });
+
+    $('.edit-form').submit(function(event){
+      event.preventDefault();
+      var amount = $('#ns-amount').val();
+      var mail = $('#ns-mail').val();
+      var time = $('#ns-time').val();
+      if(amount.length >= 1 && mail.length >= 3 && time.length >= 3){
+        $.ajax({
+          url: "sync.php",
+          method: "POST",
+          data: { getTime: t, sndDate: dt},
+          success: function(result) {
+
+          }
+        });
+      }
+      return false;
+    });
+
+    function getOverviewParameter() {
+      var url = new URL(window.location.href);
+      var c = url.searchParams.get("overview");
+      if(c != null){
+        return c.split("&")[0];
+      }
+      return false;
+    }
+
+    function closeEdit() {
+      $('.noShow-edit-container').css("display","none");
+    }
     </script>
   </body>
 </html>

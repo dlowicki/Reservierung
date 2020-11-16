@@ -269,7 +269,8 @@ $(document).on("click",".acp-settings-buttons button",function(){
 
 
 $(document).on("click","#login-NoShow",function(){
-  window.location.href = "admin.php";
+  date = dateToSQL(new Date());
+  window.location.href = "admin.php?overview=Day&day="+date;
 });
 
 
