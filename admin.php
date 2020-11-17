@@ -1,5 +1,6 @@
 <?php
 require_once("script/script.admin.php");
+require_once("script/script.reservierung.php");
 ?>
 <!DOCTYPE html>
 <html lang="ger" dir="ltr">
@@ -82,9 +83,8 @@ require_once("script/script.admin.php");
             echo '<ul class="noShow-content">';
               $data = $admin->getNoShow();
               foreach ($data as $key) {
-                echo '<li id="ns-list'.$key["id"].'">';
+                echo '<li id="ns-'.$key["id"].'">';
                   echo '<p class="ns-amount">'.$key["amount"].'</p>';
-                  echo '<p>'.$key["client"].'</p>';
                   echo '<p class="ns-mail">'.$key["mail"].'</p>';
                   echo '<p class="ns-time">'.$key["time"].'</p>';
                 echo '</li>';
@@ -93,6 +93,65 @@ require_once("script/script.admin.php");
           echo '</div>';
 
         } elseif(isset($_GET['reservierungen'])) {
+          $table = 0;
+          $day = date('Y-m-d');
+          if(isset($_GET['table']) && isset($_GET['day'])){
+            $table = $_GET['table']; $day = $_GET['day'];
+          }
+          echo '<div class="rs-container">';
+            if($table != 0 && $day != 0){
+              echo '<div class="rs-input-table"><h3>Bitte Tisch und Datum auswählen</h3><input type="text" value="'.$table.'" id="rs-table"><input type="date" value="'.$day.'" id="rs-date"></div>';
+
+              $reservierung = new Reservierung($table, $day);
+              $rsList = $reservierung->loadReservierung();
+              echo '<div class="rs-reservierung-list">';
+                echo '<ul>';
+                  echo '<button>Neue Reservierung</button>';
+                  if($rsList != false){
+                    foreach ($rsList as $key) {
+                      echo '<li id="'.$key["rID"].'" class="state'.$key["rState"].'">'.$key["rStart"].' - '.$key["rEnd"].'</li>';
+                    }
+                  }
+                echo '</ul>';
+
+                echo '<div class="rs-list-edit-container">';
+                  echo '<div class="list-edit-reservierung">';
+                    echo '<div class="list-edit-top">';
+                      echo '<button id="bt-eingetroffen"><i class="fas fa-check"></i> Eingetroffen</button>';
+                      echo '<button id="bt-freigeben"><i class="fas fa-unlock"></i> Wieder freigeben</button>';
+                      echo '<button id="bt-abgesagt"><i class="fas fa-user-slash"></i> Abgesagt</button>';
+                      echo '<button id="bt-noShow"><i class="fas fa-user-times"></i> No-Show</button>';
+                    echo '</div>';
+
+                    echo '<div class="list-edit-bottom">';
+                      echo '<input type="time" id="rs-time">';
+                      echo '<input type="number" id="amount" min="0" max="20">';
+                      echo '<div class="edit-bottom-table">';
+                        echo '<img src="img/open/t-right-transparent.png">';
+                        echo '<label class="switch"><input type="checkbox" checked><span class="slider round"></span></label>';
+                      echo '</div>';
+                  echo '</div>';
+                echo '</div>';
+
+                echo '<div class="list-edit-hh">';
+                  echo '<input type="number" id="hh-number" value="1" min="1" max="20">';
+                  echo '<div id="" class="edit-hh">';
+                    echo '<input type="text" placeholder="Name..." id="hh-name">';
+                    echo '<input type="text" placeholder="Vorname..." id="hh-vorname">';
+                    echo '<input type="text" placeholder="E-Mail..." id="hh-mail">';
+                    echo '<input type="text" placeholder="Adresse..." id="hh-adresse">';
+                    echo '<input type="text" placeholder="Telefon..." id="hh-tnr">';
+                  echo '</div>';
+                echo '</div>';
+
+              echo '</div>';
+
+            echo '</div>';
+
+            } else {
+              echo '<div class="rs-input-table"><h3>Bitte Tisch auswählen</h3><input type="text" placeholder="Tisch Nummer" id="rs-table"><input type="date" value="'.$day.'" id="rs-date"></div>';
+            }
+
 
         }
 
@@ -120,33 +179,83 @@ require_once("script/script.admin.php");
     $(document).on("click",".noShow-content li",function(){
       var id = $(this).attr("id");
       if($('.noShow-edit-container').length<=0){
-        var idAmount = $('#ns-list14 .ns-amount').val();
-        var idMail = $('#'+id+' #ns-mail').val();
-        var idTime = $('#'+id+' #ns-time').val();
-        alert(idAmount);
+        var idAmount = $('#'+id).children(".ns-amount").text();
+        var idMail = $('#'+id).children(".ns-mail").text();
+        var idTime = $('#'+id).children(".ns-time").text();
+
         $('#'+id).append('<div class="noShow-edit-container"></div>');
-        $('.noShow-edit-container').append('<div class="edit-form"><input type="text" id="ns-amount" value="'+idAmount+'"><input type="text" id="ns-mail" value="'+idMail+'"><input type="text" id="ns-time" value="'+idTime+'"></div>');
+        $('.noShow-edit-container').append('<div class="edit-form"><input type="hidden" id="ns-id" value="'+id+'"><input type="text" id="ns-amount" value="'+idAmount+'"><input type="text" id="ns-mail" value="'+idMail+'"><input type="text" id="ns-time" value="'+idTime+'"></div>');
         $('.edit-form').append('<div class="edit-container-bottom"></div>');
-        $('.edit-container-bottom').append('<button class="edit-button" onClick="closeEdit()">Schließen</button><button class="edit-button"id="ns-submit">Speichern</button>');
+        $('.edit-container-bottom').append('<button class="edit-button" onClick="closeEdit()">Schließen</button><button class="edit-button" id="delete-noShow">Entfernen</button><button class="edit-button"id="ns-submit">Speichern</button>');
       }
     });
 
-    $('.edit-form').submit(function(event){
-      event.preventDefault();
+    $(document).on("click","#ns-submit",function(){
       var amount = $('#ns-amount').val();
       var mail = $('#ns-mail').val();
       var time = $('#ns-time').val();
+      var id = $('#ns-id').val().split('-')[1];
       if(amount.length >= 1 && mail.length >= 3 && time.length >= 3){
         $.ajax({
-          url: "sync.php",
+          url: "script/sync-admin.php",
           method: "POST",
-          data: { getTime: t, sndDate: dt},
+          data: { nsID: id, nsAmount: amount, nsMail: mail, nsTime: time},
           success: function(result) {
-
+            if(result=="1"){
+              $(".noShow-content").load(" .noShow-content > *");
+              return;
+            }
+            alert("Ein Fehler ist aufgetreten \n" + result);
           }
         });
       }
       return false;
+    });
+
+    $('.fa-user-plus').click(function(){
+      $.ajax({
+        url: "script/sync-admin.php",
+        method: "POST",
+        data: { nsEdit: "Create"},
+        success: function(result) {
+          if(result=="1"){
+            $(".noShow-content").load(" .noShow-content > *");
+            return;
+          }
+          alert("Ein Fehler ist aufgetreten \n" +result);
+        }
+      });
+    });
+
+    $(document).on("click","#delete-noShow",function(){
+      var id = $('#ns-id').val().split('-')[1];
+      $.ajax({
+        url: "script/sync-admin.php",
+        method: "POST",
+        data: { nsEdit: id},
+        success: function(result) {
+          if(result=="1"){
+            $(".noShow-content").load(" .noShow-content > *");
+            return;
+          }
+          alert("Ein Fehler ist aufgetreten \n" +result);
+        }
+      });
+    });
+
+    $('#rs-table').keypress(function(e){
+      if(e.which == 13) {
+        var input = $(this).val(); var day = $("#rs-date").val();
+        if(input.length >= 1 && input.length <= 3 && day.length <= 10){
+          window.location.href = "admin.php?reservierungen&table="+input+"&day="+day;
+        }
+      }
+    });
+    $('#rs-date').change(function(e){
+      var input = $('#rs-table').val(); var day = $(this).val();
+      if(input.length >= 1 && input.length <= 3 && day.length <= 10){
+        window.location.href = "admin.php?reservierungen&table="+input+"&day="+day;
+      }
     });
 
     function getOverviewParameter() {

@@ -52,7 +52,7 @@ class Overview
 
   public function getNoShow() {
     $con = $this->connectDatabase();
-    $statement = "SELECT nsID, clientID, nsMail, nsAmount, nsDate FROM rnoshow";
+    $statement = "SELECT nsID, nsMail, nsAmount, nsDate FROM rnoshow";
     $query = $con->query($statement) or die();
 
     if($query){
@@ -60,13 +60,46 @@ class Overview
       $r=0;
       foreach ($query as $key) {
         $data[$r]['id'] = $key['nsID'];
-        $data[$r]['client'] = $key['clientID'];
         $data[$r]['mail'] = $key['nsMail'];
         $data[$r]['amount'] = $key['nsAmount'];
         $data[$r]['time'] = $key['nsDate'];
         $r++;
       }
       return $data;
+    }
+    return false;
+  }
+
+  public function updateNoShow($id,$amount,$mail,$time) {
+    $con = $this->connectDatabase();
+    $statement = "UPDATE rnoshow SET nsMail = '$mail', nsAmount = '$amount', nsDate = '$time' WHERE nsID = '$id'";
+    $query = $con->query($statement) or die();
+
+    if($query === TRUE){
+      return true;
+    }
+    return false;
+  }
+
+  public function createNoShow() {
+    $con = $this->connectDatabase();
+    $time = date('Y-m-d H:i:s');
+    $statement = "INSERT INTO rnoshow (nsID, nsMail, nsAmount, nsDate) VALUES (null, 'mail@domain.de','1','$time')";
+    $query = $con->query($statement) or die();
+
+    if($query === TRUE){
+      return true;
+    }
+    return false;
+  }
+
+  public function deleteNoShow($id) {
+    $con = $this->connectDatabase();
+    $statement = "DELETE FROM rnoshow WHERE nsID = '$id'";
+    $query = $con->query($statement) or die();
+
+    if($query === TRUE){
+      return true;
     }
     return false;
   }
