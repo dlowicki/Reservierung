@@ -321,36 +321,7 @@ if(isset($_POST['acpReserve']) && isset($_POST['acpSubmit'])){
   return;
 }
 
-if(isset($_POST['acpButton']) && isset($_POST['acpReserveID']) && isset($_POST['acpDate'])){
-  $func = false;
-  switch ($_POST['acpButton']) {
-    case '1':
-      // Zeit wird nicht aktualisiert sondern nur State auf eingetroffen gesetzt
-      //if(updateReserveStart($_POST['acpReserveID'], $_POST['acpDate'])){ $func = true; }
-      $func = true;
-      break;
-    case '2':
-      // Setze ReserveEnd auf jetzige Uhrzeit
-      if(updateReserveEnd($_POST['acpReserveID'])){ $func = true; }
-      break;
-    case '3':
-      // Hierfür muss checkTime usw. angepasst werden
-      $func = true;
-      break;
-    case '4':
-      // Hierfür muss checkTime usw. angepasst werden und NoShow eintragen
-      if(createNoShow($_POST['acpReserveID'], $_POST['acpDate'])){ $func = true; }
-      break;
-  }
-  if($func == true){
-    if(updateReserveState($_POST['acpButton'],$_POST['acpReserveID'])) {
-      echo "1";
-      return;
-    }
-  }
-  echo "0";
-  return;
-}
+
 
 if(isset($_POST['acpInputs'])){
   $data = array("reserve"=>getReserveData($_POST['acpInputs']), "clients"=>getClientsFromReserve($_POST['acpInputs']));
@@ -437,16 +408,6 @@ function tischAktivieren($rID) {
 function tischDeaktivieren($rID) {
   $con = connect();
   $statement = "UPDATE rTable INNER JOIN rReserve ON (rReserve.tableID = rTable.tableID) SET rTable.tableActive = 'closed' WHERE rReserve.ReserveID = '$rID'";
-  $query = $con -> query($statement);
-  if($query === TRUE){
-    return true;
-  }
-  return false;
-}
-
-function updateReserveState($state, $rID) {
-  $con = connect();
-  $statement = "UPDATE rReserve SET reserveState = '$state' WHERE reserveID = '$rID'";
   $query = $con -> query($statement);
   if($query === TRUE){
     return true;
@@ -625,23 +586,7 @@ function createClient($cID,$rID,$vorname,$name,$mail,$adresse,$tnr,$cf) {
   return false;
 }
 
-function createNoShow($rID) {
-  $con = connect();
-  $date = echoDateTime();
-  $statement = "SELECT rClient.clientID, clientMail FROM rReserve INNER JOIN rClient ON rReserve.clientID = rClient.clientID WHERE rReserve.reserveID = '$rID'";
-  $query = $con -> query($statement);
-  foreach ($query as $key) {
-    if($key['clientID'] && $key['clientMail']){
-      $clientID = $key['clientID'];
-      $clientMail = $key['clientMail'];
-      $statement2 = "INSERT INTO rNoshow (nsID,clientID,reserveID,nsMail,nsAmount,nsDate) VALUES ('null','$clientID','$rID','$clientMail','1','$date') ON DUPLICATE KEY UPDATE nsAmount = nsAmount +1";
-      $query2 = $con -> query($statement2);
-      if($query2 === TRUE) { return true; }
-      return false;
-    }
-  }
-  return false;
-}
+
 
 function getTableData() {
   $date = echoDate();

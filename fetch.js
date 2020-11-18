@@ -212,60 +212,7 @@ $(document).on("click",".information-box-acp",function(){
   });
 });
 
-$(document).on("click",".acp-settings-buttons button",function(){
-  var reserveID = $(this).attr("class");
-  if(!reserveID){
-    alert("Sie müssen vorher eine Reservierung auswählen!");
-    return;
-  }
 
-  var buttonType = $(this).attr("id");
-  var iconType,dataType,color;
-
-  if($('#'+reserveID).css('background-color') == "rgb(0, 109, 119)" && buttonType == "bt-no-show"){
-    alert("No Show wurde für die Reservierung bereits eingetragen!");
-    return;
-  }
-
-  switch (buttonType) {
-    case "bt-eingetroffen":
-      dataType = "1";
-      iconType = "bt-eingetroffen .fa-check";
-      color = "#2b9348";
-      break;
-    case "bt-freigeben":
-      dataType = "2";
-      iconType = "bt-freigeben .fa-unlock";
-      color = "#ee6c4d";
-      break;
-    case "bt-abgesagt":
-      dataType = "3";
-      iconType = "bt-abgesagt .fa-user-slash";
-      color = "#ba181b";
-      break;
-    case "bt-no-show":
-      dataType = "4";
-      iconType = "bt-no-show .fa-user-times";
-      color = "#006d77";
-      break;
-  }
-
-  var inputDate = $('#acpInputDate').val();
-
-  $.ajax({
-    url: "sync.php",
-    method: "POST",
-    data: { acpButton: dataType, acpReserveID: reserveID, acpDate: inputDate},
-    success: function(result) {
-      console.log(result);
-      if(result){
-        $('#'+reserveID).css("background-color",color);
-        return;
-      }
-      alert("Fehler: Tisch konnte nicht bearbeitet werden!");
-    }
-  });
-});
 
 
 $(document).on("click","#login-NoShow",function(){

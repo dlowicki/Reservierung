@@ -258,8 +258,12 @@ html,body {
   text-align: center;
 }
 
-.edit-form input[type=text]:first-of-type {
+.edit-form input[type=number] {
   width: 5%;
+  font-size: 1.2rem;
+  margin-left: 2%;
+  margin-right: 2%;
+  text-align: center;
 }
 
 .edit-container-bottom {
@@ -283,13 +287,13 @@ html,body {
 }
 
 #delete-noShow:hover {
+  background-color: #e71d36;
   color: white;
-  border: 1px solid #f07167;
 }
 
 #ns-submit:hover {
-  color: #80ed99;
-  border: 1px solid green;
+  background-color: #8ac926;
+  color: white;
 }
 
 
@@ -322,6 +326,8 @@ html,body {
   font-size: 1.2rem;
   outline: none;
 }
+
+/* RESERVIERUNG LISTE */
 
 .rs-reservierung-list {
   width: 90%;
@@ -361,6 +367,7 @@ html,body {
   text-align: center;
   padding: 4%;
   transition: 0.5s;
+  color: white;
 }
 
 .state0 { background-color: #4ea8de; }
@@ -371,8 +378,16 @@ html,body {
 
 .rs-reservierung-list ul li:hover {
   cursor: pointer;
-  color: white;
+  color: darkgray;
 }
+
+.reservierung-list-current {
+  font-weight: 800;
+}
+
+
+/* RESERVIERUNG HAUPT CONTAINER */
+
 
 .rs-list-edit-container {
   background-color: rgba(192,95,95,0.6);
@@ -380,8 +395,8 @@ html,body {
   height: auto;
   display: flex;
   flex-wrap: nowrap;
-  animation: fadeInLeft 1s;
   z-index: 2;
+  display: none;
 }
 
 .list-edit-reservierung {
@@ -404,18 +419,16 @@ html,body {
   width: 160px;
   transition: 0.5s;
   cursor: pointer;
-}
-.list-edit-top button:hover {
   color: white;
 }
+.list-edit-top button:hover {
+  color: darkgray;
+}
 
-#bt-eingetroffen { background-color: #2b9348; }
-
-#bt-freigeben {  background-color: #ee6c4d;}
-
-#bt-abgesagt {  background-color: #ba181b;}
-
-#bt-noShow {  background-color: #006d77;}
+#bt-eingetroffen {background-color: #2b9348;}
+#bt-freigeben {background-color: #ee6c4d;}
+#bt-abgesagt {background-color: #ba181b;}
+#bt-noShow {background-color: #006d77;}
 
 /* LIST EDIT BOTTOM */
 
@@ -429,11 +442,17 @@ html,body {
 
 .list-edit-bottom input {
   width: 10%;
+  min-width: 70px;
   height: 20px;
   padding: 0.25%;
   font-size: 1.2rem;
   margin-left: 2%;
   margin-right: 2%;
+  text-align: center;
+}
+
+.list-edit-bottom input[type=time] {
+  width: 100px;
 }
 
 .edit-bottom-table {
@@ -485,6 +504,19 @@ html,body {
   font-size: 1.2rem;
   padding: 2px;
   margin: 5% 0% 5% 0%;
+}
+
+#submit-clients {
+  background-color: transparent;
+  display: block;
+  border: 1px solid white;
+  padding: 0.5% 2% 0.5% 2%;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 1.5rem;
+  margin-top: 2%;
+  color: white;
+  cursor: pointer;
 }
 
 
@@ -578,6 +610,10 @@ input:checked + .slider:before {
 @-o-keyframes fadein {
     from { opacity: 0; }
     to   { opacity: 1; }
+}
+
+.css-animation-right {
+  animation: fadeInLeft 1s;
 }
 
 @keyframes fadeInLeft {

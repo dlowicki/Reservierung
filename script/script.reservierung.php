@@ -12,7 +12,7 @@ class Reservierung extends Overview {
     $this->rDate = $rDate;
   }
 
-  public function loadReservierung() {
+  public function loadReservierungenList() {
     $db = new Overview();
     $con = $db->connectDatabase();
     $statement = "SELECT reserveID, reserveStart, reserveEnd, reserveState FROM rReserve WHERE tableID='$this->tID' AND reserveDate='$this->rDate' ORDER BY reserveStart ASC";
@@ -31,7 +31,6 @@ class Reservierung extends Overview {
     }
     return false;
   }
-
 }
 
 ?>

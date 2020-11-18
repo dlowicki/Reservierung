@@ -103,7 +103,7 @@ require_once("script/script.reservierung.php");
               echo '<div class="rs-input-table"><h3>Bitte Tisch und Datum auswählen</h3><input type="text" value="'.$table.'" id="rs-table"><input type="date" value="'.$day.'" id="rs-date"></div>';
 
               $reservierung = new Reservierung($table, $day);
-              $rsList = $reservierung->loadReservierung();
+              $rsList = $reservierung->loadReservierungenList();
               echo '<div class="rs-reservierung-list">';
                 echo '<ul>';
                   echo '<button>Neue Reservierung</button>';
@@ -125,26 +125,17 @@ require_once("script/script.reservierung.php");
 
                     echo '<div class="list-edit-bottom">';
                       echo '<input type="time" id="rs-time">';
-                      echo '<input type="number" id="amount" min="0" max="20">';
+                      echo '<input type="number" id="rs-amount" min="0" max="20">';
                       echo '<div class="edit-bottom-table">';
                         echo '<img src="img/open/t-right-transparent.png">';
-                        echo '<label class="switch"><input type="checkbox" checked><span class="slider round"></span></label>';
+                        echo '<label class="switch"><input type="checkbox" id="switch-table"><span class="slider round"></span></label>';
                       echo '</div>';
                   echo '</div>';
                 echo '</div>';
 
                 echo '<div class="list-edit-hh">';
-                  echo '<input type="number" id="hh-number" value="1" min="1" max="20">';
-                  echo '<div id="" class="edit-hh">';
-                    echo '<input type="text" placeholder="Name..." id="hh-name">';
-                    echo '<input type="text" placeholder="Vorname..." id="hh-vorname">';
-                    echo '<input type="text" placeholder="E-Mail..." id="hh-mail">';
-                    echo '<input type="text" placeholder="Adresse..." id="hh-adresse">';
-                    echo '<input type="text" placeholder="Telefon..." id="hh-tnr">';
-                  echo '</div>';
+                  echo '<input type="number" id="hh-number" value="0" min="0" max="19"></div>';
                 echo '</div>';
-
-              echo '</div>';
 
             echo '</div>';
 
@@ -184,7 +175,7 @@ require_once("script/script.reservierung.php");
         var idTime = $('#'+id).children(".ns-time").text();
 
         $('#'+id).append('<div class="noShow-edit-container"></div>');
-        $('.noShow-edit-container').append('<div class="edit-form"><input type="hidden" id="ns-id" value="'+id+'"><input type="text" id="ns-amount" value="'+idAmount+'"><input type="text" id="ns-mail" value="'+idMail+'"><input type="text" id="ns-time" value="'+idTime+'"></div>');
+        $('.noShow-edit-container').append('<div class="edit-form"><input type="hidden" id="ns-id" value="'+id+'"><input type="number" id="ns-amount" value="'+idAmount+'"><input type="text" id="ns-mail" value="'+idMail+'"><input type="text" id="ns-time" value="'+idTime+'"></div>');
         $('.edit-form').append('<div class="edit-container-bottom"></div>');
         $('.edit-container-bottom').append('<button class="edit-button" onClick="closeEdit()">Schließen</button><button class="edit-button" id="delete-noShow">Entfernen</button><button class="edit-button"id="ns-submit">Speichern</button>');
       }
@@ -257,6 +248,131 @@ require_once("script/script.reservierung.php");
         window.location.href = "admin.php?reservierungen&table="+input+"&day="+day;
       }
     });
+
+
+
+    /* Reservierung RS Liste */
+
+    $('.rs-reservierung-list li').click(function(){
+      $('.rs-reservierung-list>ul>li.reservierung-list-current').removeClass('reservierung-list-current');
+      $(this).addClass('reservierung-list-current');
+      var rID = $(this).attr("id");
+      $.ajax({
+        url: "script/sync-admin.php",
+        method: "POST",
+        data: { rsLoad: rID},
+        success: function(result) {
+          if(result!="0"){
+            $(".rs-list-edit-container").removeClass("css-animation-right");
+            $(".rs-list-edit-container").width(); // trigger a DOM reflow
+            $(".rs-list-edit-container").addClass("css-animation-right");
+            $('.rs-list-edit-container').css("display","flex");
+            var d = JSON.parse(result);
+
+            // TABLE DATA
+            $('.edit-bottom-table img').attr("src","img/"+d[0]['tableActive']+"/t-"+d[0]['tableType']+"-transparent.png");
+            if(d[0]['tableActive'] == "open"){$('#switch-table').attr("checked","true");}
+            $('.switch').attr("id",d[0]['tableID']);
+
+            // FRONT DATA
+            $('#rs-time').val(d[0]['reserveStart']);
+            $('#rs-amount').val(parseInt(d[0]['reserveAmount']));
+
+            // Client
+            $('.edit-hh').remove();
+            $('#submit-clients').remove();
+            for (var i=0; i < 20; i++) {
+              $('.list-edit-hh').append('<div id="hh-'+i+'" class="edit-hh" style="display: none;"></div>');
+              $('#hh-'+i).append('<input type="text" placeholder="Name..." class="hh-name">');
+              $('#hh-'+i).append('<input type="text" placeholder="Vorname..." class="hh-vorname">');
+              $('#hh-'+i).append('<input type="text" placeholder="E-Mail..." class="hh-mail">');
+              $('#hh-'+i).append('<input type="text" placeholder="Adresse..." class="hh-adresse">');
+              $('#hh-'+i).append('<input type="text" placeholder="Telefon..." class="hh-tnr">');
+            }
+
+            var count = 0;
+            d.forEach((item, i) => {
+              $('#hh-'+count+' .hh-name').val(item['clientName']);
+              $('#hh-'+count+' .hh-vorname').val(item['clientVorname']);
+              $('#hh-'+count+' .hh-mail').val(item['clientMail']);
+              $('#hh-'+count+' .hh-adresse').val(item['clientAdresse']);
+              $('#hh-'+count+' .hh-tnr').val(item['clientTNR']);
+              count++;
+            });
+            $('#hh-0').css("display","block");
+            $('.list-edit-hh').append('<button id="submit-clients">Speichern</button>');
+            return;
+          }
+          alert("Ein Fehler ist aufgetreten \n" +result);
+        }
+      });
+
+    });
+
+    $('#switch-table').click(function(){
+      var check = $(this).prop("checked");
+      var id = $('.switch').attr("id");
+
+      $.ajax({
+        url: "sync.php",
+        method: "POST",
+        data: { setTableActive: id, value: check},
+        success: function(result) {
+          var src = $('.edit-bottom-table img').attr("src").split("/");
+          if(result){
+            if(check == false){ $('.edit-bottom-table img').attr("src",src[0] + "/closed/" + src[2]);
+            } else {('.edit-bottom-table img').attr("src",src[0] + "/open/" + src[2]); }
+            return;
+          }
+          }
+      });
+    });
+
+    $('#hh-number').change(function(){
+      $('.edit-hh').css("display","none");
+      $('#hh-'+$(this).val()).css("display","block");
+    });
+
+    $(document).on("click",".list-edit-top button",function(){
+      // Erhalte Reservierung ID von list-current button
+      var reserveID = $('.reservierung-list-current').attr('id');
+      if(!reserveID){ alert("Sie müssen vorher eine Reservierung auswählen!");return;}
+
+      var buttonType = $(this).attr("id");
+      var dataType,color;
+
+      if($('.reservierung-list-current').css('background-color') == "rgb(0, 109, 119)" && buttonType == "bt-noShow"){
+        alert("No Show wurde für die Reservierung bereits eingetragen!");
+        return;
+      }
+
+      switch (buttonType) {
+        case "bt-eingetroffen":
+          dataType = "1";color = "#2b9348";
+          break;
+        case "bt-freigeben":
+          dataType = "2";color = "#ee6c4d";
+          break;
+        case "bt-abgesagt":
+          dataType = "3";color = "#ba181b";
+          break;
+        case "bt-noShow":
+          dataType = "4";color = "#006d77";
+          break;
+      }
+
+      $.ajax({
+        url: "script/sync-admin.php",
+        method: "POST",
+        data: { acpButton: dataType, acpReserveID: reserveID, acpDate: $('#rs-date').val()},
+        success: function(result) {
+          console.log(result);
+          if(result){$('#'+reserveID).css("background-color",color);return;}
+          alert("Fehler: Tisch konnte nicht bearbeitet werden!");
+        }
+      });
+    });
+
 
     function getOverviewParameter() {
       var url = new URL(window.location.href);

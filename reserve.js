@@ -438,25 +438,7 @@ function getTableACP(id) {
   });
 }
 
-function updateTable(id) {
-  var check = $('.switch input').prop("checked");
-  $.ajax({
-    url: "sync.php",
-    method: "POST",
-    data: { setTableActive: id, value: check},
-    success: function(result) {
-      var src = $('#acp-table img').attr("src").split("/");
-      if(result){
-        if(check == false){
-          $('#acp-table img').attr("src",src[0] + "/closed/" + src[2]);
-        } else {
-          $('#acp-table img').attr("src",src[0] + "/open/" + src[2]);
-        }
-        return;
-      }
-      }
-  });
-}
+
 
 function getReservierungenACP(t){
   $('#container-information-content').empty();
