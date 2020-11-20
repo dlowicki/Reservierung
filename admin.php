@@ -287,6 +287,7 @@ require_once("script/script.reservierung.php");
             $('#submit-clients').remove();
             for (var i=0; i < 20; i++) {
               $('.list-edit-hh').append('<div id="hh-'+i+'" class="edit-hh" style="display: none;"></div>');
+              $('#hh-'+i).append('<input type="hidden" class="hh-id">');
               $('#hh-'+i).append('<input type="text" placeholder="Name..." class="hh-name">');
               $('#hh-'+i).append('<input type="text" placeholder="Vorname..." class="hh-vorname">');
               $('#hh-'+i).append('<input type="text" placeholder="E-Mail..." class="hh-mail">');
@@ -378,8 +379,32 @@ require_once("script/script.reservierung.php");
     });
 
     $(document).on("click","#submit-clients",function(){
-      
-
+      var dataClients = [];
+      for (var i = 0; i < 20; i++) {
+        var name = $('#hh-'+i+' .hh-name').val().toString();
+        var rID = $('.reservierung-list-current').attr('id');
+        if(name.length <= 2){
+          continue;
+        }
+        var temp = [];
+        temp[0] = $('#hh-'+i+' .hh-name').val();
+        temp[1] = $('#hh-'+i+' .hh-vorname').val();
+        temp[2] = $('#hh-'+i+' .hh-mail').val();
+        temp[3] = $('#hh-'+i+' .hh-adresse').val();
+        temp[4] = $('#hh-'+i+' .hh-tnr').val();
+        dataClients[i] = temp;
+      }
+      console.log(dataClients);
+      $.ajax({
+        url: "script/sync-admin.php",
+        method: "POST",
+        data: { submitClients: dataClients },
+        success: function(result) {
+          console.log(result);
+          //if(result){$('#'+reserveID).css("background-color",color);return;}
+          //alert("Fehler: Tisch konnte nicht bearbeitet werden!");
+        }
+      });
     });
 
     function getOverviewParameter() {

@@ -76,6 +76,17 @@ if(isset($_POST['acpButton']) && isset($_POST['acpReserveID']) && isset($_POST['
   return;
 }
 
+if(isset($_POST['submitClients'])){
+  $data = $_POST['submitClients'];
+  foreach ($data as $key) {
+    // Wenn Name Länge >= 2
+    if(strlen($data[0]) >= 2){
+      updateClient($cID,$rID,$vn,$nn,$ma,$adr,$tnr,$date,$cc);
+    }
+  }
+  return;
+}
+
 
 
 
@@ -146,6 +157,21 @@ function addNoShow($rID) {
       if($query2 === TRUE) { return true; }
       return false;
     }
+  }
+  return false;
+}
+
+function updateClient($cID,$rID,$vn,$nn,$ma,$adr,$tnr,$date,$cc) {
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  //$iClient = uniqid();
+  if(strlen($cID)<=0){ $cID = uniqid(); }
+  $temp = "clientID,reserveID,clientVorname,clientName,clientMail,clientAdresse,clientTNR,clientDate,clientConfirm";
+  $temp2 = "'$cID','$rID','$vn','$nn','$ma','$adr','$tnr','$date','$cc'";
+  $statement = "INSERT INTO rClient ($temp) VALUES ($temp2) ON DUPLICATE KEY UPDATE clientVorname = '$vn', clientName = '$nn', clientMail = '$ma', clientAdresse = '$adr', clientTNR='$tnr'";
+  $query = $con -> query($statement);
+  if($query===TRUE){
+    return true;
   }
   return false;
 }

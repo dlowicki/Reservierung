@@ -371,20 +371,6 @@ function acpUpdateReserve($rID,$rDate,$rS,$rE,$rD,$rA) {
   return false;
 }
 
-function acpUpdateClient($cID,$rID,$vn,$nn,$ma,$adr,$tnr,$date,$cc) {
-  $con = connect();
-  $iClient = uniqid();
-  if(strlen($cID)<=0){ $cID = uniqid(); }
-  $temp = "clientID,reserveID,clientVorname,clientName,clientMail,clientAdresse,clientTNR,clientDate,clientConfirm";
-  $temp2 = "'$cID','$rID','$vn','$nn','$ma','$adr','$tnr','$date','$cc'";
-  $statement = "INSERT INTO rClient ($temp) VALUES ($temp2) ON DUPLICATE KEY UPDATE clientVorname = '$vn', clientName = '$nn', clientMail = '$ma', clientAdresse = '$adr', clientTNR='$tnr'";
-  $query = $con -> query($statement);
-  if($query===TRUE){
-    return true;
-  }
-  return false;
-}
-
 function acpDeleteClient($cID) {
   $con = connect();
   $statement = "DELETE FROM rClient WHERE clientID = '$cID'";
