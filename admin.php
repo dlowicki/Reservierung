@@ -256,6 +256,10 @@ require_once("script/script.reservierung.php");
     $('.rs-reservierung-list li').click(function(){
       $('.rs-reservierung-list>ul>li.reservierung-list-current').removeClass('reservierung-list-current');
       $(this).addClass('reservierung-list-current');
+
+      $('.rs-reservierung-list ul').css("margin-left: 0%; margin-right: 0%; width: 15%;");
+      $('#hh-number').val("0");
+
       var rID = $(this).attr("id");
       $.ajax({
         url: "script/sync-admin.php",
@@ -373,6 +377,10 @@ require_once("script/script.reservierung.php");
       });
     });
 
+    $(document).on("click","#submit-clients",function(){
+      
+
+    });
 
     function getOverviewParameter() {
       var url = new URL(window.location.href);

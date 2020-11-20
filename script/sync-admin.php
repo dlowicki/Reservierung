@@ -120,6 +120,17 @@ function updateReserveState($state, $rID) {
   return false;
 }
 
+function updateReserveEnd($rID) {
+  $con = connect();
+  $datetime = echoTime();
+  $statement = "UPDATE rReserve SET reserveEnd = '$datetime' WHERE reserveID = '$rID'";
+  $query = $con -> query($statement);
+  if($query === TRUE){
+    return true;
+  }
+  return false;
+}
+
 function addNoShow($rID) {
   $db = new Overview();
   $con = $db->connectDatabase();
