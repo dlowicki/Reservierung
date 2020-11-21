@@ -1,5 +1,9 @@
 <?php
 require_once("script.admin.php");
+
+if(!isset($_COOKIE['rSession'])){ return; }
+if(isAdmin() != true){ return; }
+
 /*
 * Created 17.11.2020
 * Mail und ID = Unique
@@ -60,7 +64,7 @@ if(isset($_POST['acpButton']) && isset($_POST['acpReserveID']) && isset($_POST['
       break;
     case '2':
       /* Setze ReserveEnd auf jetzige Uhrzeit */
-      if(updateReserveEnd($rID)){ $func = true; }
+      if(updateReserveEnd($rID,date("G:i:s"))){ $func = true; }
       break;
     case '3':
       /*Hierfür muss checkTime usw. angepasst werden*/
@@ -78,14 +82,76 @@ if(isset($_POST['acpButton']) && isset($_POST['acpReserveID']) && isset($_POST['
 
 if(isset($_POST['submitClients'])){
   $data = $_POST['submitClients'];
+  $error = false;
   foreach ($data as $key) {
-    // Wenn Name Länge >= 2
-    if(strlen($data[0]) >= 2){
-      updateClient($cID,$rID,$vn,$nn,$ma,$adr,$tnr,$date,$cc);
+    if(strlen($key[2]) >= 2){ // Wenn Name Länge >= 2
+      $updateClient = updateClient($key[0],$key[1],$key[3],$key[2],$key[4],$key[5],$key[6],date("Y-m-d"),uniqid());
+      if($updateClient == false){ $error = true; }
     }
   }
+  // Bei der Übertragung der Client gab es einen Fehler
+  if($error == true){ echo "0"; } else { echo "1"; }
   return;
 }
+
+// Delete Client
+if(isset($_POST['deleteClient'])){if(deleteClient($_POST['deleteClient'])){echo"1";return;} else {echo"0";return;}}
+
+if(isset($_POST['createReserveButton']) && isset($_POST['table']) && isset($_POST['date'])){
+  $tID = $_POST['table']; $date = $_POST['date']; $clientID = uniqid();
+  $cnrID = createNewReserve($tID,$clientID,$date);
+  if($cnrID != false){
+    if(updateClient($clientID,$cnrID,'Vorname','Nachname','E-Mail','Adresse','Telefon',date("Y-m-d"),uniqid())){
+      echo "1";
+      return;
+    }
+  }
+  echo "0";
+  return;
+}
+
+if(isset($_POST['updateReserveStart']) && isset($_POST['startTime']) && isset($_POST['endTime'])){
+  $rID = $_POST['updateReserveStart']; $startTime = $_POST['startTime']; $endTime = $_POST['endTime'];
+  if(updateReserveStart($rID,$startTime, $endTime)){
+    echo "1"; return;
+  }
+  echo "0"; return;
+}
+if(isset($_POST['updateReserveDuration']) && isset($_POST['duration'])&& isset($_POST['endTime'])){
+  $rID = $_POST['updateReserveDuration']; $duration = $_POST['duration']; $endTime = $_POST['endTime'];
+  if(updateReserveDuration($rID,$duration,$endTime)){
+    echo "1"; return;
+  }
+  echo "0"; return;
+}
+if(isset($_POST['updateReserveAmount']) && isset($_POST['amount'])){
+  $rID = $_POST['updateReserveAmount']; $amount = $_POST['amount'];
+  if(updateReserveAmount($rID,$amount)){
+    echo "1"; return;
+  }
+  echo "0"; return;
+}
+
+
+function isAdmin(){
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  $query = $con->prepare("SELECT userCookie FROM rUser WHERE userCookie = ?");
+  $query->bind_param('s',$_COOKIE['rSession']);
+  $query->execute();
+
+  $result = $query->get_result();
+  $row = $result->fetch_array(MYSQLI_ASSOC);
+
+  if(sizeof($row) >=1 ){
+    if($row['userCookie'] == $_COOKIE['rSession']) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
 
 
 
@@ -93,7 +159,7 @@ if(isset($_POST['submitClients'])){
 function getReservierungData($id) {
   $db = new Overview();
   $con = $db->connectDatabase();
-  $statement = "SELECT rreserve.tableID, rreserve.clientID, reserveDate, reserveStart, reserveEnd, reserveDuration, reserveAmount, rClient.clientName, rClient.clientVorname, rClient.clientMail, rClient.clientAdresse, rClient.clientTNR, rTable.tableType,rTable.tableActive FROM rReserve INNER JOIN rClient ON rReserve.reserveID = rClient.reserveID INNER JOIN rTable ON rreserve.tableID = rtable.tableID WHERE rReserve.reserveID = '$id'";
+  $statement = "SELECT rreserve.tableID, rreserve.clientID, reserveDate, reserveStart, reserveEnd, reserveDuration, reserveAmount, rClient.clientID, rClient.clientName, rClient.clientVorname, rClient.clientMail, rClient.clientAdresse, rClient.clientTNR, rTable.tableType,rTable.tableActive FROM rReserve INNER JOIN rClient ON rReserve.reserveID = rClient.reserveID INNER JOIN rTable ON rreserve.tableID = rtable.tableID WHERE rReserve.reserveID = '$id'";
   $query = $con->query($statement) or die();
 
   if($query){
@@ -108,6 +174,8 @@ function getReservierungData($id) {
       $data[$r]['reserveAmount'] = $key['reserveAmount'];
       $data[$r]['tableType'] = $key['tableType'];
       $data[$r]['tableActive'] = $key['tableActive'];
+      // Client Data
+      $data[$r]['clientID'] = $key['clientID'];
       $data[$r]['clientName'] = $key['clientName'];
       $data[$r]['clientVorname'] = $key['clientVorname'];
       $data[$r]['clientMail'] = $key['clientMail'];
@@ -131,16 +199,50 @@ function updateReserveState($state, $rID) {
   return false;
 }
 
-function updateReserveEnd($rID) {
-  $con = connect();
-  $datetime = echoTime();
-  $statement = "UPDATE rReserve SET reserveEnd = '$datetime' WHERE reserveID = '$rID'";
+function updateReserveEnd($rID,$time) {
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  $statement = "UPDATE rReserve SET reserveEnd = '$time' WHERE reserveID = '$rID'";
   $query = $con -> query($statement);
   if($query === TRUE){
     return true;
   }
   return false;
 }
+
+function updateReserveStart($rID, $startTime, $endTime) {
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  $query = $con -> query("UPDATE rReserve SET reserveStart = '$startTime', reserveEnd = '$endTime' WHERE reserveID = '$rID'");
+  if($query === TRUE){
+    return true;
+  }
+  return false;
+}
+
+function updateReserveDuration($rID,$duration,$endTime) {
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  $statement = "UPDATE rReserve SET reserveEnd = '$endTime', reserveDuration = '$duration' WHERE reserveID = '$rID'";
+  $query = $con -> query($statement);
+  if($query === TRUE){
+    return true;
+  }
+  return false;
+}
+
+function updateReserveAmount($rID,$amount) {
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  $statement = "UPDATE rReserve SET reserveAmount = '$amount' WHERE reserveID = '$rID'";
+  $query = $con -> query($statement);
+  if($query === TRUE){
+    return true;
+  }
+  return false;
+}
+
+
 
 function addNoShow($rID) {
   $db = new Overview();
@@ -164,7 +266,6 @@ function addNoShow($rID) {
 function updateClient($cID,$rID,$vn,$nn,$ma,$adr,$tnr,$date,$cc) {
   $db = new Overview();
   $con = $db->connectDatabase();
-  //$iClient = uniqid();
   if(strlen($cID)<=0){ $cID = uniqid(); }
   $temp = "clientID,reserveID,clientVorname,clientName,clientMail,clientAdresse,clientTNR,clientDate,clientConfirm";
   $temp2 = "'$cID','$rID','$vn','$nn','$ma','$adr','$tnr','$date','$cc'";
@@ -172,6 +273,26 @@ function updateClient($cID,$rID,$vn,$nn,$ma,$adr,$tnr,$date,$cc) {
   $query = $con -> query($statement);
   if($query===TRUE){
     return true;
+  }
+  return false;
+}
+function deleteClient($cID) {
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  $statement = "DELETE FROM rClient WHERE clientID = '$cID'";
+  $query = $con -> query($statement);
+  if($query===TRUE){return true;}
+  return false;
+}
+
+function createNewReserve($table,$client,$date) {
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  $rC = uniqid();
+  $p = "INSERT INTO rReserve (reserveID, tableID, clientID, reserveDate, reserveStart, reserveEnd, reserveDuration, reserveAmount, reserveCookie, reserveState) VALUES (null,'$table','$client','$date','00:00:00','00:00:00','2:30','0','$rC','0')";
+  $query = $con->query($p) or die();
+  if($query === TRUE){
+    return $con->insert_id;
   }
   return false;
 }

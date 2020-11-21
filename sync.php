@@ -246,88 +246,6 @@ if(isset($_POST['crDelete'])){
 }
 
 
-/* ACP ISSET ABFRAGEN */
-
-if(isset($_POST['acpReserve']) && isset($_POST['acpSubmit'])){
-  $daten = $_POST['acpReserve'];
-  $type = $_POST['acpSubmit'];
-
-  $con = connect();
-  $cookie = htmlspecialchars($_COOKIE['rSession']);
-  $query=$con->query("SELECT userActive FROM rUser WHERE userCookie = '$cookie'");
-  if($query){
-    $amount = $daten[0];
-    $date=$daten[1];
-    $time = $daten[2];
-    $duration = $daten[3];
-    $rID = $daten[4];
-    $tID = $daten[5];
-
-    $hhExist = false;
-    for ($i=0; $i < 5; $i++) {
-      if(array_key_exists($i,$daten[6])==false){ continue; }
-      if(strlen($daten[6][$i]) > 10){
-        $exp = explode(";",$daten[6][$i]);
-        if(strlen($exp[0])>0 && strlen($exp[1])>0 && strlen($exp[2])>0 && strlen($exp[3])>0 && strlen($exp[4])>0){
-          $hhExist = true;
-        }
-      }
-    }
-
-    switch($duration){
-      case "1":
-        $duration = "2:30";
-        break;
-      case "2":
-        $duration = "gz";
-        break;
-    }
-
-    $clientID = uniqid(); // Falls Reservierung neu erstellt werden muss
-    if($type == 'Bearbeiten'){
-      acpUpdateReserve($rID,$date,$time,createReserveEnd($time,$duration),$duration,$amount);
-    } elseif($type == 'Erstellen') {
-      $rID = reserveTable($tID,$clientID,$date,$time . ":00",$duration,$amount,uniqid());
-    }
-
-    if($hhExist == true){
-      $count = 0;
-      foreach ($daten[6] as $key => $value) {
-        if($value){
-            if($count != 0){ $clientID = uniqid(); }
-            $exp = explode(";",$value);
-            $dateTime = echoDateTime();
-            $vorname = $exp[0]; $name = $exp[1]; $mail = $exp[2]; $adresse = $exp[3]; $tnr = $exp[4]; $cID = $exp[5];
-            if($type == 'Bearbeiten'){
-              acpUpdateClient($cID,$rID,$vorname,$name,$mail,$adresse,$tnr,$dateTime,uniqid()."".uniqid());
-            } elseif($type == 'Erstellen'){
-              $cf = uniqid()."".uniqid();
-              $sqlStatement = "INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientAdresse, clientTNR, clientDate, clientConfirm) VALUES ('$clientID','$rID','$vorname','$name','$mail','$adresse','$tnr','$dateTime','$cf');";
-              $query = $con -> query($sqlStatement) or die();
-              if($query === FALSE){
-                // Hier eventuell Reservierung wieder entfernen
-                echo "0";
-                return;
-              }
-            }
-        }
-        $count++;
-      }
-    }
-    echo "1";
-    return;
-  }
-  echo "0";
-  return;
-}
-
-
-
-if(isset($_POST['acpInputs'])){
-  $data = array("reserve"=>getReserveData($_POST['acpInputs']), "clients"=>getClientsFromReserve($_POST['acpInputs']));
-  echo json_encode($data);
-  return;
-}
 
 if(isset($_POST['getTableActive'])){
   $id = $_POST['getTableActive'];
@@ -360,27 +278,6 @@ if(isset($_POST['setTableActive']) && isset($_POST['value'])){
 }
 
 
-
-function acpUpdateReserve($rID,$rDate,$rS,$rE,$rD,$rA) {
-  $con = connect();
-  $statement = "UPDATE rReserve SET reserveDate = '$rDate', reserveStart = '$rS', reserveEnd = '$rE', reserveDuration = '$rD', reserveAmount='$rA' WHERE reserveID = '$rID'";
-  $query = $con -> query($statement);
-  if($query===TRUE){
-    return true;
-  }
-  return false;
-}
-
-function acpDeleteClient($cID) {
-  $con = connect();
-  $statement = "DELETE FROM rClient WHERE clientID = '$cID'";
-  $query = $con -> query($statement);
-  if($query===TRUE){
-    return true;
-  }
-  return false;
-}
-
 function tischAktivieren($rID) {
   $con = connect();
   $statement = "UPDATE rTable INNER JOIN rReserve ON (rReserve.tableID = rTable.tableID) SET rTable.tableActive = 'open' WHERE rReserve.ReserveID = '$rID'";
@@ -394,16 +291,6 @@ function tischAktivieren($rID) {
 function tischDeaktivieren($rID) {
   $con = connect();
   $statement = "UPDATE rTable INNER JOIN rReserve ON (rReserve.tableID = rTable.tableID) SET rTable.tableActive = 'closed' WHERE rReserve.ReserveID = '$rID'";
-  $query = $con -> query($statement);
-  if($query === TRUE){
-    return true;
-  }
-  return false;
-}
-
-function updateReserveStart($rID, $datetime) {
-  $con = connect();
-  $statement = "UPDATE rReserve SET reserveStart = '$datetime' WHERE reserveID = '$rID'";
   $query = $con -> query($statement);
   if($query === TRUE){
     return true;
@@ -456,67 +343,6 @@ function getClientsFromReserve($id) {
 }
 
 
-
-
-
-
-function getOverviewDay($date) {
-  $con = connect();
-  $cookie = htmlspecialchars($_COOKIE['rSession']);
-  $query=$con->query("SELECT userActive FROM rUser WHERE userCookie = '$cookie'");
-
-  if($query){
-    $para = "rReserve.reserveID,rReserve.tableID,reserveStart,reserveEnd,reserveDuration,reserveAmount,clientName,clientTNR";
-    $query2 = $con -> query("SELECT $para FROM rReserve INNER JOIN rClient ON rReserve.clientID=rClient.clientID WHERE reserveTime LIKE '$date %' ORDER BY reserveTime ASC");
-
-    if($query2){
-      $data = array();
-      $s=0;
-      foreach ($query2 as $key) {
-        $data[$s]['rID'] = $key['reserveID'];
-        $data[$s]['tID'] = $key['tableID'];
-        $data[$s]['rStart'] = $key['reserveStart'];
-        $data[$s]['rEnd'] = $key['reserveEnd'];
-        $data[$s]['rDuration'] = $key['reserveDuration'];
-        $data[$s]['rA'] = $key['reserveAmount'];
-        $data[$s]['cName'] = $key['clientName'];
-        $data[$s]['cTNR'] = $key['clientTNR'];
-        $s++;
-      }
-      return $data;
-    }
-  }
-  return false;
-}
-
-function getOverviewWeek($date,$d7) {
-  $con = connect();
-  $cookie = htmlspecialchars($_COOKIE['rSession']);
-  $query=$con->query("SELECT userActive FROM rUser WHERE userCookie = '$cookie'");
-
-  if($query){
-    $para = "rReserve.reserveID,rReserve.tableID,reserveStart,reserveEnd,reserveDuration,reserveAmount,clientName,clientTNR";
-    $query2 = $con -> query("SELECT $para FROM rReserve INNER JOIN rClient ON rReserve.clientID=rClient.clientID WHERE reserveTime BETWEEN '$date %' AND '$d7 %' ORDER BY reserveTime ASC");
-
-    if($query2){
-      $data = array();
-      $s=0;
-      foreach ($query2 as $key) {
-        $data[$s]['rID'] = $key['reserveID'];
-        $data[$s]['tID'] = $key['tableID'];
-        $data[$s]['rStart'] = $key['reserveStart'];
-        $data[$s]['rEnd'] = $key['reserveEnd'];
-        $data[$s]['rDuration'] = $key['reserveDuration'];
-        $data[$s]['rA'] = $key['reserveAmount'];
-        $data[$s]['cName'] = $key['clientName'];
-        $data[$s]['cTNR'] = $key['clientTNR'];
-        $s++;
-      }
-      return $data;
-    }
-  }
-  return false;
-}
 
 
 function connect() {

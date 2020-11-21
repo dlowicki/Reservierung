@@ -1,5 +1,6 @@
 $(document).ready(function(){
-  tc=getTableParameter()
+  // Table Parameter for QR Code
+  tc=getTableParameter();
   if(tc != false){ viewTablewithCode(tc); }
 
   $.ajax({
@@ -28,7 +29,7 @@ $(document).ready(function(){
 	    (async() => {
   			var id = jQuery(this).attr("id");
   			const uc = await userCheck().then(function(result){
-  				if(result == false){ viewTable(id); } else { var src = $('#'+id+ " img").attr("src"); viewAdminTable(id, src); }
+  				if(result == false){ viewTable(id); } else { window.location.href = "admin.php?reservierungen&table="+id+"&date="; }
   			});
 		  })();
     }
@@ -498,10 +499,8 @@ function loginClose() {
 
 function tableClose() {
   $('#viewTable').empty();
-  $('#viewAdminTable').empty();
   $('#viewCoronaInfo').empty();
   $("#viewTable").css("display","none");
-  $("#viewAdminTable").css("display","none");
   $('#viewCoronaInfo').css("display","none");
   $('.container-reserve').css("background-color","transparent");
 }

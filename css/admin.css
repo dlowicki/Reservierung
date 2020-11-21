@@ -454,6 +454,17 @@ html,body {
   text-align: center;
 }
 
+.list-edit-bottom select {
+  width: 15%;
+  min-width: 70px;
+  height: 30px;
+  padding: 0.25%;
+  font-size: 1.2rem;
+  margin-left: 2%;
+  margin-right: 2%;
+  text-align: center;
+}
+
 .list-edit-bottom input[type=time] {
   width: 130px;
 }
@@ -483,6 +494,17 @@ html,body {
   width: 25%;
   height:auto;
   background-color: rgba(192,95,95,1);
+}
+
+.list-edit-hh .fa-user-minus {
+  float: right;
+  margin: 4% 4% 0% -4%;
+  color: white;
+  cursor: pointer;
+  transition: 0.5s;
+}
+.fa-user-minus:hover {
+  color: red;
 }
 
 #hh-number {
