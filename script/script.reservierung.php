@@ -12,6 +12,16 @@ class Reservierung extends Overview {
     $this->rDate = $rDate;
   }
 
+  public function tableExists() {
+    $db = new Overview();
+    $con = $db->connectDatabase();
+    $query = $con->query("SELECT tableID FROM rTable WHERE tableID = '$this->tID'");
+    if(mysqli_num_rows($query)==1){
+      return true;
+    }
+    return false;
+  }
+
   public function loadReservierungenList() {
     $db = new Overview();
     $con = $db->connectDatabase();

@@ -1,6 +1,9 @@
 <?php
 require_once("script/script.admin.php");
 require_once("script/script.reservierung.php");
+require_once("script/sync-admin.php");
+
+
 ?>
 <!DOCTYPE html>
 <html lang="ger" dir="ltr">
@@ -25,10 +28,8 @@ require_once("script/script.reservierung.php");
       <div class="main">
         <?php
         // Überprüfen ob Admin Cookie gesetzt
-        if(!isset($_COOKIE['rSession'])){
-          header("Location: index.php");
-          return;
-        }
+        if(!isset($_COOKIE['rSession'])){ header("Location: index.php"); }
+        if(isAdmin() != true){ header("Location: index.php"); }
 
         $admin = new Overview();
         // Wenn overview gesetzt ist = Überischt Reservierungen
@@ -58,7 +59,8 @@ require_once("script/script.reservierung.php");
             echo '<tr><th>Tisch ID</th><th>Name</th><th>Datum</th><th>Uhrzeit</th><th>Dauer</th><th>Anzahl</th><th>Telefon</th></tr>';
             foreach ($data as $key) {
               echo '<tr>';
-              echo '<td><i class="fa fa-table fa-1x" onClick="viewAdminTable()"></i> Tisch ' . $key["tID"] . '</td>';
+              $var = "'".$key['tID']."','".$key["rDate"]."'";
+              echo '<td><i class="fa fa-table fa-1x" onClick="redirectAdminReservierungen('.$var.')"></i> Tisch ' . $key["tID"] . '</td>';
               echo '<td>'.$key["cName"].'</td>';
               echo '<td>'.$key["rDate"].'</td>';
               echo '<td>'.$key["rStart"].' - '.$key["rEnd"].'</td>';
@@ -102,43 +104,53 @@ require_once("script/script.reservierung.php");
               echo '<div class="rs-input-table"><h3>Bitte Tisch und Datum auswählen</h3><input type="text" value="'.$table.'" id="rs-table"><input type="date" value="'.$day.'" id="rs-date"></div>';
 
               $reservierung = new Reservierung($table, $day);
-              $rsList = $reservierung->loadReservierungenList();
-              echo '<div class="rs-reservierung-list">';
-                echo '<ul>';
-                  echo '<button id="createReserveButton">Neue Reservierung</button>';
-                  if($rsList != false){
-                    foreach ($rsList as $key) {
-                      echo '<li id="'.$key["rID"].'" class="state'.$key["rState"].'">'.$key["rStart"].' - '.$key["rEnd"].'</li>';
-                    }
-                  }
-                echo '</ul>';
+              if($reservierung->tableExists()){
+                  $rsList = $reservierung->loadReservierungenList();
 
-                echo '<div class="rs-list-edit-container">';
-                  echo '<div class="list-edit-reservierung">';
-                    echo '<div class="list-edit-top">';
-                      echo '<button id="bt-eingetroffen"><i class="fas fa-check"></i> Eingetroffen</button>';
-                      echo '<button id="bt-freigeben"><i class="fas fa-unlock"></i> Wieder freigeben</button>';
-                      echo '<button id="bt-abgesagt"><i class="fas fa-user-slash"></i> Abgesagt</button>';
-                      echo '<button id="bt-noShow"><i class="fas fa-user-times"></i> No-Show</button>';
+                  echo '<div class="rs-reservierung-list">';
+                    echo '<ul>';
+                      echo '<button id="createReserveButton">Neue Reservierung</button>';
+                      if($rsList != false){
+                        foreach ($rsList as $key) {
+                          echo '<li id="'.$key["rID"].'" class="state'.$key["rState"].'">'.$key["rStart"].' - '.$key["rEnd"].'</li>';
+                        }
+                      } else {
+                        echo '<p style="color: white; font-size: 1.4rem; display:block; text-align:center; padding: 1%;">Keine Reservierung vorhanden</p>';
+                      }
+                    echo '</ul>';
+
+                    echo '<div class="rs-list-edit-container">';
+                      echo '<div class="list-edit-reservierung">';
+                        echo '<div class="list-edit-top">';
+                          echo '<button id="bt-eingetroffen"><i class="fas fa-check"></i> Eingetroffen</button>';
+                          echo '<button id="bt-freigeben"><i class="fas fa-unlock"></i> Wieder freigeben</button>';
+                          echo '<button id="bt-abgesagt"><i class="fas fa-user-slash"></i> Abgesagt</button>';
+                          echo '<button id="bt-noShow"><i class="fas fa-user-times"></i> No-Show</button>';
+                        echo '</div>';
+
+                        echo '<div class="list-edit-bottom">';
+                          echo '<input type="time" id="rs-time">';
+                          echo '<select id="rs-duration"><option value="2:30">2:30</option><option value="gz">Bis 22 Uhr</option></select>';
+                          echo '<input type="number" id="rs-amount" min="0" max="20">';
+                          echo '<div class="edit-bottom-table">';
+                            echo '<img src="img/open/t-right-transparent.png">';
+                            echo '<label class="switch"><input type="checkbox" id="switch-table"><span class="slider round"></span></label>';
+                          echo '</div>';
+                      echo '</div>';
                     echo '</div>';
 
-                    echo '<div class="list-edit-bottom">';
-                      echo '<input type="time" id="rs-time">';
-                      echo '<select id="rs-duration"><option value="2:30">2:30</option><option value="gz">Bis 22 Uhr</option></select>';
-                      echo '<input type="number" id="rs-amount" min="0" max="20">';
-                      echo '<div class="edit-bottom-table">';
-                        echo '<img src="img/open/t-right-transparent.png">';
-                        echo '<label class="switch"><input type="checkbox" id="switch-table"><span class="slider round"></span></label>';
-                      echo '</div>';
+                    echo '<div class="list-edit-hh">';
+                      echo '<i class="fas fa-user-minus fa-1x" id="deleteClient"></i><input type="number" id="hh-number" value="0" min="0" max="19">';
+                    echo '</div>';
                   echo '</div>';
                 echo '</div>';
+              }
 
-                echo '<div class="list-edit-hh">';
-                  echo '<i class="fas fa-user-minus fa-1x" id="deleteClient"></i><input type="number" id="hh-number" value="0" min="0" max="19">';
-                echo '</div>';
-              echo '</div>';
 
-            echo '</div>';
+
+
+
+
 
             } else {
               echo '<div class="rs-input-table"><h3>Bitte Tisch auswählen</h3><input type="text" placeholder="Tisch Nummer" id="rs-table"><input type="date" value="'.$day.'" id="rs-date"></div>';
@@ -167,6 +179,12 @@ require_once("script/script.reservierung.php");
         window.location.href = "admin.php?overview=Week&day="+$('#oInputDate').val();
       }
     });
+
+    function redirectAdminReservierungen(table, date) {
+      window.location.href = "admin.php?reservierungen&table="+table+"&day="+date;
+    }
+
+    /* NO SHOW CONTENT */
 
     $(document).on("click",".noShow-content li",function(){
       var id = $(this).attr("id");
