@@ -106,7 +106,7 @@ function viewTable(id) {
 
       $('.form-table-left-inputs').append('<select id="amount">'+options+'</select></div>');
       $('.form-table-left-inputs').append('<input type="date" id="timeDate" onChange="checkTimeFrom('+tID+')">');
-      $('.form-table-left-inputs').append('<input type="time" id="timeFrom" value="17:00" onChange="checkTimeFrom('+tID+')" min="17:00" max="21:00" step="900">');
+      $('.form-table-left-inputs').append('<input type="time" id="timeFrom" value="17:00" onChange="checkTimeFrom('+tID+')" min="17:00" step="900">');
       $('.form-table-left-inputs').append('<select id="timeDuration" onChange="checkTimeFrom('+tID+')"><option value="1">2:30h</option><option value="2">Bis 22 Uhr</option></select>');
       //document.querySelector("#timeDate").valueAsDate = new Date();
 

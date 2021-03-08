@@ -708,7 +708,7 @@ html,body {
 }
 
 .form-table-left-inputs {
-  width: 465px;
+  width: 525px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 2%;
@@ -749,7 +749,7 @@ html,body {
 }
 
 #timeDate {
-  width: 180px;
+  width: 190px;
   border-bottom: 1px solid darkgray;
   border-top: 1px solid darkgray;
   border-left: 1px solid darkgray;

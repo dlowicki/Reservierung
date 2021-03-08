@@ -25,8 +25,10 @@
     Tische müssen Händisch von Hubraum MA gesperrt werden können. (Geschlossenen Gesellschaft)
     Online Tische Reservieren & Corona Registrierung  mit Name und Adresse
 
-    DESIGN ändern 1060 pixel
-
+    Zeit 15 Minuten funktioniert nicht
+    // https://stackoverflow.com/questions/13713755/html-input-time-step-attribute-to-set-timestep-by-say-x-minutes
+    
+    DESIGN ändern 1120 pixel
     -->
 
     <?php
