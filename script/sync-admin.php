@@ -254,7 +254,7 @@ function addNoShow($rID) {
     if($key['clientID'] && $key['clientMail']){
       $clientID = $key['clientID'];
       $clientMail = $key['clientMail'];
-      $statement2 = "INSERT INTO rNoshow (nsID,nsMail,nsAmount,nsDate) VALUES ('null','$clientMail','1','$date') ON DUPLICATE KEY UPDATE nsAmount = nsAmount +1";
+      $statement2 = "INSERT INTO rNoshow (nsID,nsMail,nsAmount,nsDate) VALUES (null,'$clientMail','1','$date') ON DUPLICATE KEY UPDATE nsAmount = nsAmount +1";
       $query2 = $con -> query($statement2);
       if($query2 === TRUE) { return true; }
       return false;

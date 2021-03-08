@@ -598,7 +598,7 @@ html,body {
 #viewTable h1 {
   text-align: center;
   font-size: 2rem;
-  padding: 2%;
+  padding: 2% 2% 1% 2%;
 }
 
 .fa-times {
@@ -620,7 +620,12 @@ html,body {
 .form-table h2 {
   font-size: 1.5rem;
   text-align: center;
-  padding: 2%;
+  padding: 10px;
+}
+
+.form-table-middle {
+  display: flex;
+  flex-wrap: nowrap;
 }
 
 /* ViewTable Reservierungen BOX */
@@ -636,7 +641,7 @@ html,body {
   flex-wrap: nowrap;
   background-color: white;
   width: 100%;
-  height: 50px;
+  height: 75px;
   border-left: 1px solid darkgray;
   border-right: 1px solid darkgray;
   border-bottom: 1px solid darkgray;
@@ -683,7 +688,7 @@ html,body {
 /* VIEWTABLE Tisch reservieren */
 
 .form-table-left {
-  width: 80%;
+  width: 50%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -709,6 +714,7 @@ html,body {
   margin-top: 2%;
   display: flex;
   flex-wrap: nowrap;
+  outline: none;
 }
 
 .form-table-left-inputs select {
@@ -724,11 +730,11 @@ html,body {
   border-top: 1px solid darkgray;
   border-left: 1px solid darkgray;
   border-bottom: 1px solid darkgray;
-  width: 55px;
+  width: 85px;
 }
 
 #timeDuration {
-  width: 100px;
+  width: 130px;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
   border-top: 1px solid darkgray;
@@ -787,7 +793,6 @@ html,body {
   min-width: 599px;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 2%;
 }
 
 .form-table-right p {
@@ -866,10 +871,12 @@ html,body {
   outline: none;
   background-color: white;
   border: 1px solid black;
-  padding: 1% 2% 1% 2%;
+  padding: 0.5% 2% 0.5% 2%;
   margin-left: 5%;
   -webkit-transition: 0.5s;
   font-size: 1.0rem;
+  width: 150px;
+  text-align:center;
 }
 
 .form-table-submit input[type=submit]:hover {
@@ -882,7 +889,8 @@ html,body {
   outline: none;
   background-color: white;
   border: 1px solid black;
-  padding: 1%;
+  padding: 0.5% 2% 0.5% 2%;
+  width: 150px;
   transition: 0.5s;
   margin-right: 5%;
   font-size: 1.0rem;

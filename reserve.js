@@ -1,5 +1,6 @@
 $(document).ready(function(){
   // Table Parameter for QR Code
+  viewTable(98);
   tc=getTableParameter();
   if(tc != false){ viewTablewithCode(tc); }
 
@@ -90,8 +91,9 @@ function viewTable(id) {
 
       $('#viewTable').append("<form method='POST' class='form-table' onsubmit='event.preventDefault();'></form>");
       $('.form-table').append("<div id='container-information'><h3>Reservierungen</h3><div id='container-information-content'></div></div>");
-      $('.form-table').append("<div class='form-table-left'></div>");
-      $('.form-table').append("<div class='form-table-right'></div>");
+      $('.form-table').append("<div class='form-table-middle'></div>");
+      $('.form-table-middle').append("<div class='form-table-left'></div>");
+      $('.form-table-middle').append("<div class='form-table-right'></div>");
 
       $('.form-table-left').append("<h2>Tisch reservieren</h2>");
       $('.form-table-left').append("<p>Damit ein Tisch reserviert werden kann werden folgende Daten benötigt</p>");
@@ -102,7 +104,7 @@ function viewTable(id) {
 
       var options = ""; for (var i = parseInt(d['tableMin']); i <= parseInt(d['tableMax']); i++) { options = options + "<option value='"+i+"'>"+i+"</option>";}
 
-      $('.form-table-left-inputs').append('<div class="left-inputs-icon"><select id="amount">'+options+'</select><i class="fas fa-user fa-1x"></div>');
+      $('.form-table-left-inputs').append('<select id="amount">'+options+'</select></div>');
       $('.form-table-left-inputs').append('<input type="date" id="timeDate" onChange="checkTimeFrom('+tID+')">');
       $('.form-table-left-inputs').append('<input type="time" id="timeFrom" value="17:00" onChange="checkTimeFrom('+tID+')" min="17:00" max="21:00" step="900">');
       $('.form-table-left-inputs').append('<select id="timeDuration" onChange="checkTimeFrom('+tID+')"><option value="1">2:30h</option><option value="2">Bis 22 Uhr</option></select>');
@@ -331,7 +333,7 @@ function viewCoronaInfo() {
   }, 5000);
 }
 
-function viewAdminTable(id, src){
+/*function viewAdminTable(id, src){
   (async() => {
     const uc = await userCheck().then(function(result){
 		if(result == true){
@@ -398,11 +400,11 @@ function viewAdminTable(id, src){
 
       // Damit Tisch bearbeitet werden kann. Freigabe für 5/15/30 Minuten, damit Haushalte eingetragen werden können
       // Link wird in E-Mail eingebunden für Bearbeitung und muss vor Bearbeitung vom Personal freigeschaltet werden
-      /*$('.acp-bottom-content').append('<div id="acp-bottom-freigabe"></div>');
-      $('#acp-bottom-freigabe').append('<img src="'+src+'">');
-      $('#acp-bottom-freigabe').append('<div class="freigabe-settings"></div>');
-      $('.freigabe-settings').append('<select><option value="1">5 Minuten</option><option value="2">10 Minuten</option><option value="3">30 Minuten</option></select>');
-      $('.freigabe-settings').append('');*/
+      //$('.acp-bottom-content').append('<div id="acp-bottom-freigabe"></div>');
+      //$('#acp-bottom-freigabe').append('<img src="'+src+'">');
+      //$('#acp-bottom-freigabe').append('<div class="freigabe-settings"></div>');
+      //$('.freigabe-settings').append('<select><option value="1">5 Minuten</option><option value="2">10 Minuten</option><option value="3">30 Minuten</option></select>');
+      //$('.freigabe-settings').append('');
 
 
 
@@ -418,7 +420,7 @@ function viewAdminTable(id, src){
 		}
 	});
   })();
-}
+}*/
 
 function getTableACP(id) {
   $.ajax({

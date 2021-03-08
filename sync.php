@@ -278,27 +278,6 @@ if(isset($_POST['setTableActive']) && isset($_POST['value'])){
 }
 
 
-function tischAktivieren($rID) {
-  $con = connect();
-  $statement = "UPDATE rTable INNER JOIN rReserve ON (rReserve.tableID = rTable.tableID) SET rTable.tableActive = 'open' WHERE rReserve.ReserveID = '$rID'";
-  $query = $con -> query($statement);
-  if($query === TRUE){
-    return true;
-  }
-  return false;
-}
-
-function tischDeaktivieren($rID) {
-  $con = connect();
-  $statement = "UPDATE rTable INNER JOIN rReserve ON (rReserve.tableID = rTable.tableID) SET rTable.tableActive = 'closed' WHERE rReserve.ReserveID = '$rID'";
-  $query = $con -> query($statement);
-  if($query === TRUE){
-    return true;
-  }
-  return false;
-}
-
-
 
 function getReserveData($id) {
   $con = connect();

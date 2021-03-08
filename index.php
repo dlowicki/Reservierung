@@ -6,11 +6,11 @@
     <title>Test</title>
     <link rel="stylesheet" href="css/table.css">
     <link rel="stylesheet" href="css/reserve.css">
+    <link rel="stylesheet" href="css/change.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
     <script src="jquery.min.js" charset="utf-8"></script>
     <script src="reserve.js" charset="utf-8"></script>
-
     <script src="fetch.js" charset="utf-8"></script>
   </head>
   <body>
@@ -24,6 +24,9 @@
 
     Tische müssen Händisch von Hubraum MA gesperrt werden können. (Geschlossenen Gesellschaft)
     Online Tische Reservieren & Corona Registrierung  mit Name und Adresse
+
+    DESIGN ändern 1060 pixel
+
     -->
 
     <?php
@@ -37,12 +40,10 @@
     ?>
 
     <div class="container-reserve">
-      <div id="viewAdminTable"></div>
       <div id="viewTable"></div>
       <div id="viewLogin"></div>
       <div id="viewOverview"></div>
       <div class="reserve-top">
-
         <div class="reserve-top-left">
           <div class="table object-t-right" id="99">
             <h3 class="table-h3" id="99-h3">99</h3>
