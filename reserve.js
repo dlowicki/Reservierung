@@ -131,7 +131,7 @@ function viewTable(id) {
         t = "'clientAdresse'";
         $('.right-inputs-hh'+(i+1)).append('<input type="text" class="clientAdresse" onkeyup="verifyInput('+t+')" placeholder="Adresse">');
         t = "'clientTNR'";
-        $('.right-inputs-hh'+(i+1)).append('<input type="text" class="clientTNR" onkeyup="verifyInput('+t+')" placeholder="TNR">');
+        $('.right-inputs-hh'+(i+1)).append('<input type="text" class="clientTNR" onkeyup="verifyInput('+t+')" placeholder="Telefonnummer">');
         $('.right-inputs-hh'+(i+1)).css("display","none");
       }
       $('.right-inputs-hh1').css("display","block");
