@@ -3,10 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test</title>
+    <title>Reservierung | Hubraum</title>
     <link rel="stylesheet" href="css/table.css">
-    <link rel="stylesheet" href="css/reserve.css">
+    <!--<link rel="stylesheet" href="css/reserve.css">-->
     <link rel="stylesheet" href="css/change.css">
+    <link rel="stylesheet" media="screen and (max-width: 700px)" href="css/reserve_small.css">
+    <link rel="stylesheet" media="screen and (max-width: 1200px) and (min-width: 700px)" href="css/reserve_mid.css">
+    <link rel="stylesheet" media="screen and (min-width: 1200px)" href="css/reserve.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
     <script src="jquery.min.js" charset="utf-8"></script>
@@ -27,8 +30,9 @@
 
     Zeit 15 Minuten funktioniert nicht
     // https://stackoverflow.com/questions/13713755/html-input-time-step-attribute-to-set-timestep-by-say-x-minutes
-    
+
     DESIGN ändern 1120 pixel
+
     -->
 
     <?php
