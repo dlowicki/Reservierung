@@ -1,6 +1,9 @@
 $(document).ready(function(){
+  // DEBUG
+  //viewTable(98);
+  //viewReserved('36','17:00:00 Uhr','15-03-2021','2:30','6');
+
   // Table Parameter for QR Code
-  viewTable(98);
   tc=getTableParameter();
   if(tc != false){ viewTablewithCode(tc); }
 
