@@ -109,11 +109,17 @@ function viewTable(id) {
 
       $('.form-table-left-inputs').append('<select id="amount">'+options+'</select></div>');
       $('.form-table-left-inputs').append('<input type="date" id="timeDate" onChange="checkTimeFrom('+tID+')">');
-      $('.form-table-left-inputs').append('<input type="time" id="timeFrom" value="17:00" onChange="checkTimeFrom('+tID+')" min="17:00" step="900">');
+      $('.form-table-left-inputs').append('<input type="time" id="timeFrom" list="timelist" value="17:00" onChange="checkTimeFrom('+tID+')" min="17:00" step="900">');
       $('.form-table-left-inputs').append('<select id="timeDuration" onChange="checkTimeFrom('+tID+')"><option value="1">2:30h</option><option value="2">Bis 22 Uhr</option></select>');
       //document.querySelector("#timeDate").valueAsDate = new Date();
-
       //setTimeout(function(){ getReservierungen(d['tableID'], $('#timeDate').val()); }, 100);
+
+      $('.form-table-left').append('<datalist id="timelist"></datalist>');
+      $('#timelist').append('<option value="17:00"><option value="17:15"><option value="17:30"><option value="17:45">');
+      $('#timelist').append('<option value="18:00"><option value="18:15"><option value="18:30"><option value="18:45">');
+      $('#timelist').append('<option value="19:00"><option value="19:15"><option value="19:30"><option value="19:45">');
+      $('#timelist').append('<option value="20:00"><option value="20:15"><option value="20:30"><option value="20:45">');
+      $('#timelist').append('<option value="21:00"><option value="21:15"><option value="21:30">');
 
       $('.form-table-right').append("<h2>Registrierung zwecks Corona</h2>");
       $('.form-table-right').append('<p>Damit ein Tisch bei uns reserviert werden kann, müssen wir den Anforderungen entsprechend die Daten einer Person bei uns abspeichern.<br>Bitte Denken Sie daran, dass bei mehreren Haushalten an einem Tisch, <b>pro Haushalt eine Kontakperson</b> registriert werden muss.<br>Die Daten werden <a href="#">Datenschutzkonform</a> abgespeichert</p');
@@ -544,7 +550,7 @@ function sendReserve(tID) {
       const cm = $('.right-inputs-hh'+i+' .clientMail').val();
       const ca = $('.right-inputs-hh'+i+' .clientAdresse').val();
       const ct = $('.right-inputs-hh'+i+' .clientTNR').val();
-      if(cv.length >= 3){
+      if(cv.length >= 1){
         if(r(cv) == true && r(cn) == true && r(cm) == true && r(ca) == true && r(ct) == true){
           haushalt[i-1] = cv + ";" + cn + ";" + cm + ";" + ca + ";" + ct;
         }
@@ -555,7 +561,7 @@ function sendReserve(tID) {
       $.ajax({
         url: "sync.php", method: "POST", data: { createReserve: inputs },
         success: function(result) {
-          //console.log("Result: " + result);
+          console.log("Result: " + result);
           if(result == "1"){
             tableClose();
             //table, time, date, duration, amount

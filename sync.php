@@ -39,20 +39,18 @@ if(isset($_POST['createReserve'])){
   $table = $daten[4];
 
   $hhExist = false;
-  for ($i=0; $i < 5; $i++) {
-    if(array_key_exists($i,$daten[5])==false){ continue; }
-    if(strlen($daten[5][$i]) > 10){
-      $exp = explode(";",$daten[5][$i]);
+  for ($i=0; $i < 5; $i++) { // Schleife, die 5 mal durchlaufen wird
+    if(array_key_exists($i,$daten[5])==false){ continue; } // Wenn $i in array nicht existiert
+    //if(strlen($daten[5][$i]) > 10){}
+    $exp = explode(";",$daten[5][$i]);
+    if(count($exp) == 5){  // Count gibt Wert 5 zurück, alle Felder ausgefüllt
       if(strlen($exp[0])>0 && strlen($exp[1])>0 && strlen($exp[2])>0 && strlen($exp[3])>0 && strlen($exp[4])>0){
         $hhExist = true;
       }
     }
   }
-
-  if($hhExist == false){
-    echo "0";
-    return;
-  }
+  // $hhExist == false, kein Haushalt wurde eingetragen
+  if($hhExist == false){ echo "0"; return; }
 
   switch($duration){
     case "1":
@@ -63,38 +61,29 @@ if(isset($_POST['createReserve'])){
       break;
   }
 
-  // checkReserveTime TIME DATE TABLE
+  // checkReserveTime = Überprüfe ob Überschneidung mit vorhandener Reservierung
   if(checkReserveTime($time,$duration,$date,$table)){
-	  $clientID = uniqid(); // ClientID
-    $rCookie = uniqid(); // Um später Tisch bearbeiten zu können
+	  $clientID = uniqid();
+    $rCookie = md5(uniqid(rand (),true));
     // $tID,$cID,$rDate,$rStart,$rEnd,$rD,$rA
     $rID = reserveTable($table,$clientID,$date,$time . ":00",$duration,$amount,$rCookie);
-    if($rID != false){
-      $date = echoDateTime();
-      $count = 0;
-      $con = connect();
-      foreach ($daten[5] as $key => $value) {
+    if($rID != false){  // $rID wurde erfolgreich erstellt --> Reservierung eingetragen
+      $date = echoDateTime(); $count = 0; $con = connect();
+      foreach ($daten[5] as $key => $value) { // Für jeden Datensatz (Haushalt)
         if($count != 0){ $clientID = uniqid(); }
-        if($value){
+        if($value){ // Wenn Wert von Haushalt existiert
           $exp = explode(";",$value);
           $cf = uniqid()."".uniqid();
           $vorname = $exp[0]; $name = $exp[1]; $mail = $exp[2]; $adresse = $exp[3]; $tnr = $exp[4];
           // $cID,$rID,$tID,$vorname,$name,$mail,$adresse,$tnr,$cf
           $sqlStatement = "INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientAdresse, clientTNR, clientDate, clientConfirm) VALUES ('$clientID','$rID','$vorname','$name','$mail','$adresse','$tnr','$date','$cf');";
           $query = $con -> query($sqlStatement) or die();
-          if($query !== TRUE){
-            echo "0";
-            return;
-          }
+          if($query !== TRUE){ echo "0"; return; }
         }
         $count++;
-      }
-      echo "1";
-      return;
+      } echo "1"; return;
     }
-  }
-  echo "0";
-  return;
+  } echo "0"; return;
 }
 
 if(isset($_POST['hubName']) && isset($_POST['hubSecure'])){
