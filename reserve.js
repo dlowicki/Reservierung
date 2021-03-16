@@ -193,7 +193,8 @@ function checkTimeFrom(t) {
         for (var i = 0; i < d.length; i++) {
           // Wenn Reservierung Datenbank GANZTAGS und INPUT GANZTAGS
           if(d[i]['rD'] == "gz" && duration == 2){ $('#timeDuration').css("color","red"); return false; }
-          if(d[i]['rState'] == 3 && d[i]['rState'] == 4){ continue; }
+          if(d[i]['rState'] == 3 || d[i]['rState'] == 4){ continue; }
+
           dateStart = new Date(d[i]['rDate']+" "+d[i]['rS']); // Startzeit in Datenbank
           dateEnd = new Date(d[i]['rDate']+" "+d[i]['rE']);   // Endzeit in Datenbank
 
@@ -227,6 +228,7 @@ function checkTimeFrom(t) {
               continue;
           }
         }
+
         //console.log("Überschneidung: " + ueberschneidung);
         switch (ueberschneidung.includes(true)) {
           case true:
@@ -342,94 +344,9 @@ function viewCoronaInfo() {
   }, 5000);
 }
 
-/*function viewAdminTable(id, src){
-  (async() => {
-    const uc = await userCheck().then(function(result){
-		if(result == true){
-
-      // Wenn schon geöffnet
-      if($('.acp-settings-buttons').length > 0){ return; }
-
-			$('#viewAdminTable').append('<i class="fa fa-times fa-2x" onClick="tableClose()"></i>');
-			$('#viewAdminTable').append("<h1>Bearbeitung Tisch "+id+"</h1>");
-			$('#viewAdminTable').append("<div class='acp-top'></div>");
-      $('#viewAdminTable').append("<div class='acp-bottom'></div>");
-
-      getTableACP(id);
-
-      $('.acp-top').append("<div id='container-information'><h3>Reservierungen</h3><div id='container-information-content'></div></div>");
-      $('.acp-top').append("<div class='acp-settings-buttons'></div>");
-      // Aktivieren | Deaktivieren | Löschen | Bearbeiten // Tisch verlängern |
-      $('.acp-settings-buttons').append("<button id='bt-eingetroffen'><i class='fas fa-check'></i> Eingetroffen</button><button id='bt-freigeben'><i class='fas fa-unlock'></i> Wieder freigeben</button><button id='bt-abgesagt'><i class='fas fa-user-slash'></i> Abgesagt</button><button id='bt-no-show'><i class='fas fa-user-times'></i> No-Show</button>");
-
-      $('.acp-bottom').append("<ul class='acp-bottom-nav'><li class='acp-bottom-nav-current'>Reservierung</li><li>Haushalt</li></ul>");
-      $('.acp-bottom').append("<div class='acp-bottom-content'></div>");
-
-      var str = "'" + id + "'";
-			$('.acp-bottom-content').append('<div id="acp-bottom-reservierung"></div>');
-
-      $('#acp-bottom-reservierung').append('<div id="acp-table"><img src="'+src+'"></div>');
-      $('#acp-bottom-reservierung').append('<div id="acp-bottom-reservierung-inputs"></div>');
-      $('#acp-bottom-reservierung-inputs').append('<input type="hidden" id="acpReserveID">');
-			$('#acp-bottom-reservierung-inputs').append('<label id="acpTimeLabel">Reservieren ab <input type="time" value="17:00" class="setting" id="acpInputTime" min="17:00" max="21:00"></label>');
-      $('#acp-bottom-reservierung-inputs').append('<label id="acpDateLabel">Datum auswählen <input type="date" id="acpInputDate" onChange="getReservierungenACP('+str+')"></label>');
-      $('#acp-bottom-reservierung-inputs').append('<label id="acpDurationLabel">Dauer auswählen <select class="setting" id="acpInputDuration"><option value="1">2:30h</option><option value="2">Ganztags</option></select></label>');
-			$('#acp-bottom-reservierung-inputs').append('<label id="acpAmountLabel">Anzahl <input type="text" class="setting" id="acpInputAmount" placeholder="z.B. 10"></label>');
-      document.querySelector("#acpInputDate").valueAsDate = new Date();
-
-      getReservierungenACP(id);
-
-      $('.acp-bottom-content').append('<div id="acp-bottom-haushalt"></div>');
-
-      $('#acp-bottom-haushalt').append('<div class="acp-bottom-haushalt-container">');
-      $('.acp-bottom-haushalt-container').append('<select size="3" id="acp-bottom-haushalt-select"></select>');
-      var hcount = 1;
-      do {
-        $('.acp-bottom-haushalt-container select').append('<option value="'+hcount+'">'+hcount+'</option>');
-        hcount++;
-      } while (hcount <= 20);
-
-      for (var i = 0; i < 20; i++) {
-        $('.acp-bottom-haushalt-container').append('<div class="right-inputs-hh'+(i+1)+' hh">');
-        $('.right-inputs-hh'+(i+1)).append('<h3>Haushalt 1</h3>');
-        $('.right-inputs-hh'+(i+1)).append('<input type="hidden" class="clientID">');
-        var t = "'clientVorname'";
-        $('.right-inputs-hh'+(i+1)).append('<input type="text" class="clientVorname" onkeyup="verifyInput('+t+')" placeholder="Vorname">');
-        t = "'clientName'";
-        $('.right-inputs-hh'+(i+1)).append('<input type="text" class="clientName" onkeyup="verifyInput('+t+')" placeholder="Name">');
-        t = "'clientMail'";
-        $('.right-inputs-hh'+(i+1)).append('<input type="text" class="clientMail" onkeyup="verifyInput('+t+')" placeholder="E-Mail">');
-        t = "'clientAdresse'";
-        $('.right-inputs-hh'+(i+1)).append('<input type="text" class="clientAdresse" onkeyup="verifyInput('+t+')" placeholder="Adresse">');
-        t = "'clientTNR'";
-        $('.right-inputs-hh'+(i+1)).append('<input type="text" class="clientTNR" onkeyup="verifyInput('+t+')" placeholder="TNR">');
-        $('.right-inputs-hh'+(i+1)).css("display","none");
-      }
-      $('.right-inputs-hh1').css("display","block");
-
-      // Damit Tisch bearbeitet werden kann. Freigabe für 5/15/30 Minuten, damit Haushalte eingetragen werden können
-      // Link wird in E-Mail eingebunden für Bearbeitung und muss vor Bearbeitung vom Personal freigeschaltet werden
-      //$('.acp-bottom-content').append('<div id="acp-bottom-freigabe"></div>');
-      //$('#acp-bottom-freigabe').append('<img src="'+src+'">');
-      //$('#acp-bottom-freigabe').append('<div class="freigabe-settings"></div>');
-      //$('.freigabe-settings').append('<select><option value="1">5 Minuten</option><option value="2">10 Minuten</option><option value="3">30 Minuten</option></select>');
-      //$('.freigabe-settings').append('');
 
 
 
-			var tID = "'"+id+"'";
-			$('#viewAdminTable').append('<div class="acp-submit-container"></div>');
-			$('.acp-submit-container').append('<input type="button" onClick="tableClose()" id="acpClose" value="Schließen"><input type="submit" id="acpSubmit" onClick="acpSubmit('+tID+')" value="Erstellen">');
-
-      $('#container-information').css("max-width","60%");
-      $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
-			$('#viewAdminTable').css("display", "block");
-		} else {
-			submitLogoff();
-		}
-	});
-  })();
-}*/
 
 function getTableACP(id) {
   $.ajax({
@@ -540,7 +457,7 @@ function sendReserve(tID) {
     var inputs = new Array();
     var haushalt = new Array();
     const amount = $('#amount').val(); if(r(amount)){ inputs[0] = amount; }
-    const date = $('#timeDate').val(); if(r(date)){ inputs[1] = date; }
+    const date = $('#timeDate').val(); if(r(date) && date >= getToday()){ inputs[1] = date; }
     const time = $('#timeFrom').val(); if(r(time)){ inputs[2] = time; }
     const duration = $('#timeDuration').val(); if(r(duration)){ inputs[3] = duration; }
     inputs[4] = tID;
@@ -588,6 +505,12 @@ function submitLogin(){
 function submitLogoff() {
   setCookie("rSession","",-1);
   location.reload();
+}
+
+function getToday() {
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0'); var mm = String(today.getMonth() + 1).padStart(2, '0'); var yyyy = today.getFullYear();
+  return dd + "." + mm + "." + yyyy;
 }
 
 // regex t=text | r=regex
