@@ -195,20 +195,23 @@ function viewTable(id) {
       $('.form-table-left').append("<div class='form-table-left-inputs'></div>");
 
       var options = ""; for (var i = parseInt(d['tableMin']); i <= parseInt(d['tableMax']); i++) { options = options + "<option value='"+i+"'>"+i+"</option>";}
-
       $('.form-table-left-inputs').append('<select id="amount">'+options+'</select></div>');
       $('.form-table-left-inputs').append('<input type="date" id="timeDate" onChange="checkTimeFrom('+tID+')">');
-      $('.form-table-left-inputs').append('<input type="time" id="timeFrom" list="timelist" value="17:00" onChange="checkTimeFrom('+tID+')" min="17:00" step="900">');
-      $('.form-table-left-inputs').append('<select id="timeDuration" onChange="checkTimeFrom('+tID+')"><option value="1">2:30h</option><option value="2">Bis 22 Uhr</option></select>');
-      //document.querySelector("#timeDate").valueAsDate = new Date();
-      //setTimeout(function(){ getReservierungen(d['tableID'], $('#timeDate').val()); }, 100);
 
-      $('.form-table-left').append('<datalist id="timelist"></datalist>');
+      $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+        $('.form-table-left-inputs').append('<select id="timeBlock"></select>');
+        data.forEach((item, i) => {
+          time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
+          $('#timeBlock').append('<option value="'+item["id"]+'">'+time+' Uhr</option>');
+        });
+      });
+
+      /*$('.form-table-left').append('<datalist id="timelist"></datalist>');
       $('#timelist').append('<option value="17:00"><option value="17:15"><option value="17:30"><option value="17:45">');
       $('#timelist').append('<option value="18:00"><option value="18:15"><option value="18:30"><option value="18:45">');
       $('#timelist').append('<option value="19:00"><option value="19:15"><option value="19:30"><option value="19:45">');
       $('#timelist').append('<option value="20:00"><option value="20:15"><option value="20:30"><option value="20:45">');
-      $('#timelist').append('<option value="21:00"><option value="21:15"><option value="21:30">');
+      $('#timelist').append('<option value="21:00"><option value="21:15"><option value="21:30">');*/
 
       $('.form-table-right').append("<h2>Registrierung zwecks Corona</h2>");
       $('.form-table-right').append('<p>Damit ein Tisch bei uns reserviert werden kann, müssen wir den Anforderungen entsprechend die Daten einer Person bei uns abspeichern.<br>Bitte Denken Sie daran, dass bei mehreren Haushalten an einem Tisch, <b>pro Haushalt eine Kontakperson</b> registriert werden muss.<br>Die Daten werden <a href="#">Datenschutzkonform</a> abgespeichert</p');
@@ -547,9 +550,8 @@ function sendReserve(tID) {
     var haushalt = new Array();
     const amount = $('#amount').val(); if(r(amount)){ inputs[0] = amount; }
     const date = $('#timeDate').val(); if(r(date) && date >= getToday()){ inputs[1] = date; }
-    const time = $('#timeFrom').val(); if(r(time)){ inputs[2] = time; }
-    const duration = $('#timeDuration').val(); if(r(duration)){ inputs[3] = duration; }
-    inputs[4] = tID;
+    const timeBlock = $('#timeBlock').val(); if(r(timeBlock)){ inputs[2] = timeBlock; }
+    inputs[3] = tID;
     for (var i = 1; i < 6; i++) {
       const cv = $('.right-inputs-hh'+i+' .clientVorname').val();
       const cn = $('.right-inputs-hh'+i+' .clientName').val();
@@ -571,7 +573,7 @@ function sendReserve(tID) {
           if(result == "1"){
             tableClose();
             //table, time, date, duration, amount
-            viewReserved(tID,time,date,duration,amount);
+            viewReserved(tID,time,date,timeBlock,amount);
           }
         }
       });

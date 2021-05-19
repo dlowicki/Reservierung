@@ -58,10 +58,9 @@ if(isset($_POST['loadAmpel'])){
 if(isset($_POST['createReserve'])){
   $daten = $_POST['createReserve'];
   $amount=$daten[0];
-  $date=$daten[1];
-  $time = $daten[2];
-  $duration = $daten[3];
-  $table = $daten[4];
+  $date = $daten[1];
+  $block = $daten[2];
+  $table = $daten[3];
 
   $hhExist = false;
   for ($i=0; $i < 5; $i++) { // Schleife, die 5 mal durchlaufen wird
@@ -77,21 +76,12 @@ if(isset($_POST['createReserve'])){
   // $hhExist == false, kein Haushalt wurde eingetragen
   if($hhExist == false){ echo "0"; return; }
 
-  switch($duration){
-    case "1":
-      $duration = "2:30";
-      break;
-    case "2":
-      $duration = "gz";
-      break;
-  }
-
   // checkReserveTime = Überprüfe ob Überschneidung mit vorhandener Reservierung
-  if(checkReserveTime($time,$duration,$date,$table)){
+  if(checkReserveTime($block,$date,$table)){
 	  $clientID = uniqid();
     $rCookie = md5(uniqid(rand (),true));
-    // $tID,$cID,$rDate,$rStart,$rEnd,$rD,$rA
-    $rID = reserveTable($table,$clientID,$date,$time . ":00",$duration,$amount,$rCookie);
+    // $tID,$cID,$rDate,$rTime,$rD,$rA
+    $rID = reserveTable($table,$clientID,$date,getTimeBlockTime($block),$block,$amount,$rCookie);
     if($rID != false){  // $rID wurde erfolgreich erstellt --> Reservierung eingetragen
       $date = echoDateTime(); $count = 0; $con = connect();
       foreach ($daten[5] as $key => $value) { // Für jeden Datensatz (Haushalt)
@@ -198,7 +188,7 @@ if(isset($_POST['qrCode'])){
 if(isset($_POST['changeReserve'])){
   $id = $_POST['changeReserve'];
   $con = connect();
-  $query = $con->query("SELECT reserveID, tableID, reserveStart, reserveEnd FROM rReserve WHERE reservecookie = '$id'");
+  $query = $con->query("SELECT reserveID, tableID, reserveTime FROM rReserve WHERE reservecookie = '$id'");
   $data = array();
 
   if($query){
@@ -206,8 +196,7 @@ if(isset($_POST['changeReserve'])){
     foreach ($query as $key) {
       $data[$r]['reserveID'] = $key['reserveID'];
       $data[$r]['tableID'] = $key['tableID'];
-      $data[$r]['reserveStart'] = $key['reserveStart'];
-      $data[$r]['reserveEnd'] = $key['reserveEnd'];
+      $data[$r]['reserveTime'] = $key['reserveTime'];
       $data[$r]['clients'] = getClientsFromReserve($key['reserveID']);
     }
     echo json_encode($data);
@@ -295,7 +284,7 @@ if(isset($_POST['setTableActive']) && isset($_POST['value'])){
 
 function getReserveData($id) {
   $con = connect();
-  $statement = "SELECT tableID, clientID, reserveDate, reserveStart, reserveEnd, reserveDuration, reserveAmount FROM rReserve WHERE reserveID = '$id'";
+  $statement = "SELECT tableID, clientID, reserveDate, reserveTime, reserveBlock, reserveAmount FROM rReserve WHERE reserveID = '$id'";
   $query = $con -> query($statement);
   $data = array();
   if($query){
@@ -303,9 +292,8 @@ function getReserveData($id) {
       $data['tableID'] = $key['tableID'];
       $data['clientID'] = $key['clientID'];
       $data['reserveDate'] = $key['reserveDate'];
-      $data['reserveStart'] = $key['reserveStart'];
-      $data['reserveEnd'] = $key['reserveEnd'];
-      $data['reserveDuration'] = $key['reserveDuration'];
+      $data['reserveTime'] = $key['reserveTime'];
+      $data['reserveBlock'] = $key['reserveBlock'];
       $data['reserveAmount'] = $key['reserveAmount'];
     }
     return $data;
@@ -352,10 +340,9 @@ function connect() {
   return $conn;
 }
 
-function reserveTable($tID,$cID,$rDate,$rS,$rD,$rA,$rC) {
+function reserveTable($tID,$cID,$rDate,$rT,$rB,$rA,$rC) {
   $con = connect();
-  $rE = createReserveEnd($rDate . " " . $rS, $rD);
-  $p = "INSERT INTO rReserve (reserveID, tableID, clientID, reserveDate, reserveStart, reserveEnd, reserveDuration, reserveAmount, reserveCookie, reserveState) VALUES (null,'$tID','$cID','$rDate','$rS','$rE','$rD','$rA','$rC','0')";
+  $p = "INSERT INTO rReserve (reserveID, tableID, clientID, reserveDate, reserveTime, reserveBlock, reserveAmount, reserveCookie, reserveState) VALUES (null,'$tID','$cID','$rDate','$rT','$rB','$rA','$rC','0')";
   $query = $con->query($p) or die();
   if($query === TRUE){
     $p2="SELECT reserveID FROM rReserve ORDER BY reserveID DESC LIMIT 1";
@@ -381,7 +368,25 @@ function createClient($cID,$rID,$vorname,$name,$mail,$tnr,$cf) {
   return false;
 }
 
-
+function getTimeBlockTime($id) {
+  $con = connect();
+  $query= $con->query("SELECT timeStart, timeEnd FROM rTime WHERE timeActive = 1 AND timeID = $id");
+  if($query){
+    foreach ($query as $key) { return $key['timeStart'] . " - " . $key['timeEnd']; }
+  }
+  return false;
+}
+function getTimeBlocks() {
+  $con = connect();
+  $query= $con->query('SELECT timeStart, timeEnd, timeActive FROM rTime');
+  if($query){
+    $arr = array(); $r=0;
+    foreach ($query as $key) {
+      $arr[$r] = $key['timeStart']; $arr[$r] = $key['timeEnd']; $r++;
+    }
+  }
+  return false;
+}
 
 function getTableData() {
   $date = echoDate();
@@ -400,7 +405,7 @@ function getTableData() {
       $data[$c]['tableCode'] = $table['tableCode']; $data[$c]['tableActive'] = $table['tableActive'];
       foreach ($query2 as $reserve) {
         if($reserve['tableID'] == $table['tableID']){
-          if(checkReserveTime($reserve['reserveTime'],$reserve['reserveBlock'],$reserve['reserveDate'],$table['tableID']) == false){
+          if(checkReserveTime($reserve['reserveBlock'],$reserve['reserveDate'],$table['tableID']) == false){
             // Überschneidung ist aktiv
             $data[$c]['tableActive'] = "closed";
           }
@@ -463,7 +468,7 @@ function getTableDataID($id) {
 
 function getTableReserveTime($t, $date) {
   $con = connect();
-  $p = "SELECT rReserve.reserveID,rReserve.reserveDate,rReserve.reserveStart,rReserve.reserveEnd,reserveBlock,rReserve.reserveState,rReserve.clientID,clientConfirm,clientName FROM rReserve INNER JOIN rClient ON rReserve.clientID=rClient.clientID WHERE rReserve.tableID = '$t' AND reserveDate = '$date' ORDER BY reserveStart ASC";
+  $p = "SELECT rReserve.reserveID,rReserve.reserveDate,rReserve.Time,reserveBlock,rReserve.reserveState,rReserve.clientID,clientConfirm,clientName FROM rReserve INNER JOIN rClient ON rReserve.clientID=rClient.clientID WHERE rReserve.tableID = '$t' AND reserveDate = '$date' ORDER BY reserveStart ASC";
   $query = $con -> query($p) or die();
   $data = array();
 
@@ -520,52 +525,30 @@ function r($str){
   return false;
 }*/
 
-echo checkReserveTime(0, '2021-05-18', 9);
+
 // Überprüfe ob Überschneidung mit Reservierung
 function checkReserveTime($block,$date,$tableID) {
   $con = connect();
-  $p = "SELECT reserveBlock FROM rReserve WHERE reserveDate LIKE '$date' AND tableID = $tableID AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)";
+  $p = "SELECT reserveBlock FROM rReserve WHERE reserveDate LIKE '2021-05-18' AND tableID = $tableID AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)";
   $query = $con->query($p) or die();
 
   if($query){
     $arr = array(); $r=0;
     foreach ($query as $key) {
       $arr[$r] = $key['reserveBlock'];
-      echo $key['reserveTime'];
       $r++;
     }
-    print_r($arr);
     // Wenn beide Blöcke reserviert sind
     if(sizeof($arr) == 2){ return false; }
 
-    for ($i = 0; $i <= sizeof($arr); $i++) {
-      // Block in Datenbank ist gleich Block ausgewählt
-      if($arr[$i]['reserveBlock'] == $block){ echo "abc"; return; }
+    for ($i = 0; $i < sizeof($arr); $i++) {
+      // Block in Datenbank ist gleich Block ausgewählt, heißt Block nicht frei
+      if($arr[$i] == $block){ return false; }
     }
+    return true;
   }
   return true;
 }
 
-function createReserveEnd($rStart, $rDuration) {
-  $time = strtotime($rStart);
-  if($rDuration == "2:30"){
-    $uH = date('H', $time) +2; $uM = date('i', $time) +30;
-    if($uM >= 60){
-      $uH = date('H', $time) + 3; $uM = date('i', $time) + 30 - 60; if(strlen($uM)==1){ $uM = "0".$uM; }
-    }
-    return echoDate() . " " . $uH . ":" . $uM . ":00";
-  } else {
-    return echoDate() . " 22:00:00";
-  }
-  return false;
-}
 
-function updatedTime($t) {
-  $time = strtotime($t); $uH = date('H', $time) + 2; $uM = date('i', $time) + 30;
-  if($uM >= 60){
-    $uH = date('H', $time) + 3; $uM = date('i', $time) + 30 - 60; if(strlen($uM)==1){ $uM = "0".$uM; }
-  }
-  // uM = up Minutes uH = up Hours
-  return array('uM' => $uM, 'uH' => $uH, 'hour' => date('H', $time), 'minute' => date('i', $time));
-}
 ?>
