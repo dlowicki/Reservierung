@@ -402,6 +402,9 @@ function getTableData($date) {
   $query = $con -> query($p) or die();
   $data = array();
 
+  $dateEnd = date('Y-m-d', strtotime('+6 week'));
+  if($date > $dateEnd){ return false; }
+
   if($query){
     $c = 0;
     $ampelTables = loadAmpelTables($date);
@@ -421,6 +424,7 @@ function getTableData($date) {
   }
   return false;
 }
+
 
 
 function getTableDataID($id) {

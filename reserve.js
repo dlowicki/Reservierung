@@ -126,7 +126,7 @@ function viewCalendar(){
 $(document).on('click','#calendar-confirm',function(){
   const date = $('#calendar-date').val(); const time = $('#calendar-time').val();
   var today = new Date().toISOString().slice(0, 10);
-  if(date.length == 10 && time.length >= 1 && date > today){
+  if(date.length == 10 && time.length >= 1 && date > today && date <= todayPlusSixWeeks()){
     localStorage.setItem('rCalendar',date+';'+time);
     (async() => {
       const uc = await loadTables(localStorage.getItem('rCalendar').split(';')[0]).then(function(result){
@@ -719,4 +719,9 @@ function getTableParameter() {
   return false;
 }
 
-function dateToSQL(d) { return new Date().toISOString().slice(0, 10); }
+function dateToSQL() { return new Date().toISOString().slice(0, 10); }
+function todayPlusSixWeeks() {
+  var today = new Date();
+  var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+(7*6));
+  return nextweek.getFullYear() + "-" + ("0" + (nextweek.getMonth() + 1)).slice(-2) + "-" + ("0" + nextweek.getDate()).slice(-2);
+}
