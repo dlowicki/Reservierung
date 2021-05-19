@@ -20,9 +20,12 @@ require_once("script/sync-admin.php");
       <div class="sidebar">
         <ul>
           <li><a href="?overview=Day<?php echo "&day=".date("Y-m-d"); ?>">Übersicht</a></li>
+          <li><a href="?analyse=HubRaum">Analyse</a></li>
           <li><a href="?noShow=HubRaum">NoShow Liste</a></li>
+          <li><a href="?abweichendeAnzahl=HubRaum">Black Liste</a></li>
           <li><a href="?reservierungen=HubRaum">Reservierungen</a></li>
-          <li><a href="index.php">Zurück</a></li>
+          <li><a href="?tische=HubRaum">Tische</a></li>
+          <li><a href="index.php">Verlassen</a></li>
         </ul>
       </div>
       <div class="main">

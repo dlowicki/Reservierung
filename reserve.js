@@ -15,29 +15,10 @@ $(document).ready(function(){
     if(dateToSQL() > rc[0] && rc[0] != 'admin'){ viewCalendar(); }
   }
 
-  /*$.ajax({
-    url: "sync.php",
-    method: "POST",
-    data: {loadTables: "1"},
-    success: function(result) {
-      var d = JSON.parse(result);
-      var ampel = await loadAmpel(localStorage.getItem('rCalendar').split(';')[0]);
-      console.log(ampel);
-      for (var i = 0; i < d.length; i++) {
-        var h3 = "#"+d[i]['tableID']+"-h3"; var img = "#"+d[i]['tableID']+"-img";
-        $(h3).text(d[i]['tableID']);
-        $(img).attr("src","img/"+d[i]['tableActive']+"/t-"+d[i]['tableType']+"-transparent.png");
-      }
-    }
-  });*/
-
+  // Lade Tische mit Ampelsystem
   (async() => { await loadTables(localStorage.getItem('rCalendar').split(';')[0]); })();
-
-  (async() => {
-  	const uc = await userCheck().then(function(result){
-  		if(result == true){ $('.icon-user').css("color","green"); }
-  	});
-  })();
+  // Überprüfe Login
+  (async() => { await userCheck().then(function(result){ if(result == true){ $('.icon-user').css("color","green"); } }); })();
 
 
   $('.table').click(function(event){
@@ -92,8 +73,6 @@ async function loadTables(date) {
     var data = "";
     result =   $.ajax({ url: "sync.php", method: "POST", data: {loadTables: date}, success: function(result) { data = JSON.parse(result); } });
     await new Promise((resolve, reject) => setTimeout(resolve, 100));
-    var ampel = loadAmpel(localStorage.getItem('rCalendar').split(';')[0]);
-    console.log(ampel);
     for (var i = 0; i < data.length; i++) {
       var h3 = "#"+data[i]['tableID']+"-h3"; var img = "#"+data[i]['tableID']+"-img";
       $(h3).text(data[i]['tableID']);
@@ -166,23 +145,6 @@ $(document).on('click','#calendar-confirm',function(){
 });
 
 $(document).on('click','.fa-calendar-alt',function(){ viewCalendar(); });
-
-
-
-
-
-function loadAmpel(date) {
-  $.ajax({
-    url: "sync.php",
-    method: "POST",
-    data: { loadAmpel: date},
-    success: function(result) {
-      if(result != false){ console.log(result); return result; }
-    }
-  });
-}
-
-
 
 
 
