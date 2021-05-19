@@ -15,19 +15,23 @@ $(document).ready(function(){
     if(dateToSQL() > rc[0] && rc[0] != 'admin'){ viewCalendar(); }
   }
 
-  $.ajax({
+  /*$.ajax({
     url: "sync.php",
     method: "POST",
     data: {loadTables: "1"},
     success: function(result) {
       var d = JSON.parse(result);
+      var ampel = await loadAmpel(localStorage.getItem('rCalendar').split(';')[0]);
+      console.log(ampel);
       for (var i = 0; i < d.length; i++) {
         var h3 = "#"+d[i]['tableID']+"-h3"; var img = "#"+d[i]['tableID']+"-img";
         $(h3).text(d[i]['tableID']);
         $(img).attr("src","img/"+d[i]['tableActive']+"/t-"+d[i]['tableType']+"-transparent.png");
       }
     }
-  });
+  });*/
+
+  (async() => { await loadTables(localStorage.getItem('rCalendar').split(';')[0]); })();
 
   (async() => {
   	const uc = await userCheck().then(function(result){
@@ -82,6 +86,25 @@ async function userCheck() {
 
 
 
+async function loadTables(date) {
+  let result;
+  try {
+    var data = "";
+    result =   $.ajax({ url: "sync.php", method: "POST", data: {loadTables: date}, success: function(result) { data = JSON.parse(result); } });
+    await new Promise((resolve, reject) => setTimeout(resolve, 100));
+    var ampel = loadAmpel(localStorage.getItem('rCalendar').split(';')[0]);
+    console.log(ampel);
+    for (var i = 0; i < data.length; i++) {
+      var h3 = "#"+data[i]['tableID']+"-h3"; var img = "#"+data[i]['tableID']+"-img";
+      $(h3).text(data[i]['tableID']);
+      $(img).attr("src","img/"+data[i]['tableActive']+"/t-"+data[i]['tableType']+"-transparent.png");
+    }
+    return true;
+  } catch (e) {
+    console.log("Error loadTables: " + e);
+  }
+}
+
 
 
 
@@ -93,7 +116,7 @@ function viewCalendar(){
     var rc = localStorage.getItem('rCalendar').split(';');
     $('.calendar-inputs').append('<input type="date" id="calendar-date" value="'+rc[0]+'">');
     $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+    $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
       data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
           if(item['id'] == rc[1]){
@@ -107,7 +130,7 @@ function viewCalendar(){
     $('.calendar-inputs').append('<input type="date" id="calendar-date">');
     document.getElementById('calendar-date').valueAsDate = new Date();
     $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+    $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
       data.forEach((item, i) => {
         time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
         $('.calendar-inputs select').append('<option value="'+item["id"]+'">'+time+' Uhr</option>');
@@ -124,15 +147,22 @@ function viewCalendar(){
 $(document).on('click','#calendar-confirm',function(){
   const date = $('#calendar-date').val(); const time = $('#calendar-time').val();
   var today = new Date().toISOString().slice(0, 10);
-  if(date.length == 10 && time.length >= 1 && date >= today){
+  if(date.length == 10 && time.length >= 1 && date > today){
     localStorage.setItem('rCalendar',date+';'+time);
-    $('.container-reserve').css("background-color","white");
-    $('#viewCalendar').css('display','none');
-    $('#viewCalendar').empty();
+    (async() => {
+      const uc = await loadTables(localStorage.getItem('rCalendar').split(';')[0]).then(function(result){
+        if(result == true){
+          $('.container-reserve').css("background-color","white");
+          $('#viewCalendar').css('display','none');
+          $('#viewCalendar').empty();
+        }
+      });
+    })();
   } else {
     $('#calendar-date').css('background-color','#e63946');
     $('#calendar-time').css('background-color','#e63946');
   }
+
 });
 
 $(document).on('click','.fa-calendar-alt',function(){ viewCalendar(); });
@@ -141,13 +171,13 @@ $(document).on('click','.fa-calendar-alt',function(){ viewCalendar(); });
 
 
 
-function loadAmpel(date,timeBlock) {
+function loadAmpel(date) {
   $.ajax({
     url: "sync.php",
     method: "POST",
-    data: { loadAmpel: date+";"+timeBlock},
+    data: { loadAmpel: date},
     success: function(result) {
-      console.log(result);
+      if(result != false){ console.log(result); return result; }
     }
   });
 }
@@ -198,7 +228,7 @@ function viewTable(id) {
       $('.form-table-left-inputs').append('<select id="amount">'+options+'</select></div>');
       $('.form-table-left-inputs').append('<input type="date" id="timeDate" onChange="checkTimeFrom('+tID+')">');
 
-      $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+      $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
         $('.form-table-left-inputs').append('<select id="timeBlock"></select>');
         data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);

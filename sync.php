@@ -1,6 +1,6 @@
 <?php
 if(isset($_POST['loadTables'])){
-  $data = getTableData();
+  $data = getTableData($_POST['loadTables']);
   echo json_encode($data);
   return;
 }
@@ -30,19 +30,25 @@ if(isset($_POST['getOverview']) && isset($_POST['oDate'])){
 }
 
 if(isset($_POST['loadAmpel'])){
-  $data = explode(';',$_POST['loadAmpel']); $date = $data[0];
+  $date = $_POST['loadAmpel'];
+  echo json_encode(loadAmpelTables($date));
+}
+
+function loadAmpelTables($date) {
   $con = connect();
-  $query = $con->query("SELECT reserveID, tableID, reserveBlock FROM rReserve WHERE reserveDate = '$date' AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)");
+  $query = $con->query("SELECT tableID, reserveBlock FROM rReserve WHERE reserveDate LIKE '$date' AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)");
   if($query){
-    $r=0; $arr=array();
+    $arr=array();
     foreach ($query as $key) {
-      $key['reserveID'] = $arr[$r]['reserveID'];
-      $key['tableID'] = $arr[$r]['tableID'];
-      $key['reserveBlock'] = $arr[$r]['reserveBlock'];
+      if(array_key_exists($key['tableID'], $arr) == false){
+        $arr[$key['tableID']] = 1;
+      } else {
+        $arr[$key['tableID']] = 2;
+      }
     }
-
-
+    return $arr;
   }
+  return false;
 }
 
 // Daten von Reservierung, bei die auch stattfinden zurzeit
@@ -388,37 +394,27 @@ function getTimeBlocks() {
   return false;
 }
 
-function getTableData() {
-  $date = echoDate();
+
+
+function getTableData($date) {
   $con = connect();
   $p = "SELECT * FROM rTable";
-  $p2 = "SELECT tableID,reserveDate,reserveTime,reserveBlock,reserveState FROM rReserve WHERE reserveDate LIKE '$date'";
   $query = $con -> query($p) or die();
-  $query2 = $con -> query($p2) or die();
   $data = array();
 
   if($query){
     $c = 0;
+    $ampelTables = loadAmpelTables($date);
     foreach ($query as $table) {
       $data[$c]['tableID'] = $table['tableID']; $data[$c]['tableType'] = $table['tableType'];
       $data[$c]['tableMax'] = $table['tableMax']; $data[$c]['tableMin'] = $table['tableMin'];
       $data[$c]['tableCode'] = $table['tableCode']; $data[$c]['tableActive'] = $table['tableActive'];
-      foreach ($query2 as $reserve) {
-        if($reserve['tableID'] == $table['tableID']){
-          if(checkReserveTime($reserve['reserveBlock'],$reserve['reserveDate'],$table['tableID']) == false){
-            // Überschneidung ist aktiv
-            $data[$c]['tableActive'] = "closed";
-          }
-
-          /*$dbTime = strtotime($row2['reserveTime']); $uH = date('H', $dbTime) + 2; $uM = date('i', $dbTime) + 30;
-          if($uM >= 60){ $uH = date('H', $dbTime) + 3; $uM = date('i', $dbTime) + 30 - 60;
-            if(strlen($uM)==1){ $uM = "0".$uM; } }
-          if(echoTime() > date('H', $dbTime).":".date('i', $dbTime) && echoTime() < $uH.":".$uM){
-            $data[$c]['tableReserved'] = "closed";
-          }*/
-
-        }
+      // Wenn tableID in Array von ampelTables enthalten ist, dann sind Reservierungen für Tisch vorhanden
+      if(array_key_exists($table['tableID'], $ampelTables)){
+        // Anzahl von Reservierungen sind größer gleich 2
+        if($ampelTables[$table['tableID']] >= 2){ $data[$c]['tableActive'] = "closed"; }
       }
+
       $c++;
     }
     return $data;
@@ -431,7 +427,7 @@ function getTableDataID($id) {
   $date = echoDate();
   $con = connect();
   $p = "SELECT * FROM rTable WHERE tableID = '$id'";
-  $p2 = "SELECT tableID, reserveDate, reserveTime, reserveBlock FROM rReserve WHERE tableID = '$id' AND reserveDate LIKE '$date'";
+  $p2 = "SELECT tableID, reserveDate, reserveTime, reserveBlock, reserveState FROM rReserve WHERE tableID = '$id' AND reserveDate LIKE '$date'";
   $query = $con -> query($p) or die();
   $query2 = $con -> query($p2) or die();
   $data = array();
