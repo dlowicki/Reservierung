@@ -43,8 +43,8 @@ if(isset($_POST['createReserve'])){
     if(array_key_exists($i,$daten[5])==false){ continue; } // Wenn $i in array nicht existiert
     //if(strlen($daten[5][$i]) > 10){}
     $exp = explode(";",$daten[5][$i]);
-    if(count($exp) == 5){  // Count gibt Wert 5 zurück, alle Felder ausgefüllt
-      if(strlen($exp[0])>0 && strlen($exp[1])>0 && strlen($exp[2])>0 && strlen($exp[3])>0 && strlen($exp[4])>0){
+    if(count($exp) == 4){  // Count gibt Wert 5 zurück, alle Felder ausgefüllt
+      if(strlen($exp[0])>0 && strlen($exp[1])>0 && strlen($exp[2])>0 && strlen($exp[3])>0){
         $hhExist = true;
       }
     }
@@ -74,9 +74,9 @@ if(isset($_POST['createReserve'])){
         if($value){ // Wenn Wert von Haushalt existiert
           $exp = explode(";",$value);
           $cf = uniqid()."".uniqid();
-          $vorname = $exp[0]; $name = $exp[1]; $mail = $exp[2]; $adresse = $exp[3]; $tnr = $exp[4];
+          $vorname = $exp[0]; $name = $exp[1]; $mail = $exp[2]; $tnr = $exp[3];
           // $cID,$rID,$tID,$vorname,$name,$mail,$adresse,$tnr,$cf
-          $sqlStatement = "INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientAdresse, clientTNR, clientDate, clientConfirm) VALUES ('$clientID','$rID','$vorname','$name','$mail','$adresse','$tnr','$date','$cf');";
+          $sqlStatement = "INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientTNR, clientDate, clientConfirm) VALUES ('$clientID','$rID','$vorname','$name','$mail','$tnr','$date','$cf');";
           $query = $con -> query($sqlStatement) or die();
           if($query !== TRUE){ echo "0"; return; }
         }
@@ -201,18 +201,18 @@ if(isset($_POST['crSubmit']) && isset($_POST['crID'])){
     if(is_string($value)){ // Wenn value == string
       $inside = false; // Boolean, falls ID in $base
       $exp = explode(";",$value); // Aufteilen bei Semikolon
-      $vorname = $exp[0]; $name = $exp[1]; $mail = $exp[2]; $adresse = $exp[3]; $tnr = $exp[4]; $cID = $exp[5];
+      $vorname = $exp[0]; $name = $exp[1]; $mail = $exp[2]; $tnr = $exp[3]; $cID = $exp[4];
       foreach ($base as $key2) { // Für jeden Client in Reservierung
         if($key2['clientID'] == $cID){ // Wenn ClientID von jetzigem Client == $cID
           $inside = true; // Dann ist der Client schon in Datenbank
           // Wenn Vorname und Name gesetzt sind
-          acpUpdateClient($cID,$rID,$vorname,$name,$mail,$adresse,$tnr,$dateTime,uniqid());
+          acpUpdateClient($cID,$rID,$vorname,$name,$mail,$tnr,$dateTime,uniqid());
         }
       }
       if($inside == false){ // Wenn Client nicht in Datenbank --> hinzufügen
         $cf = uniqid();
         $con = connect(); // Baue Verbindung auf
-        $sqlStatement = "INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientAdresse, clientTNR, clientDate, clientConfirm) VALUES ('$cID','$rID','$vorname','$name','$mail','$adresse','$tnr','$dateTime','$cf');";
+        $sqlStatement = "INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientTNR, clientDate, clientConfirm) VALUES ('$cID','$rID','$vorname','$name','$mail','$tnr','$dateTime','$cf');";
         $query = $con -> query($sqlStatement) or die(); // Führe Query aus
         if($query === FALSE){ // Wenn INSERT Fehler hat
           echo "0";
@@ -290,7 +290,7 @@ function getReserveData($id) {
 
 function getClientsFromReserve($id) {
   $con = connect();
-  $statement = "SELECT clientID,clientVorname,clientName,clientMail,clientAdresse,clientTNR FROM rClient WHERE reserveID = '$id'";
+  $statement = "SELECT clientID,clientVorname,clientName,clientMail,clientTNR FROM rClient WHERE reserveID = '$id'";
   $query = $con -> query($statement);
   $data = array();
 
@@ -301,7 +301,6 @@ function getClientsFromReserve($id) {
       $data[$r]['clientVorname'] = $key['clientVorname'];
       $data[$r]['clientName'] = $key['clientName'];
       $data[$r]['clientMail'] = $key['clientMail'];
-      $data[$r]['clientAdresse'] = $key['clientAdresse'];
       $data[$r]['clientTNR'] = $key['clientTNR'];
       $r++;
     }
@@ -346,10 +345,10 @@ function reserveTable($tID,$cID,$rDate,$rS,$rD,$rA,$rC) {
   return false;
 }
 
-function createClient($cID,$rID,$vorname,$name,$mail,$adresse,$tnr,$cf) {
+function createClient($cID,$rID,$vorname,$name,$mail,$tnr,$cf) {
   $con = connect();
   $date = echoDateTime();
-  $p="INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientAdresse, clientTNR, clientDate, clientConfirm) VALUES ('$cID','$rID','$vorname','$name','$mail','$adresse','$tnr','$date','$cf')";
+  $p="INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientTNR, clientDate, clientConfirm) VALUES ('$cID','$rID','$vorname','$name','$mail','$tnr','$date','$cf')";
   $query = $con -> query($p) or die();
   if($query === TRUE){
     return true;

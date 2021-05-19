@@ -159,7 +159,7 @@ function isAdmin(){
 function getReservierungData($id) {
   $db = new Overview();
   $con = $db->connectDatabase();
-  $statement = "SELECT rreserve.tableID, rreserve.clientID, reserveDate, reserveStart, reserveEnd, reserveDuration, reserveAmount, rClient.clientID, rClient.clientName, rClient.clientVorname, rClient.clientMail, rClient.clientAdresse, rClient.clientTNR, rTable.tableType,rTable.tableActive FROM rReserve INNER JOIN rClient ON rReserve.reserveID = rClient.reserveID INNER JOIN rTable ON rreserve.tableID = rtable.tableID WHERE rReserve.reserveID = '$id'";
+  $statement = "SELECT rreserve.tableID, rreserve.clientID, reserveDate, reserveStart, reserveEnd, reserveDuration, reserveAmount, rClient.clientID, rClient.clientName, rClient.clientVorname, rClient.clientMail, rClient.clientTNR, rTable.tableType,rTable.tableActive FROM rReserve INNER JOIN rClient ON rReserve.reserveID = rClient.reserveID INNER JOIN rTable ON rreserve.tableID = rtable.tableID WHERE rReserve.reserveID = '$id'";
   $query = $con->query($statement) or die();
 
   if($query){
@@ -179,7 +179,6 @@ function getReservierungData($id) {
       $data[$r]['clientName'] = $key['clientName'];
       $data[$r]['clientVorname'] = $key['clientVorname'];
       $data[$r]['clientMail'] = $key['clientMail'];
-      $data[$r]['clientAdresse'] = $key['clientAdresse'];
       $data[$r]['clientTNR'] = $key['clientTNR'];
       $r++;
     }
@@ -267,9 +266,9 @@ function updateClient($cID,$rID,$vn,$nn,$ma,$adr,$tnr,$date,$cc) {
   $db = new Overview();
   $con = $db->connectDatabase();
   if(strlen($cID)<=0){ $cID = uniqid(); }
-  $temp = "clientID,reserveID,clientVorname,clientName,clientMail,clientAdresse,clientTNR,clientDate,clientConfirm";
+  $temp = "clientID,reserveID,clientVorname,clientName,clientMail,clientTNR,clientDate,clientConfirm";
   $temp2 = "'$cID','$rID','$vn','$nn','$ma','$adr','$tnr','$date','$cc'";
-  $statement = "INSERT INTO rClient ($temp) VALUES ($temp2) ON DUPLICATE KEY UPDATE clientVorname = '$vn', clientName = '$nn', clientMail = '$ma', clientAdresse = '$adr', clientTNR='$tnr'";
+  $statement = "INSERT INTO rClient ($temp) VALUES ($temp2) ON DUPLICATE KEY UPDATE clientVorname = '$vn', clientName = '$nn', clientMail = '$ma', clientTNR='$tnr'";
   $query = $con -> query($statement);
   if($query===TRUE){
     return true;

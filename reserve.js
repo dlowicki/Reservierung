@@ -1,6 +1,6 @@
 $(document).ready(function(){
   // DEBUG
-  //viewTable(98);
+  viewTable(98);
   //viewReserved('36','17:00:00 Uhr','15-03-2021','2:30','6');
 
   // Table Parameter for QR Code
@@ -137,8 +137,6 @@ function viewTable(id) {
         $('.right-inputs-hh'+(i+1)).append('<input type="text" class="clientName" onkeyup="verifyInput('+t+')" placeholder="Name">');
         t = "'clientMail'";
         $('.right-inputs-hh'+(i+1)).append('<input type="text" class="clientMail" onkeyup="verifyInput('+t+')" placeholder="E-Mail">');
-        t = "'clientAdresse'";
-        $('.right-inputs-hh'+(i+1)).append('<input type="text" class="clientAdresse" onkeyup="verifyInput('+t+')" placeholder="Adresse">');
         t = "'clientTNR'";
         $('.right-inputs-hh'+(i+1)).append('<input type="text" class="clientTNR" onkeyup="verifyInput('+t+')" placeholder="Telefonnummer">');
         $('.right-inputs-hh'+(i+1)).css("display","none");
@@ -174,6 +172,8 @@ $(document).on("click",".right-input-nav", function(event){
 function checkTimeFrom(t) {
   $('#timeDuration').css("color","black");
   $('#timeLabel').css("color","black");
+
+
   // Reservierungen anzeigen lassen
   setTimeout(function(){ getReservierungen(t, $('#timeDate').val()); }, 100);
   var duration = $('#timeDuration').val(); // 1=2:30 2=Ganztags
@@ -465,15 +465,15 @@ function sendReserve(tID) {
       const cv = $('.right-inputs-hh'+i+' .clientVorname').val();
       const cn = $('.right-inputs-hh'+i+' .clientName').val();
       const cm = $('.right-inputs-hh'+i+' .clientMail').val();
-      const ca = $('.right-inputs-hh'+i+' .clientAdresse').val();
       const ct = $('.right-inputs-hh'+i+' .clientTNR').val();
       if(cv.length >= 1){
-        if(r(cv) == true && r(cn) == true && r(cm) == true && r(ca) == true && r(ct) == true){
-          haushalt[i-1] = cv + ";" + cn + ";" + cm + ";" + ca + ";" + ct;
+        if(r(cv) == true && r(cn) == true && r(cm) == true && r(ct) == true){
+          haushalt[i-1] = cv + ";" + cn + ";" + cm + ";" + ct;
         }
       }
     }
     inputs[5] = haushalt;
+    console.log(inputs);
     if(haushalt.length > 0){
       $.ajax({
         url: "sync.php", method: "POST", data: { createReserve: inputs },
@@ -543,11 +543,10 @@ function acpSubmit(tID) {
         const cv = $('.right-inputs-hh'+i+' .clientVorname').val();
         const cn = $('.right-inputs-hh'+i+' .clientName').val();
         const cm = $('.right-inputs-hh'+i+' .clientMail').val();
-        const ca = $('.right-inputs-hh'+i+' .clientAdresse').val();
         const ct = $('.right-inputs-hh'+i+' .clientTNR').val();
         if(cv.length >= 3){
-          if(r(cv) == true && r(cn) == true && r(cm) == true && r(ca) == true && r(ct) == true){
-            haushalt[i-1] = cv + ";" + cn + ";" + cm + ";" + ca + ";" + ct + ";" + ci;
+          if(r(cv) == true && r(cn) == true && r(cm) == true && r(ct) == true){
+            haushalt[i-1] = cv + ";" + cn + ";" + cm + ";" + ct + ";" + ci;
           }
         }
       }
