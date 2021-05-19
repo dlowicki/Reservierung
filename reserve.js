@@ -1,11 +1,19 @@
 $(document).ready(function(){
   // DEBUG
-  viewTable(98);
+  //viewTable(98);
   //viewReserved('36','17:00:00 Uhr','15-03-2021','2:30','6');
 
   // Table Parameter for QR Code
   tc=getTableParameter();
   if(tc != false){ viewTablewithCode(tc); }
+
+  if(localStorage.getItem('rCalendar') === null){
+    viewCalendar();
+  } else {
+    // Wenn Tag in localStorage kleiner als Tag heute
+    var rc = localStorage.getItem('rCalendar').split(';');
+    if(dateToSQL() > rc[0] && rc[0] != 'admin'){ viewCalendar(); }
+  }
 
   $.ajax({
     url: "sync.php",
@@ -71,6 +79,72 @@ async function userCheck() {
 		console.log("Error " + err);
 	}
 }
+
+
+
+
+
+
+
+
+function viewCalendar(){
+  $('#viewCalendar').append('<div class="calendar-inputs"></div>');
+  if(localStorage.getItem('rCalendar') !==null){
+    var rc = localStorage.getItem('rCalendar').split(';');
+    $('.calendar-inputs').append('<input type="date" id="calendar-date" value="'+rc[0]+'">');
+    $('.calendar-inputs').append('<input type="time" id="calendar-time" list="timelist" value="'+rc[1]+'" min="17:00" step="900">');
+  } else {
+    $('.calendar-inputs').append('<input type="date" id="calendar-date">');
+    document.getElementById('calendar-date').valueAsDate = new Date();
+    $('.calendar-inputs').append('<input type="time" id="calendar-time" list="timelist" value="17:00" min="17:00" step="900">');
+  }
+
+  $('.calendar-inputs').append('<datalist id="timelist"></datalist>');
+  $('#timelist').append('<option value="17:00"><option value="17:15"><option value="17:30"><option value="17:45">');
+  $('#timelist').append('<option value="18:00"><option value="18:15"><option value="18:30"><option value="18:45">');
+  $('#timelist').append('<option value="19:00"><option value="19:15"><option value="19:30"><option value="19:45">');
+  $('#timelist').append('<option value="20:00"><option value="20:15"><option value="20:30"><option value="20:45">');
+  $('#timelist').append('<option value="21:00"><option value="21:15"><option value="21:30">');
+
+  $('#viewCalendar').append('<div class="calendar-buttons"></div>');
+  var link = "'https://www.hubraum-durlach.de/'";
+  $('.calendar-buttons').append('<button onClick="window.location.href='+link+';">Reservierung verlassen</button><button id="calendar-confirm">Tisch auswählen</button>');
+
+  $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
+  $('#viewCalendar').css("display","block");
+}
+
+$(document).on('click','#calendar-confirm',function(){
+  const date = $('#calendar-date').val(); const time = $('#calendar-time').val();
+  var today = new Date().toISOString().slice(0, 10);
+  if(date.length == 10 && time.length == 5 && date >= today){
+    localStorage.setItem('rCalendar',date+';'+time);
+    $('.container-reserve').css("background-color","white");
+    $('#viewCalendar').css('display','none');
+  } else {
+    $('#calendar-date').css('background-color','#e63946');
+    $('#calendar-time').css('background-color','#e63946');
+  }
+});
+
+$(document).on('click','.fa-calendar-alt',function(){
+  viewCalendar();
+});
+
+
+
+
+
+function loadAmpel(date,time) {
+  
+}
+
+
+
+
+
+
+
 
 function viewTable(id) {
    var a = true;
@@ -636,8 +710,4 @@ function getTableParameter() {
   return false;
 }
 
-function dateToSQL(d) {
-  var today = d;
-  var dd = String(today.getDate()).padStart(2, '0'); var mm = String(today.getMonth() + 1).padStart(2, '0'); var yyyy = today.getFullYear();
-  return yyyy + "-" + mm + "-" + dd;
-}
+function dateToSQL(d) { return new Date().toISOString().slice(0, 10); }

@@ -28,7 +28,7 @@
     Tische müssen Händisch von Hubraum MA gesperrt werden können. (Geschlossenen Gesellschaft)
     Online Tische Reservieren & Corona Registrierung  mit Name und Adresse
 
-    
+
 
     Zeit 15 Minuten funktioniert nicht
     // https://stackoverflow.com/questions/13713755/html-input-time-step-attribute-to-set-timestep-by-say-x-minutes
@@ -51,6 +51,13 @@
       <div id="viewTable"></div>
       <div id="viewLogin"></div>
       <div id="viewOverview"></div>
+      <div id="viewCalendar"></div>
+
+      <div class="container-header">
+        <i class="far fa-calendar-alt fa-3x icon-calendar" style="padding: 0.5%;"></i>
+        <i class="fa fa-user-circle fa-3x icon-user" style="padding: 0.5%;"></i>
+      </div>
+
       <div class="reserve-top">
         <div class="reserve-top-left">
           <div class="table object-t-right" id="99">
@@ -81,7 +88,7 @@
               <h3 class="table-h3" id="24-h3">24</h3>
               <img src="img/t-pillar-transparent.png" id="24-img" width="100%">
             </div>
-            <i class="fa fa-user-circle fa-3x icon-user"></i>
+
           </div>
 
           <div class="reserve-top-middle-bottom">

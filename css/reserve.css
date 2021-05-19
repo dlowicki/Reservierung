@@ -78,19 +78,23 @@ html,body {
 
 
 
-
-
-
-.icon-user {
-  float: right;
+.container-header i {
   transition: 0.5s;
-  border-radius: 20px;
 }
 
-.icon-user:hover {
+.container-header i:hover {
   color: darkgray;
   cursor: pointer;
 }
+
+.icon-user {
+  float: right;
+  border-radius: 20px;
+}
+
+
+
+
 
 
 
@@ -567,9 +571,58 @@ html,body {
 }
 
 
+/* viewCalendar POPUP */
 
+#viewCalendar {
+  position: fixed;
+  left: 10%;
+  right: 10%;
+  width: 80%;
+  height: 30%;
+  min-height: 300px;
 
+  margin-top: 1%;
+  margin-bottom: 1%;
+  z-index: 8;
+  padding-bottom: 20px;
+  font-family: sans-serif;
+  display: none;
+  overflow: auto;
 
+  border: 1px solid black;
+  background-color: white;
+
+  -webkit-animation: fadein 0.5s; /* Safari, Chrome and Opera > 12.1 */
+ -moz-animation: fadein 0.5s; /* Firefox < 16 */
+  -ms-animation: fadein 0.5s; /* Internet Explorer */
+   -o-animation: fadein 0.5s; /* Opera < 12.1 */
+      animation: fadein 0.5s;
+}
+
+.calendar-inputs {
+  width: 80%; height: auto;
+  margin-left: auto; margin-right: auto; margin-top: 5%; margin-bottom: 5%;
+  text-align: center;
+}
+.calendar-inputs input {
+  font-size: 1.5rem;
+  padding: 0%;
+  margin-left: 5%; margin-right: 5%;
+  width: 250px;
+}
+
+.calendar-buttons {
+  margin-left: auto; margin-right: auto; margin-top: 5%; margin-bottom: 5%;
+  width: 80%; height: auto;
+  text-align: center;
+}
+.calendar-buttons button {
+  font-size: 1.3rem;
+  padding: 0.5% 2% 0.5% 2%; border: 2px solid darkgray;
+  background-color: white;
+  margin-left: 5%; margin-right: 5%; cursor: default;
+}
+.calendar-buttons button:hover { cursor: pointer; }
 
 
 /* viewTable POPUP */

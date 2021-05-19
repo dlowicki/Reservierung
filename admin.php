@@ -312,7 +312,6 @@ require_once("script/sync-admin.php");
               $('#hh-'+i).append('<input type="text" placeholder="Name..." class="hh-name">');
               $('#hh-'+i).append('<input type="text" placeholder="Vorname..." class="hh-vorname">');
               $('#hh-'+i).append('<input type="text" placeholder="E-Mail..." class="hh-mail">');
-              $('#hh-'+i).append('<input type="text" placeholder="Adresse..." class="hh-adresse">');
               $('#hh-'+i).append('<input type="text" placeholder="Telefon..." class="hh-tnr">');
             }
 
@@ -322,7 +321,6 @@ require_once("script/sync-admin.php");
               $('#hh-'+count+' .hh-name').val(item['clientName']);
               $('#hh-'+count+' .hh-vorname').val(item['clientVorname']);
               $('#hh-'+count+' .hh-mail').val(item['clientMail']);
-              $('#hh-'+count+' .hh-adresse').val(item['clientAdresse']);
               $('#hh-'+count+' .hh-tnr').val(item['clientTNR']);
               count++;
             });
