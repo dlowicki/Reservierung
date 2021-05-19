@@ -89,27 +89,34 @@ async function userCheck() {
 
 function viewCalendar(){
   $('#viewCalendar').append('<div class="calendar-inputs"></div>');
-  if(localStorage.getItem('rCalendar') !==null){
+  if(localStorage.getItem('rCalendar') !== null){
     var rc = localStorage.getItem('rCalendar').split(';');
     $('.calendar-inputs').append('<input type="date" id="calendar-date" value="'+rc[0]+'">');
-    $('.calendar-inputs').append('<input type="time" id="calendar-time" list="timelist" value="'+rc[1]+'" min="17:00" step="900">');
+    $('.calendar-inputs').append('<select id="calendar-time"></select>');
+    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+      data.forEach((item, i) => {
+          time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
+          if(item['id'] == rc[1]){
+            $('.calendar-inputs select').append('<option value="'+item["id"]+'" selected>'+time+' Uhr</option>');
+          } else {
+            $('.calendar-inputs select').append('<option value="'+item["id"]+'">'+time+' Uhr</option>');
+          }
+      });
+    });
   } else {
     $('.calendar-inputs').append('<input type="date" id="calendar-date">');
     document.getElementById('calendar-date').valueAsDate = new Date();
-    $('.calendar-inputs').append('<input type="time" id="calendar-time" list="timelist" value="17:00" min="17:00" step="900">');
+    $('.calendar-inputs').append('<select id="calendar-time"></select>');
+    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+      data.forEach((item, i) => {
+        time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
+        $('.calendar-inputs select').append('<option value="'+item["id"]+'">'+time+' Uhr</option>');
+      });
+    });
   }
-
-  $('.calendar-inputs').append('<datalist id="timelist"></datalist>');
-  $('#timelist').append('<option value="17:00"><option value="17:15"><option value="17:30"><option value="17:45">');
-  $('#timelist').append('<option value="18:00"><option value="18:15"><option value="18:30"><option value="18:45">');
-  $('#timelist').append('<option value="19:00"><option value="19:15"><option value="19:30"><option value="19:45">');
-  $('#timelist').append('<option value="20:00"><option value="20:15"><option value="20:30"><option value="20:45">');
-  $('#timelist').append('<option value="21:00"><option value="21:15"><option value="21:30">');
-
   $('#viewCalendar').append('<div class="calendar-buttons"></div>');
   var link = "'https://www.hubraum-durlach.de/'";
   $('.calendar-buttons').append('<button onClick="window.location.href='+link+';">Reservierung verlassen</button><button id="calendar-confirm">Tisch auswählen</button>');
-
   $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
   $('#viewCalendar').css("display","block");
 }
@@ -117,27 +124,35 @@ function viewCalendar(){
 $(document).on('click','#calendar-confirm',function(){
   const date = $('#calendar-date').val(); const time = $('#calendar-time').val();
   var today = new Date().toISOString().slice(0, 10);
-  if(date.length == 10 && time.length == 5 && date >= today){
+  if(date.length == 10 && time.length >= 1 && date >= today){
     localStorage.setItem('rCalendar',date+';'+time);
     $('.container-reserve').css("background-color","white");
     $('#viewCalendar').css('display','none');
+    $('#viewCalendar').empty();
   } else {
     $('#calendar-date').css('background-color','#e63946');
     $('#calendar-time').css('background-color','#e63946');
   }
 });
 
-$(document).on('click','.fa-calendar-alt',function(){
-  viewCalendar();
-});
+$(document).on('click','.fa-calendar-alt',function(){ viewCalendar(); });
 
 
 
 
 
-function loadAmpel(date,time) {
-  
+function loadAmpel(date,timeBlock) {
+  $.ajax({
+    url: "sync.php",
+    method: "POST",
+    data: { loadAmpel: date+";"+timeBlock},
+    success: function(result) {
+      console.log(result);
+    }
+  });
 }
+
+
 
 
 

@@ -1,0 +1,7 @@
+Status einer Reservierung:
+0: Reservierung wurde angelegt
+1: Person ist eingetroffen
+2: Tisch wieder freigeben
+3: Person hat Tisch abgesagt
+4: Person ist nicht aufgetaucht (NoShow)
+5: Abweichende Anzahl + Eingetroffen

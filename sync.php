@@ -29,6 +29,31 @@ if(isset($_POST['getOverview']) && isset($_POST['oDate'])){
   return;
 }
 
+if(isset($_POST['loadAmpel'])){
+  $data = explode(';',$_POST['loadAmpel']); $date = $data[0];
+  $con = connect();
+  $query = $con->query("SELECT reserveID, tableID, reserveBlock FROM rReserve WHERE reserveDate = '$date' AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)");
+  if($query){
+    $r=0; $arr=array();
+    foreach ($query as $key) {
+      $key['reserveID'] = $arr[$r]['reserveID'];
+      $key['tableID'] = $arr[$r]['tableID'];
+      $key['reserveBlock'] = $arr[$r]['reserveBlock'];
+    }
+
+
+  }
+}
+
+// Daten von Reservierung, bei die auch stattfinden zurzeit
+// Dann wird block überprüft, welcher schon reserviert ist
+// Wenn Tisch kein Block mehr frei = rot
+
+// Ich hab den Tag
+// Ich hab die Uhrzeit gegeben
+// Wenn angegebene Uhrzeit > reserveEnd dann Eintrag nicht beachten
+
+
 
 if(isset($_POST['createReserve'])){
   $daten = $_POST['createReserve'];
@@ -362,7 +387,7 @@ function getTableData() {
   $date = echoDate();
   $con = connect();
   $p = "SELECT * FROM rTable";
-  $p2 = "SELECT tableID,reserveDate,reserveStart,reserveEnd,reserveDuration,reserveState FROM rReserve WHERE reserveStart LIKE '$date %'";
+  $p2 = "SELECT tableID,reserveDate,reserveTime,reserveBlock,reserveState FROM rReserve WHERE reserveDate LIKE '$date'";
   $query = $con -> query($p) or die();
   $query2 = $con -> query($p2) or die();
   $data = array();
@@ -375,7 +400,7 @@ function getTableData() {
       $data[$c]['tableCode'] = $table['tableCode']; $data[$c]['tableActive'] = $table['tableActive'];
       foreach ($query2 as $reserve) {
         if($reserve['tableID'] == $table['tableID']){
-          if(checkReserveTime($reserve['reserveStart'],$reserve['reserveDuration'],$reserve['reserveDate'],$table['tableID']) == false){
+          if(checkReserveTime($reserve['reserveTime'],$reserve['reserveBlock'],$reserve['reserveDate'],$table['tableID']) == false){
             // Überschneidung ist aktiv
             $data[$c]['tableActive'] = "closed";
           }
@@ -401,7 +426,7 @@ function getTableDataID($id) {
   $date = echoDate();
   $con = connect();
   $p = "SELECT * FROM rTable WHERE tableID = '$id'";
-  $p2 = "SELECT tableID, reserveDate, reserveStart, reserveEnd, reserveDuration FROM rReserve WHERE tableID = '$id' AND reserveStart LIKE '$date %'";
+  $p2 = "SELECT tableID, reserveDate, reserveTime, reserveBlock FROM rReserve WHERE tableID = '$id' AND reserveDate LIKE '$date'";
   $query = $con -> query($p) or die();
   $query2 = $con -> query($p2) or die();
   $data = array();
@@ -415,22 +440,21 @@ function getTableDataID($id) {
       $data['tableCode'] = $row['tableCode'];
       $data['tableActive'] = $row['tableActive'];
       $data['tableReserved'] = "open";
-      $r=0;
+      /*$r=0;
       $timeSchneidung=false;
       foreach ($query2 as $row2) { // Jede Reservierung für den Tisch am besagten Tag
         $data['reserveA'] = $r;
         $data[$r]['rDate'] = $row2['reserveDate'];
-        $data[$r]['rS'] = $row2['reserveStart'];
-        $data[$r]['rE'] = $row2['reserveEnd'];
-        $data[$r]['rD'] = $row2['reserveDuration'];
+        $data[$r]['rT'] = $row2['reserveTime'];
+        $data[$r]['rB'] = $row2['reserveBlock'];
 
         // Wenn TIME >= startzeit && TIME <= ENDZEIT
-        if(echoTime().":00">=$row2['reserveStart'] && echoTime().":00"<=$row2['reserveEnd']){
+        if(echoTime().":00" >= $row2['reserveStart'] && echoTime().":00"<=$row2['reserveEnd']){
           $timeSchneidung = true; // Eine Reservierung läuft zurzeit
         }
         $r++;
       }
-      if($timeSchneidung==true){ $data['tableReserved'] = "closed"; }
+      if($timeSchneidung==true){ $data['tableReserved'] = "closed"; }*/
     }
     return $data;
   }
@@ -439,7 +463,7 @@ function getTableDataID($id) {
 
 function getTableReserveTime($t, $date) {
   $con = connect();
-  $p = "SELECT rReserve.reserveID,rReserve.reserveDate,rReserve.reserveStart,rReserve.reserveEnd,reserveDuration,rReserve.reserveState,rReserve.clientID,clientConfirm,clientName FROM rReserve INNER JOIN rClient ON rReserve.clientID=rClient.clientID WHERE rReserve.tableID = '$t' AND reserveDate = '$date' ORDER BY reserveStart ASC";
+  $p = "SELECT rReserve.reserveID,rReserve.reserveDate,rReserve.reserveStart,rReserve.reserveEnd,reserveBlock,rReserve.reserveState,rReserve.clientID,clientConfirm,clientName FROM rReserve INNER JOIN rClient ON rReserve.clientID=rClient.clientID WHERE rReserve.tableID = '$t' AND reserveDate = '$date' ORDER BY reserveStart ASC";
   $query = $con -> query($p) or die();
   $data = array();
 
@@ -448,9 +472,8 @@ function getTableReserveTime($t, $date) {
     foreach ($query as $key) {
       $data[$r]['rID'] = $key['reserveID'];
       $data[$r]['rDate'] = $key['reserveDate'];
-      $data[$r]['rS'] = $key['reserveStart'];
-      $data[$r]['rE'] = $key['reserveEnd'];
-      $data[$r]['rD'] = $key['reserveDuration'];
+      $data[$r]['rT'] = $key['reserveTime'];
+      $data[$r]['rB'] = $key['reserveBlock'];
       $data[$r]['cc'] = $key['clientConfirm'];
       $data[$r]['cn'] = $key['clientName'];
       $data[$r]['rState'] = $key['reserveState'];
@@ -497,64 +520,28 @@ function r($str){
   return false;
 }*/
 
-
+echo checkReserveTime(0, '2021-05-18', 9);
 // Überprüfe ob Überschneidung mit Reservierung
-function checkReserveTime($time,$duration,$date,$tableID) {
-  $startTime="17:00"; $endTime="21:30";
-  if($time<$startTime||$time>$endTime){ // time kleiner als startTime oder time größer als endTime
-    return false;
-  }
-
-  $con=connect();
-  $p="SELECT reserveDate,reserveStart,reserveEnd,reserveDuration FROM rReserve WHERE reserveStart LIKE '$date %' AND tableID = '$tableID'";
+function checkReserveTime($block,$date,$tableID) {
+  $con = connect();
+  $p = "SELECT reserveBlock FROM rReserve WHERE reserveDate LIKE '$date' AND tableID = $tableID AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)";
   $query = $con->query($p) or die();
 
   if($query){
-    $key = $query->fetch_array(MYSQLI_ASSOC);
-    $reservierung = array();
-    $reservierungCount=0;
-    ini_set("display_errors","off");
-    for ($s=0; $s < count($key); $s++) {
-      //$r=explode(" ",$key['reserveStart']);
-      if($duration == "gz" && $key['reserveDuration'] == "gz"){
-        // Wenn Reservierung GANZTAGS aber GANZTAGS schon existiert
-        return false;
-      }
-
-      $dbT = updatedTime($key['reserveDate'] . " " . $key['reserveStart']);
-      if($duration == "gz" && $key['reserveDuration'] == "2:30"){
-        // Reservierung GANZTAGS ausgewählt aber Tag hat schon Reservierung
-        if($time>$dbT['uH'].":".$dbT['uM']){
-          // Wenn Reservierungszeit > Updated Datenbankzeit kann kein GANZTAGS gesetzt werden
-          $reservierung[$reservierungCount]=true;
-        } else {
-          $reservierung[$reservierungCount]=false;
-        }
-        continue;
-      }
-
-      if($duration == "2:30"){
-        $pT = updatedTime($date . " " . $time . ":00");
-        $b = true;
-        // Wenn $time größer als $dbTime + 2:30 oder $time kleiner als $dbTime
-        if($time > $dbT['uH'].":".$dbT['uM'] || $time < $dbT['hour'].":".$dbT['minute']){
-          // Wenn $time +2:30 kleiner als $dbTime oder $time größer als $dbTime + 2:30
-          if($pT['uH'].":".$pT['uM'] < $dbT['hour'].":".$dbT['minute'] || $time > $dbT['uH'].":".$dbT['uM']){
-            $reservierung[$reservierungCount] = true;
-          } else { $reservierung[$reservierungCount] = false; }
-        } else { $reservierung[$reservierungCount] = false; }
-      }
-
-      $reservierungCount++;
+    $arr = array(); $r=0;
+    foreach ($query as $key) {
+      $arr[$r] = $key['reserveBlock'];
+      echo $key['reserveTime'];
+      $r++;
     }
-    ini_set("display_errors","on");
-    // FALSE wurde in array gefunden = überschneidung irgenwo
-    if(in_array(false,$reservierung)){
-      return false;
-    } else {
-      return true;
-    }
+    print_r($arr);
+    // Wenn beide Blöcke reserviert sind
+    if(sizeof($arr) == 2){ return false; }
 
+    for ($i = 0; $i <= sizeof($arr); $i++) {
+      // Block in Datenbank ist gleich Block ausgewählt
+      if($arr[$i]['reserveBlock'] == $block){ echo "abc"; return; }
+    }
   }
   return true;
 }
