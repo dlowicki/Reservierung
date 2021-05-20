@@ -3,7 +3,7 @@
   $con = connect();
   $query = $con->query('SELECT * FROM rTime WHERE timeActive = 1');
   if($query){
-    $r=0;$arr=array();
+    $r=0; $arr=array();
     foreach ($query as $key) {
       $arr[$r]['id'] = $key['timeID'];
       $arr[$r]['start'] = $key['timeStart'];

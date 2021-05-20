@@ -95,7 +95,7 @@ function viewCalendar(){
     var rc = localStorage.getItem('rCalendar').split(';');
     $('.calendar-inputs').append('<input type="date" id="calendar-date" value="'+rc[0]+'">');
     $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
+    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
       data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
           if(item['id'] == rc[1]){
@@ -109,7 +109,8 @@ function viewCalendar(){
     $('.calendar-inputs').append('<input type="date" id="calendar-date">');
     document.getElementById('calendar-date').valueAsDate = new Date();
     $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
+    // http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php   http://localhost/html/Reservierung/script/load.timeblock.php
+    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
       data.forEach((item, i) => {
         time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
         $('.calendar-inputs select').append('<option value="'+item["id"]+'">'+time+' Uhr</option>');
@@ -175,6 +176,7 @@ function viewTable(id, date) {
 
       $('#viewTable').append("<form method='POST' class='form-table' onsubmit='event.preventDefault();'></form>");
       $('.form-table').append("<div id='container-information'><h3>Reservierungen</h3><div id='container-information-content'></div></div>");
+      getReservierungen(d['tableID'], date);
       $('.form-table').append("<div class='form-table-middle'></div>");
       $('.form-table-middle').append("<div class='form-table-left'></div>");
       $('.form-table-middle').append("<div class='form-table-right'></div>");
@@ -189,18 +191,21 @@ function viewTable(id, date) {
       var options = ""; for (var i = parseInt(d['tableMin']); i <= parseInt(d['tableMax']); i++) { options = options + "<option value='"+i+"'>"+i+"</option>";}
       $('.form-table-left-inputs').append('<select id="amount">'+options+'</select></div>');
       var localDate = localStorage.getItem('rCalendar').split(';')[0];
-      $('.form-table-left-inputs').append('<input type="date" id="timeDate" value="'+localDate+'" onChange="checkTimeFrom('+tID+')">');
+      $('.form-table-left-inputs').append('<input type="date" id="timeDate" value="'+localDate+'" onChange="getReservierungen('+tID+',this.value)">');
       var localBlock = localStorage.getItem('rCalendar').split(';')[1];
-      $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
+      $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
         $('.form-table-left-inputs').append('<select id="timeBlock"></select>');
         data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
-          if(item['id'] == localBlock){ $('#timeBlock').append('<option value="'+item["id"]+'" selected>'+time+' Uhr</option>');
-          } else { $('#timeBlock').append('<option value="'+item["id"]+'">'+time+' Uhr</option>'); }
+          if(item['id'] == localBlock){
+            $('#timeBlock').append('<option value="'+item["id"]+'" id="option'+item["id"]+'" selected>'+time+' Uhr</option>');
+            $('#container-information-content').children().each((index, element) => {
+              if(item["id"] == element['id'].slice(-1)){ $('#timeBlock').css('color','red'); $('#option'+item["id"]).css('color','red'); }
+            });
+          } else { $('#timeBlock').append('<option value="'+item["id"]+'" id="option'+item["id"]+'">'+time+' Uhr</option>'); }
         });
       });
 
-      getReservierungen(d['tableID'], date);
 
       $('.form-table-right').append("<h2>Registrierung zwecks Corona</h2>");
       $('.form-table-right').append('<p>Damit ein Tisch bei uns reserviert werden kann, müssen wir den Anforderungen entsprechend die Daten einer Person bei uns abspeichern.<br>Bitte Denken Sie daran, dass bei mehreren Haushalten an einem Tisch, <b>pro Haushalt eine Kontakperson</b> registriert werden muss.<br>Die Daten werden <a href="#">Datenschutzkonform</a> abgespeichert</p');
@@ -250,13 +255,21 @@ $(document).on("click",".right-input-nav", function(event){
   $('.right-inputs-hh'+id).css("display","block");
 });
 
+$(document).on('change','#timeBlock',function(){
+  var block = []; var count = 0;
+  $('#container-information-content').children().each((index, element) => { block[count] = element['id'].slice(-1); count++; });
+  if(block.includes($(this).val())){ $(this).css('color','red'); } else {
+    $('#option'+$(this).val()).css('color','black'); $(this).css('color','black');
+  }
+});
+
 function checkTimeFrom(t) {
   $('#timeDuration').css("color","black");
   $('#timeLabel').css("color","black");
 
 
   // Reservierungen anzeigen lassen
-  setTimeout(function(){ getReservierungen(t, $('#timeDate').val()); }, 100);
+  //setTimeout(function(){ getReservierungen(t, $('#timeDate').val()); }, 100);
   var duration = $('#timeDuration').val(); // 1=2:30 2=Ganztags
   var tf = $("#timeFrom").val();
   var da = $("#timeDate").val();
@@ -340,7 +353,7 @@ function checkTimeFrom(t) {
 function getReservierungen(tableID, date) {
   $('#container-information-content').empty();
   // 0 = Reserviert | 1 = Eingetroffen | 2 = Frühzeitig beendet | 3 = Abgesagt | 4 = NoShow | 5 = Abweichende Anzahl + Eingetroffen
-  var colors = ['#4ea8de','#2b9348','#ee6c4d','#ba181b','#006d77'];
+  var colors = ['#4ea8de','#2b9348','#ee6c4d','#ba181b','#006d77', '#7400b8'];
   $.ajax({
     url: "sync.php",
     method: "GET",
@@ -353,18 +366,7 @@ function getReservierungen(tableID, date) {
           if(item['rState'] != 3 && item['rState'] != 4){
             var colorNum = item['rState'];
             var time = item['rT'].split(" - ");
-            $('#container-information-content').append("<div class='information-box' style='background-color: "+colors[colorNum]+"'>Reserviert<br>"+time[0]+" Uhr bis "+time[1]+" Uhr</div>");
-
-            /*if(item['rD'] == "gz"){
-              $('#container-information-content').append("<div class='information-box' style='background-color: "+colors[colorNum]+"'>Reserviert<br>Bis 22 Uhr</div>");
-              return;
-            } else {
-              dateStart = new Date(item['rDate']+" "+item['rS']);
-              var dateStartMinutes = dateStart.toTimeString().slice(3, 5);
-              dateEnd = new Date(item['rDate']+" "+item['rE']);
-              var dateEndMinutes = dateEnd.toTimeString().slice(3, 5);
-              $('#container-information-content').append("<div class='information-box' style='background-color: "+colors[colorNum]+"'>Reserviert<br>"+dateStart.getHours()+":"+dateStartMinutes+" Uhr bis "+dateEnd.getHours()+":"+dateEndMinutes+" Uhr</div>");
-            }*/
+            $('#container-information-content').append("<div class='information-box' id='rsBlock"+item['rB']+"' style='background-color: "+colors[colorNum]+"'>Reserviert<br>"+time[0].slice(0,5)+" Uhr bis "+time[1].slice(0,5)+" Uhr</div>");
           }
         });
       }

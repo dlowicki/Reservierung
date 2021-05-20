@@ -480,6 +480,7 @@ function getTableDataID($id, $date) {
       // ausgewählter Tisch ist in Ampel Array enthalten
       if(sizeof($ampelTable) >= 1){
         $ampelBlock = 0;
+        ini_set('display_errors','off');
         foreach ($ampelTable as $key) {  // Für jeden Tisch im AmpelArray
           if($key['table'] == $table['tableID']){
             // Wenn Zeit Jetzt größer als Startzeit von Block und kleiner als Endzeit von Block (Uhrzeit gerade in Blockzeit)
@@ -489,6 +490,7 @@ function getTableDataID($id, $date) {
             $ampelBlock++;
           }
         }
+        ini_set('display_errors','on');
         // Wenn an einem Tag mehr als und oder 2 Blöcke reserviert sind. Tisch für Tag auf belegt setzen
         if($ampelBlock >= 2){ $data['tableReserved'] = "closed"; }
       }
