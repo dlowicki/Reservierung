@@ -9,15 +9,16 @@ if(isAdmin() != true){ return; }
 * Mail und ID = Unique
 *
 */
-if(isset($_POST['nsAmount']) && isset($_POST['nsMail']) && isset($_POST['nsTime'])&& isset($_POST['nsID'])){
+if(isset($_POST['nsAmount']) && isset($_POST['nsMail']) && isset($_POST['nsTNR']) && isset($_POST['nsTime']) && isset($_POST['nsID'])){
   $id = trim($_POST['nsID']); // Erhalte ID von POST (trim)
   $amount = trim($_POST['nsAmount']); // Erhalte Anzahl von POST (trim)
   $mail = trim($_POST['nsMail']); // Erhalte neue Mail von POST (trim)
+  $tnr = trim($_POST['nsTNR']); // Erhalte neue Telefonnummer von POST (trim)
   $time = trim($_POST['nsTime']); // Erhalte neue Zeit von POST (trim)
   // Wenn Alle Variablen gesetzt sind
-  if(strlen($id) >= 1 && strlen($amount) >= 1 && strlen($mail) >= 3 && strlen($time) >= 3){
+  if(strlen($id) >= 1 && strlen($amount) >= 1 && strlen($mail) >= 3 && strlen($tnr) >= 3 && strlen($time) >= 3){
     $overview = new Overview();
-    $update = $overview->updateNoShow($id,$amount,$mail,$time);
+    $update = $overview->updateNoShow($id,$amount,$mail,$tnr,$time);
     if($update){
       echo "1";
       return;

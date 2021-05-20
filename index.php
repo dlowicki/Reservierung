@@ -48,6 +48,9 @@
     ?>
 
     <div class="container-reserve">
+      <div id="viewError">
+        <!--<p>Die eingegebene Telefonnummer befindet sich auf der Blacklist. Sie können keine Reservierung durchführen</p><button>Verstanden</button>-->
+      </div>
       <div id="viewTable"></div>
       <div id="viewLogin"></div>
       <div id="viewOverview"></div>

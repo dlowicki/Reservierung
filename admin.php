@@ -91,6 +91,7 @@ require_once("script/sync-admin.php");
                 echo '<li id="ns-'.$key["id"].'">';
                   echo '<p class="ns-amount">'.$key["amount"].'</p>';
                   echo '<p class="ns-mail">'.$key["mail"].'</p>';
+                  echo '<p class="ns-tnr">'.$key["tnr"].'</p>';
                   echo '<p class="ns-time">'.$key["time"].'</p>';
                 echo '</li>';
               }
@@ -193,11 +194,12 @@ require_once("script/sync-admin.php");
       var id = $(this).attr("id");
       if($('.noShow-edit-container').length<=0){
         var idAmount = $('#'+id).children(".ns-amount").text();
+        var idTNR = $('#'+id).children(".ns-tnr").text();
         var idMail = $('#'+id).children(".ns-mail").text();
         var idTime = $('#'+id).children(".ns-time").text();
 
         $('#'+id).append('<div class="noShow-edit-container"></div>');
-        $('.noShow-edit-container').append('<div class="edit-form"><input type="hidden" id="ns-id" value="'+id+'"><input type="number" id="ns-amount" value="'+idAmount+'"><input type="text" id="ns-mail" value="'+idMail+'"><input type="text" id="ns-time" value="'+idTime+'"></div>');
+        $('.noShow-edit-container').append('<div class="edit-form"><input type="hidden" id="ns-id" value="'+id+'"><input type="number" id="ns-amount" value="'+idAmount+'"><input type="text" id="ns-mail" value="'+idMail+'"><input type="text" id="ns-tnr" value="'+idTNR+'"><input type="text" id="ns-time" value="'+idTime+'"></div>');
         $('.edit-form').append('<div class="edit-container-bottom"></div>');
         $('.edit-container-bottom').append('<button class="edit-button" onClick="closeEdit()">Schließen</button><button class="edit-button" id="delete-noShow">Entfernen</button><button class="edit-button"id="ns-submit">Speichern</button>');
       }
@@ -206,13 +208,14 @@ require_once("script/sync-admin.php");
     $(document).on("click","#ns-submit",function(){
       var amount = $('#ns-amount').val();
       var mail = $('#ns-mail').val();
+      var tnr = $('#ns-tnr').val();
       var time = $('#ns-time').val();
       var id = $('#ns-id').val().split('-')[1];
-      if(amount.length >= 1 && mail.length >= 3 && time.length >= 3){
+      if(amount.length >= 1 && mail.length >= 3 && time.length >= 3 && tnr.length >= 3){
         $.ajax({
           url: "script/sync-admin.php",
           method: "POST",
-          data: { nsID: id, nsAmount: amount, nsMail: mail, nsTime: time},
+          data: { nsID: id, nsAmount: amount, nsMail: mail, nsTNR: tnr, nsTime: time},
           success: function(result) {
             if(result=="1"){
               $(".noShow-content").load(" .noShow-content > *");

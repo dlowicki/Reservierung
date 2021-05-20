@@ -556,10 +556,14 @@ function sendReserve(tID) {
         url: "sync.php", method: "POST", data: { createReserve: inputs },
         success: function(result) {
           console.log("Result: " + result);
-          if(result == "1"){
-            tableClose();
-            console.log('Reservierung bestätigt');
-            viewReserved(tID,timeBlock,date,amount); //table, time, date, amount
+          switch (result) {
+            case "1":
+              tableClose();
+              console.log('Reservierung bestätigt');
+              viewReserved(tID,timeBlock,date,amount); //table, time, date, amount
+              break;
+            case "2":
+              viewError('Die E-Mail oder Telefonnummer wurde auf die Blacklist gesetzt. Eine Reservierung ist nicht möglich!');
           }
         }
       });
@@ -656,6 +660,18 @@ function acpSubmit(tID) {
   });
   })();
 }
+
+function viewError(text){
+  if($('#viewError p').length <= 0){
+    $('#viewError').append("<p>"+text+"</p><button>Verstanden</button>");
+    $('#viewError').css('display','block');
+  }
+}
+
+$(document).on('click','#viewError button',function(){
+  $('#viewError').empty();
+  $('#viewError').css('display','none');
+});
 
 function removeReserve(cc){
      (async() => {

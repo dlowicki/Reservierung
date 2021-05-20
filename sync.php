@@ -111,11 +111,12 @@ if(isset($_POST['createReserve'])){
   }
   // $hhExist == false, kein Haushalt wurde eingetragen
   if($hhExist == false){ echo "0"; return; }
-  
+
   //Überprüfe ob NoShow Eintrag vorhanden oder nicht
+  $nsClient = explode(";",$daten[4][0]);
   $overview = new Overview();
-  $noshow = $overview->getNoShowWithMail(explode(";",$daten[4][0])[2]);
-  if($noshow){ if($noshow['amount'] >= 2){ echo '0'; return false; } }
+  $noshow = $overview->getNoShowWithMailAndNumber($nsClient[2], $nsClient[3]);
+  if($noshow){ if($noshow['amount'] >= 2){ echo '2'; return false; } }
 
   // checkReserveTime = Überprüfe ob Reservierung für Block bereits vorhanden | return false wenn belegt
   if(checkReserveTime($block,$date,$table)){

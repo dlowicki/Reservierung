@@ -52,7 +52,7 @@ class Overview
 
   public function getNoShow() {
     $con = $this->connectDatabase();
-    $statement = "SELECT nsID, nsMail, nsAmount, nsDate FROM rnoshow";
+    $statement = "SELECT nsID, nsMail, nsTNR, nsAmount, nsDate FROM rnoshow";
     $query = $con->query($statement) or die();
 
     if($query){
@@ -61,6 +61,7 @@ class Overview
       foreach ($query as $key) {
         $data[$r]['id'] = $key['nsID'];
         $data[$r]['mail'] = $key['nsMail'];
+        $data[$r]['tnr'] = $key['nsTNR'];
         $data[$r]['amount'] = $key['nsAmount'];
         $data[$r]['time'] = $key['nsDate'];
         $r++;
@@ -70,9 +71,9 @@ class Overview
     return false;
   }
 
-  public function getNoShowWithMail($mail) {
+  public function getNoShowWithMailAndNumber($mail, $tnr) {
     $con = $this->connectDatabase();
-    $statement = "SELECT nsID, nsAmount, nsDate FROM rnoshow WHERE nsMail = '$mail'";
+    $statement = "SELECT nsID, nsAmount, nsDate FROM rnoshow WHERE nsMail = '$mail' OR nsTNR = '$tnr'";
     $query = $con->query($statement) or die();
 
     if($query){
@@ -87,9 +88,9 @@ class Overview
     return false;
   }
 
-  public function updateNoShow($id,$amount,$mail,$time) {
+  public function updateNoShow($id,$amount,$mail,$tnr,$time) {
     $con = $this->connectDatabase();
-    $statement = "UPDATE rnoshow SET nsMail = '$mail', nsAmount = '$amount', nsDate = '$time' WHERE nsID = '$id'";
+    $statement = "UPDATE rnoshow SET nsMail = '$mail', nsAmount = '$amount', nsDate = '$time', nsTNR = '$tnr' WHERE nsID = '$id'";
     $query = $con->query($statement) or die();
 
     if($query === TRUE){
@@ -101,7 +102,7 @@ class Overview
   public function createNoShow() {
     $con = $this->connectDatabase();
     $time = date('Y-m-d H:i:s');
-    $statement = "INSERT INTO rnoshow (nsID, nsMail, nsAmount, nsDate) VALUES (null, 'mail@domain.de','1','$time')";
+    $statement = "INSERT INTO rnoshow (nsID, nsMail, nsTNR, nsAmount, nsDate) VALUES (null, 'mail@domain.de','0','1','$time')";
     $query = $con->query($statement) or die();
 
     if($query === TRUE){
