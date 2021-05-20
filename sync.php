@@ -420,12 +420,13 @@ function getTimeBlockTime($id) {
 }
 function getTimeBlocks() {
   $con = connect();
-  $query= $con->query('SELECT timeStart, timeEnd, timeActive FROM rTime');
+  $query= $con->query('SELECT timeID, timeStart, timeEnd, timeActive FROM rTime');
   if($query){
     $arr = array(); $r=0;
     foreach ($query as $key) {
-      $arr[$r] = $key['timeStart']; $arr[$r] = $key['timeEnd']; $r++;
+      $arr[$r]['start'] = $key['timeStart']; $arr[$r]['end'] = $key['timeEnd']; $arr[$r]['id'] = $key['timeID']; $r++;
     }
+    return $arr;
   }
   return false;
 }

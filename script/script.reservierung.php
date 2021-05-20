@@ -25,15 +25,14 @@ class Reservierung extends Overview {
   public function loadReservierungenList() {
     $db = new Overview();
     $con = $db->connectDatabase();
-    $statement = "SELECT reserveID, reserveStart, reserveEnd, reserveState FROM rReserve WHERE tableID='$this->tID' AND reserveDate='$this->rDate' ORDER BY reserveStart ASC";
+    $statement = "SELECT reserveID, reserveTime, reserveState FROM rReserve WHERE tableID='$this->tID' AND reserveDate='$this->rDate' ORDER BY reserveBlock ASC";
     $query = $con->query($statement) or die();
     if($query){
       $data = array();
       $t=0;
       foreach ($query as $key) {
         $data[$t]['rID'] = $key['reserveID'];
-        $data[$t]['rStart'] = $key['reserveStart'];
-        $data[$t]['rEnd'] = $key['reserveEnd'];
+        $data[$t]['rTime'] = $key['reserveTime'];
         $data[$t]['rState'] = $key['reserveState'];
         $t++;
       }

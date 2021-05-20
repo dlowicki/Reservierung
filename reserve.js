@@ -183,7 +183,7 @@ function viewTable(id, date) {
 
       $('.form-table-left').append("<h2>Tisch reservieren</h2>");
       $('.form-table-left').append("<p>Damit ein Tisch reserviert werden kann werden folgende Daten benötigt</p>");
-      $('.form-table-left').append("<ul><li>Personenanzahl <b>"+d['tableMin']+"/"+d['tableMax']+"</b></li><li>Zeit zwischen <b>17 Uhr</b> und <b>21:30 Uhr</b> wählen</li><li>Personendaten eintragen</li></ul>");
+      $('.form-table-left').append("<ul><li>Personenanzahl <b>"+d['tableMin']+" - "+d['tableMax']+"</b></li><li>Zeit zwischen <b>17 Uhr</b> und <b>21:30 Uhr</b> wählen</li><li>Personendaten eintragen</li></ul>");
 
 
       $('.form-table-left').append("<div class='form-table-left-inputs'></div>");

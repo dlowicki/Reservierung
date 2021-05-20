@@ -75,6 +75,10 @@ if(isset($_POST['acpButton']) && isset($_POST['acpReserveID']) && isset($_POST['
       /* checkTime usw. anpasen und NoShow eintragen*/
       if(addNoShow($rID, $date)){ $func = true; }
       break;
+    case '5':
+      /* checkTime usw. anpasen und NoShow eintragen*/
+      if(addBlacklist($rID, $date)){ $func = true; }
+      break;
   }
   if($func == true){ if(updateReserveState($state,$rID)) { echo "1"; return;} }
   echo "0";
@@ -160,7 +164,7 @@ function isAdmin(){
 function getReservierungData($id) {
   $db = new Overview();
   $con = $db->connectDatabase();
-  $statement = "SELECT rreserve.tableID, rreserve.clientID, reserveDate, reserveStart, reserveEnd, reserveDuration, reserveAmount, rClient.clientID, rClient.clientName, rClient.clientVorname, rClient.clientMail, rClient.clientTNR, rTable.tableType,rTable.tableActive FROM rReserve INNER JOIN rClient ON rReserve.reserveID = rClient.reserveID INNER JOIN rTable ON rreserve.tableID = rtable.tableID WHERE rReserve.reserveID = '$id'";
+  $statement = "SELECT rreserve.tableID, rreserve.clientID, reserveDate, reserveTime, reserveBlock, reserveAmount, rClient.clientID, rClient.clientName, rClient.clientVorname, rClient.clientMail, rClient.clientTNR, rTable.tableType,rTable.tableActive FROM rReserve INNER JOIN rClient ON rReserve.reserveID = rClient.reserveID INNER JOIN rTable ON rreserve.tableID = rtable.tableID WHERE rReserve.reserveID = '$id'";
   $query = $con->query($statement) or die();
 
   if($query){
@@ -169,9 +173,8 @@ function getReservierungData($id) {
       $data[$r]['tableID'] = $key['tableID'];
       $data[$r]['clientID'] = $key['clientID'];
       $data[$r]['reserveDate'] = $key['reserveDate'];
-      $data[$r]['reserveStart'] = $key['reserveStart'];
-      $data[$r]['reserveEnd'] = $key['reserveEnd'];
-      $data[$r]['reserveDuration'] = $key['reserveDuration'];
+      $data[$r]['reserveTime'] = $key['reserveTime'];
+      $data[$r]['reserveBlock'] = $key['reserveBlock'];
       $data[$r]['reserveAmount'] = $key['reserveAmount'];
       $data[$r]['tableType'] = $key['tableType'];
       $data[$r]['tableActive'] = $key['tableActive'];
@@ -242,6 +245,26 @@ function updateReserveAmount($rID,$amount) {
   return false;
 }
 
+
+function addBlacklist($rID) {
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  $date = date("Y-m-d G:i:s");
+  $statement = "SELECT rClient.clientID, clientMail, clientTNR FROM rReserve INNER JOIN rClient ON rReserve.clientID = rClient.clientID WHERE rReserve.reserveID = '$rID'";
+  $query = $con -> query($statement);
+  foreach ($query as $key) {
+    if($key['clientID'] && $key['clientMail']){
+      $clientID = $key['clientID'];
+      $clientMail = $key['clientMail'];
+      $clientTNR = $key['clientTNR'];
+      $statement2 = "INSERT INTO rBlacklist (bID,bMail,bTNR,bAnzahl) VALUES (null,'$clientMail','$clientTNR',1) ON DUPLICATE KEY UPDATE bAnzahl = bAnzahl +1";
+      $query2 = $con -> query($statement2);
+      if($query2 === TRUE) { return true; }
+      return false;
+    }
+  }
+  return false;
+}
 
 
 function addNoShow($rID) {

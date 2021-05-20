@@ -2,6 +2,7 @@
 require_once("script/script.admin.php");
 require_once("script/script.reservierung.php");
 require_once("script/sync-admin.php");
+require_once('sync.php');
 
 
 ?>
@@ -115,9 +116,7 @@ require_once("script/sync-admin.php");
                     echo '<ul>';
                       echo '<button id="createReserveButton">Neue Reservierung</button>';
                       if($rsList != false){
-                        foreach ($rsList as $key) {
-                          echo '<li id="'.$key["rID"].'" class="state'.$key["rState"].'">'.$key["rStart"].' - '.$key["rEnd"].'</li>';
-                        }
+                        foreach ($rsList as $key) { echo '<li id="'.$key["rID"].'" class="state'.$key["rState"].'">'.$key["rTime"].'</li>'; }
                       } else {
                         echo '<p style="color: white; font-size: 1.4rem; display:block; text-align:center; padding: 1%;">Keine Reservierung vorhanden</p>';
                       }
@@ -130,11 +129,14 @@ require_once("script/sync-admin.php");
                           echo '<button id="bt-freigeben"><i class="fas fa-unlock"></i> Wieder freigeben</button>';
                           echo '<button id="bt-abgesagt"><i class="fas fa-user-slash"></i> Abgesagt</button>';
                           echo '<button id="bt-noShow"><i class="fas fa-user-times"></i> No-Show</button>';
+                          echo '<button id="bt-abwAnzahl"><i class="fas fa-id-card-alt"></i> Abw. Anzahl</button>';
                         echo '</div>';
 
                         echo '<div class="list-edit-bottom">';
-                          echo '<input type="time" id="rs-time">';
-                          echo '<select id="rs-duration"><option value="2:30">2:30</option><option value="gz">Bis 22 Uhr</option></select>';
+                          echo '<select id="rs-block">';
+                          $block = getTimeBlocks();
+                          foreach ($block as $key) { echo '<option value="'.$key["id"].'">'.$key["start"].' - '.$key["end"].'</option>'; }
+                          echo '</select>';
                           echo '<input type="number" id="rs-amount" min="0" max="20">';
                           echo '<div class="edit-bottom-table">';
                             echo '<img src="img/open/t-right-transparent.png">';
@@ -304,8 +306,8 @@ require_once("script/sync-admin.php");
             $('.switch').attr("id",d[0]['tableID']);
 
             // FRONT DATA
-            $('#rs-time').val(d[0]['reserveStart']);
-            $('#rs-duration').val(d[0]['reserveDuration']);
+            //$('#rs-time').val(d[0]['reserveStart']);
+            //$('#rs-block').val(d[0]['reserveDuration']);
             $('#rs-amount').val(parseInt(d[0]['reserveAmount']));
 
             // Client
@@ -389,6 +391,9 @@ require_once("script/sync-admin.php");
           break;
         case "bt-noShow":
           dataType = "4";color = "#006d77";
+          break;
+        case "bt-abwAnzahl":
+          dataType = "5";color = "#7400b8";
           break;
       }
 
