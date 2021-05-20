@@ -11,8 +11,9 @@ if(isset($_POST['loadTableID']) && isset($_POST['loadTableDate'])){
   return;
 }
 
-if(isset($_POST['getTime']) && isset($_POST['sndDate'])){
-  $r = getTableReserveTime($_POST['getTime'], $_POST['sndDate']);
+if(isset($_GET['getReservierungen'])){
+  $data = explode(';',$_GET['getReservierungen']);
+  $r = getTableReserveTime($data[0],$data[1]); // 0 = TableID, 1 = Datum
   if($r){ echo json_encode($r); }
   return;
 }
@@ -39,7 +40,7 @@ function loadAmpelTables($date) {
   $con = connect();
   $query = $con->query("SELECT tableID, reserveBlock FROM rReserve WHERE reserveDate LIKE '$date' AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)");
   if($query){
-    $arr=array(); $row=0;
+    $arr=array(); $row=1;
     ini_set('display_errors','off');
     foreach ($query as $key) {
       if(in_array($key['tableID'], $arr[$row]) == false){
@@ -465,8 +466,8 @@ function getTableDataID($id, $date) {
   if($queryTable && $queryTime){
     $ampelTable = loadAmpelForTable($id, $date);
     // Lade queryTime in Array timeData
-    while($row = $queryTime->fetch_array()) { $timeData[] = $row; }
-
+    $count = 1;
+    foreach ($queryTime as $keyTime) { $timeData[$count]['timeStart'] = $keyTime['timeStart']; $timeData[$count]['timeEnd'] = $keyTime['timeEnd']; $count++; }
     foreach ($queryTable as $table) { // Tisch mit TischID erhalten
       $data['tableID'] = $table['tableID'];
       $data['tableType'] = $table['tableType'];
@@ -482,7 +483,7 @@ function getTableDataID($id, $date) {
         foreach ($ampelTable as $key) {  // Für jeden Tisch im AmpelArray
           if($key['table'] == $table['tableID']){
             // Wenn Zeit Jetzt größer als Startzeit von Block und kleiner als Endzeit von Block (Uhrzeit gerade in Blockzeit)
-            if(echoTime() > $timeData[$key['block']-1]['timeStart'] && echoTime() < $timeData[$key['block']-1]['timeEnd']){
+            if(echoTime() > $timeData[$key['block']]['timeStart'] && echoTime() < $timeData[$key['block']]['timeEnd']){
               $data['tableReserved'] = "closed";
             }
             $ampelBlock++;
@@ -497,9 +498,9 @@ function getTableDataID($id, $date) {
   return false;
 }
 
-function getTableReserveTime($t, $date) {
+function getTableReserveTime($tableID, $date) {
   $con = connect();
-  $p = "SELECT rReserve.reserveID,rReserve.reserveDate,rReserve.Time,reserveBlock,rReserve.reserveState,rReserve.clientID,clientConfirm,clientName FROM rReserve INNER JOIN rClient ON rReserve.clientID=rClient.clientID WHERE rReserve.tableID = '$t' AND reserveDate = '$date' ORDER BY reserveStart ASC";
+  $p = "SELECT rReserve.reserveID,rReserve.reserveDate,rReserve.reserveTime,rReserve.reserveBlock,rReserve.reserveState,rReserve.clientID,clientConfirm,clientName FROM rReserve INNER JOIN rClient ON rReserve.clientID=rClient.clientID WHERE rReserve.tableID = $tableID AND reserveDate = '$date' ORDER BY reserveBlock ASC";
   $query = $con -> query($p) or die();
   $data = array();
 
