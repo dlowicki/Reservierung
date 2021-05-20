@@ -5,8 +5,8 @@ if(isset($_POST['loadTables'])){
   return;
 }
 
-if(isset($_POST['loadTableID'])){
-  $data = getTableDataID($_POST['loadTableID']);
+if(isset($_POST['loadTableID']) && isset($_POST['loadTableDate'])){
+  $data = getTableDataID($_POST['loadTableID'], $_POST['loadTableDate']);
   echo json_encode($data);
   return;
 }
@@ -34,18 +34,46 @@ if(isset($_POST['loadAmpel'])){
   echo json_encode(loadAmpelTables($date));
 }
 
+
 function loadAmpelTables($date) {
   $con = connect();
   $query = $con->query("SELECT tableID, reserveBlock FROM rReserve WHERE reserveDate LIKE '$date' AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)");
   if($query){
-    $arr=array();
+    $arr=array(); $row=0;
+    ini_set('display_errors','off');
     foreach ($query as $key) {
-      if(array_key_exists($key['tableID'], $arr) == false){
-        $arr[$key['tableID']] = 1;
+      if(in_array($key['tableID'], $arr[$row]) == false){
+        $arr[$row]['table'] = $key['tableID'];
+        $arr[$row]['block'] = $key['reserveBlock'];
       } else {
-        $arr[$key['tableID']] = 2;
+        $arr[$row]['table'] = $key['tableID'];
+        $arr[$row]['block'] = $key['reserveBlock'];
       }
+      $row++;
     }
+    ini_set('display_errors','on');
+    return $arr;
+  }
+  return false;
+}
+
+function loadAmpelForTable($tableID, $date) {
+  $con = connect();
+  $query = $con->query("SELECT tableID, reserveBlock FROM rReserve WHERE reserveDate LIKE '$date' AND tableID = $tableID AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)");
+  if($query){
+    $arr=array(); $row=0;
+    ini_set('display_errors','off');
+    foreach ($query as $key) {
+      if(in_array($key['tableID'], $arr[$row]) == false){
+        $arr[$row]['table'] = $key['tableID'];
+        $arr[$row]['block'] = $key['reserveBlock'];
+      } else {
+        $arr[$row]['table'] = $key['tableID'];
+        $arr[$row]['block'] = $key['reserveBlock'];
+      }
+      $row++;
+    }
+    ini_set('display_errors','on');
     return $arr;
   }
   return false;
@@ -398,10 +426,10 @@ function getTimeBlocks() {
 
 function getTableData($date) {
   $con = connect();
-  $p = "SELECT * FROM rTable";
-  $query = $con -> query($p) or die();
+  $query = $con -> query("SELECT * FROM rTable") or die();
   $data = array();
 
+  // Überprüfe ob Datum größer als 6 Wochen in Zukunft
   $dateEnd = date('Y-m-d', strtotime('+6 week'));
   if($date > $dateEnd){ return false; }
 
@@ -412,11 +440,14 @@ function getTableData($date) {
       $data[$c]['tableID'] = $table['tableID']; $data[$c]['tableType'] = $table['tableType'];
       $data[$c]['tableMax'] = $table['tableMax']; $data[$c]['tableMin'] = $table['tableMin'];
       $data[$c]['tableCode'] = $table['tableCode']; $data[$c]['tableActive'] = $table['tableActive'];
+
       // Wenn tableID in Array von ampelTables enthalten ist, dann sind Reservierungen für Tisch vorhanden
-      if(array_key_exists($table['tableID'], $ampelTables)){
-        // Anzahl von Reservierungen sind größer gleich 2
-        if($ampelTables[$table['tableID']] >= 2){ $data[$c]['tableActive'] = "closed"; }
+      $ampelBlocks = 0;
+      foreach ($ampelTables as $key) {  // Für jeden Tisch im AmpelArray
+        // Wenn der Tisch aus Datenbank in Array von Ampelsystem vorhanden, Anzahl abspeichern
+        if($key['table'] == $table['tableID']){ $ampelBlocks++; }
       }
+      if($ampelBlocks >= 2){ $data[$c]['tableActive'] = "closed"; }
 
       $c++;
     }
@@ -425,41 +456,41 @@ function getTableData($date) {
   return false;
 }
 
-
-
-function getTableDataID($id) {
-  $date = echoDate();
+function getTableDataID($id, $date) {
   $con = connect();
-  $p = "SELECT * FROM rTable WHERE tableID = '$id'";
-  $p2 = "SELECT tableID, reserveDate, reserveTime, reserveBlock, reserveState FROM rReserve WHERE tableID = '$id' AND reserveDate LIKE '$date'";
-  $query = $con -> query($p) or die();
-  $query2 = $con -> query($p2) or die();
+  $queryTable = $con -> query("SELECT * FROM rTable WHERE tableID = '$id'") or die();
+  $queryTime = $con -> query("SELECT timeID, timeStart, timeEnd FROM rTime WHERE timeActive = 1") or die();
   $data = array();
 
-  if($query && $query2){
-    foreach ($query as $row) { // Tisch mit TischID erhalten
-      $data['tableID'] = $row['tableID'];
-      $data['tableType'] = $row['tableType'];
-      $data['tableMax'] = $row['tableMax'];
-      $data['tableMin'] = $row['tableMin'];
-      $data['tableCode'] = $row['tableCode'];
-      $data['tableActive'] = $row['tableActive'];
-      $data['tableReserved'] = "open";
-      /*$r=0;
-      $timeSchneidung=false;
-      foreach ($query2 as $row2) { // Jede Reservierung für den Tisch am besagten Tag
-        $data['reserveA'] = $r;
-        $data[$r]['rDate'] = $row2['reserveDate'];
-        $data[$r]['rT'] = $row2['reserveTime'];
-        $data[$r]['rB'] = $row2['reserveBlock'];
+  if($queryTable && $queryTime){
+    $ampelTable = loadAmpelForTable($id, $date);
+    // Lade queryTime in Array timeData
+    while($row = $queryTime->fetch_array()) { $timeData[] = $row; }
 
-        // Wenn TIME >= startzeit && TIME <= ENDZEIT
-        if(echoTime().":00" >= $row2['reserveStart'] && echoTime().":00"<=$row2['reserveEnd']){
-          $timeSchneidung = true; // Eine Reservierung läuft zurzeit
+    foreach ($queryTable as $table) { // Tisch mit TischID erhalten
+      $data['tableID'] = $table['tableID'];
+      $data['tableType'] = $table['tableType'];
+      $data['tableMax'] = $table['tableMax'];
+      $data['tableMin'] = $table['tableMin'];
+      $data['tableCode'] = $table['tableCode'];
+      $data['tableActive'] = $table['tableActive'];
+      $data['tableReserved'] = "open";
+
+      // ausgewählter Tisch ist in Ampel Array enthalten
+      if(sizeof($ampelTable) >= 1){
+        $ampelBlock = 0;
+        foreach ($ampelTable as $key) {  // Für jeden Tisch im AmpelArray
+          if($key['table'] == $table['tableID']){
+            // Wenn Zeit Jetzt größer als Startzeit von Block und kleiner als Endzeit von Block (Uhrzeit gerade in Blockzeit)
+            if(echoTime() > $timeData[$key['block']-1]['timeStart'] && echoTime() < $timeData[$key['block']-1]['timeEnd']){
+              $data['tableReserved'] = "closed";
+            }
+            $ampelBlock++;
+          }
         }
-        $r++;
+        // Wenn an einem Tag mehr als und oder 2 Blöcke reserviert sind. Tisch für Tag auf belegt setzen
+        if($ampelBlock >= 2){ $data['tableReserved'] = "closed"; }
       }
-      if($timeSchneidung==true){ $data['tableReserved'] = "closed"; }*/
     }
     return $data;
   }

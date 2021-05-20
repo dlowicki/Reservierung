@@ -26,7 +26,7 @@ $(document).ready(function(){
 	    (async() => {
   			var id = jQuery(this).attr("id");
   			const uc = await userCheck().then(function(result){
-  				if(result == false){ viewTable(id); } else { window.location.href = "admin.php?reservierungen&table="+id+"&date="; }
+  				if(result == false){ viewTable(id, localStorage.getItem('rCalendar').split(';')[0]); } else { window.location.href = "admin.php?reservierungen&table="+id+"&date="; }
   			});
 		  })();
     }
@@ -125,8 +125,9 @@ function viewCalendar(){
 
 $(document).on('click','#calendar-confirm',function(){
   const date = $('#calendar-date').val(); const time = $('#calendar-time').val();
-  var today = new Date().toISOString().slice(0, 10);
-  if(date.length == 10 && time.length >= 1 && date > today && date <= todayPlusSixWeeks()){
+  //var today = new Date().toISOString().slice(0, 10);
+  var today = '2021-05-18';
+  if(date.length == 10 && time.length >= 1 && date >= today && date <= todayPlusSixWeeks()){
     localStorage.setItem('rCalendar',date+';'+time);
     (async() => {
       const uc = await loadTables(localStorage.getItem('rCalendar').split(';')[0]).then(function(result){
@@ -153,20 +154,18 @@ $(document).on('click','.fa-calendar-alt',function(){ viewCalendar(); });
 
 
 
-function viewTable(id) {
-   var a = true;
+function viewTable(id, date) {
   $.ajax({
     url: "sync.php",
     method: "POST",
-    data: {loadTableID: id},
+    data: {loadTableID: id, loadTableDate: date},
     success: function(result) {
       console.log(result);
       var d = JSON.parse(result);
-
       var tID = "'"+d['tableID']+"'";
 
       $('#viewTable').append('<i class="fa fa-times fa-2x" onClick="tableClose()"></i>');
-
+      // Wenn Tisch aktiv ist und Reservierung nicht vorhanden, Tisch FREI andernfalls BELEGT
       if(d['tableActive'] == "open" && d['tableReserved'] == "open"){
         $('#viewTable').append('<h1>Tisch '+id+' <span style="color: green;">FREI</span></h1>');
       } else {
@@ -188,22 +187,17 @@ function viewTable(id) {
 
       var options = ""; for (var i = parseInt(d['tableMin']); i <= parseInt(d['tableMax']); i++) { options = options + "<option value='"+i+"'>"+i+"</option>";}
       $('.form-table-left-inputs').append('<select id="amount">'+options+'</select></div>');
-      $('.form-table-left-inputs').append('<input type="date" id="timeDate" onChange="checkTimeFrom('+tID+')">');
-
+      var localDate = localStorage.getItem('rCalendar').split(';')[0];
+      $('.form-table-left-inputs').append('<input type="date" id="timeDate" value="'+localDate+'" onChange="checkTimeFrom('+tID+')">');
+      var localBlock = localStorage.getItem('rCalendar').split(';')[1];
       $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
         $('.form-table-left-inputs').append('<select id="timeBlock"></select>');
         data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
-          $('#timeBlock').append('<option value="'+item["id"]+'">'+time+' Uhr</option>');
+          if(item['id'] == localBlock){ $('#timeBlock').append('<option value="'+item["id"]+'" selected>'+time+' Uhr</option>');
+          } else { $('#timeBlock').append('<option value="'+item["id"]+'">'+time+' Uhr</option>'); }
         });
       });
-
-      /*$('.form-table-left').append('<datalist id="timelist"></datalist>');
-      $('#timelist').append('<option value="17:00"><option value="17:15"><option value="17:30"><option value="17:45">');
-      $('#timelist').append('<option value="18:00"><option value="18:15"><option value="18:30"><option value="18:45">');
-      $('#timelist').append('<option value="19:00"><option value="19:15"><option value="19:30"><option value="19:45">');
-      $('#timelist').append('<option value="20:00"><option value="20:15"><option value="20:30"><option value="20:45">');
-      $('#timelist').append('<option value="21:00"><option value="21:15"><option value="21:30">');*/
 
       $('.form-table-right').append("<h2>Registrierung zwecks Corona</h2>");
       $('.form-table-right').append('<p>Damit ein Tisch bei uns reserviert werden kann, müssen wir den Anforderungen entsprechend die Daten einer Person bei uns abspeichern.<br>Bitte Denken Sie daran, dass bei mehreren Haushalten an einem Tisch, <b>pro Haushalt eine Kontakperson</b> registriert werden muss.<br>Die Daten werden <a href="#">Datenschutzkonform</a> abgespeichert</p');
