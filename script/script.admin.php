@@ -70,6 +70,23 @@ class Overview
     return false;
   }
 
+  public function getNoShowWithMail($mail) {
+    $con = $this->connectDatabase();
+    $statement = "SELECT nsID, nsAmount, nsDate FROM rnoshow WHERE nsMail = '$mail'";
+    $query = $con->query($statement) or die();
+
+    if($query){
+      $data = array();
+      foreach ($query as $key) {
+        $data['id'] = $key['nsID'];
+        $data['amount'] = $key['nsAmount'];
+        $data['time'] = $key['nsDate'];
+      }
+      return $data;
+    }
+    return false;
+  }
+
   public function updateNoShow($id,$amount,$mail,$time) {
     $con = $this->connectDatabase();
     $statement = "UPDATE rnoshow SET nsMail = '$mail', nsAmount = '$amount', nsDate = '$time' WHERE nsID = '$id'";

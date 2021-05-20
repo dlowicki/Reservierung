@@ -1,4 +1,7 @@
 <?php
+
+require_once('script/script.admin.php');
+
 if(isset($_POST['loadTables'])){
   $data = getTableData($_POST['loadTables']);
   echo json_encode($data);
@@ -92,26 +95,29 @@ function loadAmpelForTable($tableID, $date) {
 
 if(isset($_POST['createReserve'])){
   $daten = $_POST['createReserve'];
-  $amount=$daten[0];
-  $date = $daten[1];
-  $block = $daten[2];
-  $table = $daten[3];
+  $amount = $daten[0];  // Anzahl von Personen z.B. 5
+  $date = $daten[1];    // Genaues Datum der Reservierung 2021-05-20
+  $block = $daten[2];   // BlockID z.B. 1
+  $table = $daten[3];   // TischID 9
 
   $hhExist = false;
   for ($i=0; $i < 5; $i++) { // Schleife, die 5 mal durchlaufen wird
-    if(array_key_exists($i,$daten[5])==false){ continue; } // Wenn $i in array nicht existiert
+    if(array_key_exists($i,$daten[4])==false){ continue; } // Wenn $i in array nicht existiert
     //if(strlen($daten[5][$i]) > 10){}
-    $exp = explode(";",$daten[5][$i]);
-    if(count($exp) == 4){  // Count gibt Wert 5 zurück, alle Felder ausgefüllt
-      if(strlen($exp[0])>0 && strlen($exp[1])>0 && strlen($exp[2])>0 && strlen($exp[3])>0){
-        $hhExist = true;
-      }
+    $exp = explode(";",$daten[4][$i]);
+    if(count($exp) == 4){  // Count gibt Wert 4 zurück, alle Felder ausgefüllt
+      if(strlen($exp[0])>0 && strlen($exp[1])>0 && strlen($exp[2])>0 && strlen($exp[3])>0){ $hhExist = true; }
     }
   }
   // $hhExist == false, kein Haushalt wurde eingetragen
   if($hhExist == false){ echo "0"; return; }
+  
+  //Überprüfe ob NoShow Eintrag vorhanden oder nicht
+  $overview = new Overview();
+  $noshow = $overview->getNoShowWithMail(explode(";",$daten[4][0])[2]);
+  if($noshow){ if($noshow['amount'] >= 2){ echo '0'; return false; } }
 
-  // checkReserveTime = Überprüfe ob Überschneidung mit vorhandener Reservierung
+  // checkReserveTime = Überprüfe ob Reservierung für Block bereits vorhanden | return false wenn belegt
   if(checkReserveTime($block,$date,$table)){
 	  $clientID = uniqid();
     $rCookie = md5(uniqid(rand (),true));
@@ -119,7 +125,7 @@ if(isset($_POST['createReserve'])){
     $rID = reserveTable($table,$clientID,$date,getTimeBlockTime($block),$block,$amount,$rCookie);
     if($rID != false){  // $rID wurde erfolgreich erstellt --> Reservierung eingetragen
       $date = echoDateTime(); $count = 0; $con = connect();
-      foreach ($daten[5] as $key => $value) { // Für jeden Datensatz (Haushalt)
+      foreach ($daten[4] as $key => $value) { // Für jeden Datensatz (Haushalt)
         if($count != 0){ $clientID = uniqid(); }
         if($value){ // Wenn Wert von Haushalt existiert
           $exp = explode(";",$value);
@@ -563,7 +569,7 @@ function r($str){
 // Überprüfe ob Überschneidung mit Reservierung
 function checkReserveTime($block,$date,$tableID) {
   $con = connect();
-  $p = "SELECT reserveBlock FROM rReserve WHERE reserveDate LIKE '2021-05-18' AND tableID = $tableID AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)";
+  $p = "SELECT reserveBlock FROM rReserve WHERE reserveDate LIKE '$date' AND tableID = $tableID AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)";
   $query = $con->query($p) or die();
 
   if($query){

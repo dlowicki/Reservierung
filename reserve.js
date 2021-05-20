@@ -1,7 +1,7 @@
 $(document).ready(function(){
   // DEBUG
   //viewTable(98);
-  //viewReserved('36','17:00:00 Uhr','15-03-2021','2:30','6');
+  //viewReserved('36',1,'2021-05-21','6');
 
   // Table Parameter for QR Code
   tc=getTableParameter();
@@ -190,8 +190,7 @@ function viewTable(id, date) {
 
       var options = ""; for (var i = parseInt(d['tableMin']); i <= parseInt(d['tableMax']); i++) { options = options + "<option value='"+i+"'>"+i+"</option>";}
       $('.form-table-left-inputs').append('<select id="amount">'+options+'</select></div>');
-      var localDate = localStorage.getItem('rCalendar').split(';')[0];
-      $('.form-table-left-inputs').append('<input type="date" id="timeDate" value="'+localDate+'" onChange="getReservierungen('+tID+',this.value)">');
+      $('.form-table-left-inputs').append('<input type="date" id="timeDate" value="'+date+'">');
       var localBlock = localStorage.getItem('rCalendar').split(';')[1];
       $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
         $('.form-table-left-inputs').append('<select id="timeBlock"></select>');
@@ -261,6 +260,13 @@ $(document).on('change','#timeBlock',function(){
   if(block.includes($(this).val())){ $(this).css('color','red'); } else {
     $('#option'+$(this).val()).css('color','black'); $(this).css('color','black');
   }
+});
+
+$(document).on('change','#timeDate',function(){
+  var tisch = $('#viewTable h1').text().split(' ')[1];
+  var date = $(this).val();
+  tableClose();
+  viewTable(tisch, date);
 });
 
 function checkTimeFrom(t) {
@@ -369,6 +375,7 @@ function getReservierungen(tableID, date) {
             $('#container-information-content').append("<div class='information-box' id='rsBlock"+item['rB']+"' style='background-color: "+colors[colorNum]+"'>Reserviert<br>"+time[0].slice(0,5)+" Uhr bis "+time[1].slice(0,5)+" Uhr</div>");
           }
         });
+        $('#timeBlock').css('color','black');
       }
     }
   });
@@ -490,19 +497,6 @@ function getReservierungenACP(t){
   });
 }
 
-function viewReserved(table, time, date, duration, amount){
-  $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
-  $('.container-reserve').append('<div id="viewReserved"></div>');
-  $('#viewReserved').append('<h2>Tisch '+table+' am '+date+' reserviert!</h2>');
-  $('#viewReserved').append('<ul><li>Anzahl der Personen '+amount+'</li><li>Reserviert für '+time+' Uhr</li><li>Dauer: '+decodeDuration(duration)+'</li></ul>');
-  $('#viewReserved').append('<p><p>Wir wünschen Ihnen einen angenehmen Aufenthalt!<br><br>Falls die Reservierung nicht mehr stimmen sollte, bitten wir um eine telefonische Absage oder korrektur</p></p>');
-  $('#viewReserved').append('<button onClick="reservedClose()" id="viewReservedButton">Verstanden</button>');
-}
-
-
-
-
-
 
 
 function loginClose() {
@@ -542,23 +536,21 @@ function verifyInput(id) {
 function sendReserve(tID) {
     var inputs = new Array();
     var haushalt = new Array();
-    const amount = $('#amount').val(); if(r(amount)){ inputs[0] = amount; }
-    const date = $('#timeDate').val(); if(r(date) && date >= getToday()){ inputs[1] = date; }
-    const timeBlock = $('#timeBlock').val(); if(r(timeBlock)){ inputs[2] = timeBlock; }
+    const amount = $('#amount').val(); if(r(amount)){ inputs[0] = amount; } else { return false; }
+    const date = $('#timeDate').val(); if(r(date) && date >= getToday() && date <= todayPlusSixWeeks()){ inputs[1] = date; } else { return false; }
+    const timeBlock = $('#timeBlock').val(); if(r(timeBlock)){ inputs[2] = timeBlock; } else { return false; }
     inputs[3] = tID;
+
     for (var i = 1; i < 6; i++) {
       const cv = $('.right-inputs-hh'+i+' .clientVorname').val();
       const cn = $('.right-inputs-hh'+i+' .clientName').val();
       const cm = $('.right-inputs-hh'+i+' .clientMail').val();
       const ct = $('.right-inputs-hh'+i+' .clientTNR').val();
       if(cv.length >= 1){
-        if(r(cv) == true && r(cn) == true && r(cm) == true && r(ct) == true){
-          haushalt[i-1] = cv + ";" + cn + ";" + cm + ";" + ct;
-        }
+        if(r(cv) == true && r(cn) == true && r(cm) == true && r(ct) == true){ haushalt[i-1] = cv + ";" + cn + ";" + cm + ";" + ct; }
       }
     }
-    inputs[5] = haushalt;
-    console.log(inputs);
+    inputs[4] = haushalt;
     if(haushalt.length > 0){
       $.ajax({
         url: "sync.php", method: "POST", data: { createReserve: inputs },
@@ -566,12 +558,27 @@ function sendReserve(tID) {
           console.log("Result: " + result);
           if(result == "1"){
             tableClose();
-            //table, time, date, duration, amount
-            viewReserved(tID,time,date,timeBlock,amount);
+            console.log('Reservierung bestätigt');
+            viewReserved(tID,timeBlock,date,amount); //table, time, date, amount
           }
         }
       });
     }
+}
+
+function viewReserved(table, blockID, date, amount){
+  $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+    $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
+    $('.container-reserve').append('<div id="viewReserved"></div>');
+    $('#viewReserved').append('<h2>Tisch '+table+' am '+date+' reserviert!</h2>');
+    data.forEach((item, i) => {
+      if(item['id'] == blockID){
+        $('#viewReserved').append('<ul><li>Anzahl der Personen '+amount+'</li><li>Reserviert für '+item["start"]+' - '+item["end"]+' Uhr</li></ul>');
+      }
+    });
+    $('#viewReserved').append('<p><p>Wir wünschen Ihnen einen angenehmen Aufenthalt!<br><br>Falls die Reservierung nicht mehr stimmen sollte, bitten wir um eine telefonische Absage oder korrektur</p></p>');
+    $('#viewReserved').append('<button onClick="reservedClose()" id="viewReservedButton">Verstanden</button>');
+  });
 }
 
 function submitLogin(){
@@ -579,18 +586,12 @@ function submitLogin(){
   if(n.length >= 5 && p.length >= 7){
     $.ajax({
       url: "sync.php", method: "POST", data: { hubName: CryptoJS.MD5(n).toString(), hubSecure: CryptoJS.MD5(p).toString() },
-      success: function(result) {
-        location.reload();
-        loginClose();
-      }
+      success: function(result) { location.reload(); loginClose(); }
     });
   }
 }
 
-function submitLogoff() {
-  setCookie("rSession","",-1);
-  location.reload();
-}
+function submitLogoff() { setCookie("rSession","",-1); location.reload(); }
 
 function getToday() {
   var today = new Date();
