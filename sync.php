@@ -1,5 +1,5 @@
 <?php
-
+require_once('mail/sendmail.php');
 require_once('script/script.admin.php');
 
 if(isset($_POST['loadTables'])){
@@ -16,9 +16,12 @@ if(isset($_POST['loadTableID']) && isset($_POST['loadTableDate'])){
 
 if(isset($_GET['getReservierungen'])){
   $data = explode(';',$_GET['getReservierungen']);
-  $r = getTableReserveTime($data[0],$data[1]); // 0 = TableID, 1 = Datum
-  if($r){ echo json_encode($r); }
-  return;
+  if(strlen($data[0]) > 0 && strlen($data[1] > 0)){
+	$r = getTableReserveTime($data[0],$data[1]); // 0 = TableID, 1 = Datum
+	if($r){ echo json_encode($r); }
+	return;
+  }
+
 }
 
 if(isset($_POST['getOverview']) && isset($_POST['oDate'])){
@@ -41,7 +44,7 @@ if(isset($_POST['loadAmpel'])){
 
 function loadAmpelTables($date) {
   $con = connect();
-  $query = $con->query("SELECT tableID, reserveBlock FROM rReserve WHERE reserveDate LIKE '$date' AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)");
+  $query = $con->query("SELECT tableID, reserveBlock FROM rreserve WHERE reserveDate LIKE '$date' AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)");
   if($query){
     $arr=array(); $row=1;
     ini_set('display_errors','off');
@@ -61,9 +64,9 @@ function loadAmpelTables($date) {
   return false;
 }
 
-function loadAmpelForTable($tableID, $date) {
+function loadAmpelFortable($tableID, $date) {
   $con = connect();
-  $query = $con->query("SELECT tableID, reserveBlock FROM rReserve WHERE reserveDate LIKE '$date' AND tableID = $tableID AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)");
+  $query = $con->query("SELECT tableID, reserveBlock FROM rreserve WHERE reserveDate LIKE '$date' AND tableID = $tableID AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)");
   if($query){
     $arr=array(); $row=0;
     ini_set('display_errors','off');
@@ -83,14 +86,6 @@ function loadAmpelForTable($tableID, $date) {
   return false;
 }
 
-// Daten von Reservierung, bei die auch stattfinden zurzeit
-// Dann wird block überprüft, welcher schon reserviert ist
-// Wenn Tisch kein Block mehr frei = rot
-
-// Ich hab den Tag
-// Ich hab die Uhrzeit gegeben
-// Wenn angegebene Uhrzeit > reserveEnd dann Eintrag nicht beachten
-
 
 
 if(isset($_POST['createReserve'])){
@@ -103,29 +98,26 @@ if(isset($_POST['createReserve'])){
   $hhExist = false;
   for ($i=0; $i < 5; $i++) { // Schleife, die 5 mal durchlaufen wird
     if(array_key_exists($i,$daten[4])==false){ continue; } // Wenn $i in array nicht existiert
-    //if(strlen($daten[5][$i]) > 10){}
     $exp = explode(";",$daten[4][$i]);
-    if(count($exp) == 4){  // Count gibt Wert 4 zurück, alle Felder ausgefüllt
-      if(strlen($exp[0])>0 && strlen($exp[1])>0 && strlen($exp[2])>0 && strlen($exp[3])>0){ $hhExist = true; }
-    }
+    // Count gibt Wert 4 zurück, alle Felder ausgefüllt
+	if(count($exp) == 4){  if(strlen($exp[0])>0 && strlen($exp[1])>0 && strlen($exp[2])>0 && strlen($exp[3])>0){ $hhExist = true; } }
   }
   // $hhExist == false, kein Haushalt wurde eingetragen
   if($hhExist == false){ echo "0"; return; }
 
-  //Überprüfe ob NoShow Eintrag vorhanden oder nicht
-  $nsClient = explode(";",$daten[4][0]);
-  $overview = new Overview();
-  $noshow = $overview->getNoShowWithMailAndNumber($nsClient[2], $nsClient[3]);
-  if($noshow){ if($noshow['amount'] >= 2){ echo '2'; return false; } }
-
-  // checkReserveTime = Überprüfe ob Reservierung für Block bereits vorhanden | return false wenn belegt
+	//Überprüfe ob NoShow Eintrag vorhanden oder nicht
+	$nsClient = explode(";",$daten[4][0]);
+	$overview = new Overview();
+	$noshow = $overview->getNoShowWithMailAndNumber($nsClient[2], $nsClient[3]);
+	if($noshow){ if($noshow['amount'] >= 2){ echo '2'; return false; } }
+	// checkReserveTime = Überprüfe ob Reservierung für Block bereits vorhanden | return false wenn belegt
   if(checkReserveTime($block,$date,$table)){
-	  $clientID = uniqid();
-    $rCookie = md5(uniqid(rand (),true));
+	$clientID = uniqid(); $rCookie = md5(uniqid(rand (),true)); $mailTO = "";
     // $tID,$cID,$rDate,$rTime,$rD,$rA
     $rID = reserveTable($table,$clientID,$date,getTimeBlockTime($block),$block,$amount,$rCookie);
     if($rID != false){  // $rID wurde erfolgreich erstellt --> Reservierung eingetragen
-      $date = echoDateTime(); $count = 0; $con = connect();
+      $dateToday = echoDateTime(); $count = 0; $con = connect();
+	  if($daten[4][0] != null){ $mailTO = explode(";",$daten[4][0])[2]; } // Erhalte Mail von Client0
       foreach ($daten[4] as $key => $value) { // Für jeden Datensatz (Haushalt)
         if($count != 0){ $clientID = uniqid(); }
         if($value){ // Wenn Wert von Haushalt existiert
@@ -133,12 +125,15 @@ if(isset($_POST['createReserve'])){
           $cf = uniqid()."".uniqid();
           $vorname = $exp[0]; $name = $exp[1]; $mail = $exp[2]; $tnr = $exp[3];
           // $cID,$rID,$tID,$vorname,$name,$mail,$adresse,$tnr,$cf
-          $sqlStatement = "INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientTNR, clientDate, clientConfirm) VALUES ('$clientID','$rID','$vorname','$name','$mail','$tnr','$date','$cf');";
+          $sqlStatement = "INSERT INTO rclient (clientID, reserveID, clientVorname, clientName, clientMail, clientTNR, clientDate, clientConfirm) VALUES ('$clientID','$rID','$vorname','$name','$mail','$tnr','$dateToday','$cf');";
           $query = $con -> query($sqlStatement) or die();
           if($query !== TRUE){ echo "0"; return; }
         }
         $count++;
-      } echo "1"; return;
+      }
+      // Clients wurden erfolgreich erstellt. Versende Mail
+      if(sendmail($table,$date, getTimeBlockTime($block),$amount, $mailTO)){ echo "1"; return; }
+      echo "3"; return; // 3 = Reservierung angelegt aber E-Mail konnte nicht verschickt werden
     }
   } echo "0"; return;
 }
@@ -146,7 +141,7 @@ if(isset($_POST['createReserve'])){
 if(isset($_POST['hubName']) && isset($_POST['hubSecure'])){
   if(r($_POST['hubName']) == false && r($_POST['hubSecure']) == false){
     $con = connect();
-    $query = $con->prepare("SELECT userName, userPW FROM rUser WHERE userName = ? AND userActive = '1'");
+    $query = $con->prepare("SELECT userName, userPW FROM ruser WHERE userName = ? AND userActive = '1'");
     $query->bind_param('s',$_POST['hubName']);
     $query->execute();
 
@@ -157,9 +152,9 @@ if(isset($_POST['hubName']) && isset($_POST['hubSecure'])){
       if($row['userName'] == $_POST['hubName'] && $row['userPW'] == $_POST['hubSecure']){
         $cookie = md5(uniqid());
         $n = $_POST['hubName'];
-        $query2 = $con->query("UPDATE rUser SET userCookie = '$cookie' WHERE userName = '$n'");
+        $query2 = $con->query("UPDATE ruser SET userCookie = '$cookie' WHERE userName = '$n'");
         if($query2===TRUE){
-          setcookie("rSession", $cookie, time()+3600, "/");
+          setcookie("rSession", $cookie, time()+86400, "/"); // Für eine Stunde
           echo "1";
           return;
         }
@@ -175,19 +170,15 @@ if(isset($_POST['hubName']) && isset($_POST['hubSecure'])){
 
 if(isset($_POST['user'])){
   $con = connect();
-  $query = $con->prepare("SELECT userCookie FROM rUser WHERE userCookie = ?");
+  $query = $con->prepare("SELECT userCookie FROM ruser WHERE userCookie = ?");
   $query->bind_param('s',$_POST['user']);
+  
   $query->execute();
 
   $result = $query->get_result();
   $row = $result->fetch_array(MYSQLI_ASSOC);
-
-  if(sizeof($row) >=1 ){
-    if($row['userCookie'] == $_POST['user']) {
-      echo md5($row['userCookie']);
-      return;
-    }
-  }
+	
+  if(sizeof($row) >=1 ){ if($row['userCookie'] == $_POST['user']) { echo md5($row['userCookie']); return; } }
   echo "0"; return;
 }
 
@@ -195,11 +186,11 @@ if(isset($_POST['remove'])){
   $con = connect();
   $cookie = htmlspecialchars($_COOKIE['rSession']);
   $clientConfirm = $_POST['remove'];
-  $query=$con->query("SELECT userActive FROM rUser WHERE userCookie = '$cookie'");
+  $query=$con->query("SELECT userActive FROM ruser WHERE userCookie = '$cookie'");
   if($query){
     foreach ($query as $key) {
       if($key['userActive'] == "1"){
-        $query2 = $con->query("DELETE rClient, rReserve FROM rClient INNER JOIN rReserve ON rClient.clientID = rReserve.clientID WHERE rClient.clientConfirm = '$clientConfirm'");
+        $query2 = $con->query("DELETE rclient, rreserve FROM rclient INNER JOIN rreserve ON rclient.clientID = rreserve.clientID WHERE rclient.clientConfirm = '$clientConfirm'");
         if($query2 === TRUE){
           echo "1";
           return;
@@ -213,7 +204,7 @@ if(isset($_POST['remove'])){
 
 if(isset($_POST['qrCode'])){
   $con = connect();
-  $query = $con->prepare("SELECT tableID FROM rTable WHERE tableCode = ?");
+  $query = $con->prepare("SELECT tableID FROM rtable WHERE tableCode = ?");
   $query->bind_param('s',$_POST['qrCode']);
   $query->execute();
 
@@ -230,7 +221,7 @@ if(isset($_POST['qrCode'])){
 if(isset($_POST['changeReserve'])){
   $id = $_POST['changeReserve'];
   $con = connect();
-  $query = $con->query("SELECT reserveID, tableID, reserveTime FROM rReserve WHERE reservecookie = '$id'");
+  $query = $con->query("SELECT reserveID, tableID, reserveTime FROM rreserve WHERE reservecookie = '$id'");
   $data = array();
 
   if($query){
@@ -268,7 +259,7 @@ if(isset($_POST['crSubmit']) && isset($_POST['crID'])){
       if($inside == false){ // Wenn Client nicht in Datenbank --> hinzufügen
         $cf = uniqid();
         $con = connect(); // Baue Verbindung auf
-        $sqlStatement = "INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientTNR, clientDate, clientConfirm) VALUES ('$cID','$rID','$vorname','$name','$mail','$tnr','$dateTime','$cf');";
+        $sqlStatement = "INSERT INTO rclient (clientID, reserveID, clientVorname, clientName, clientMail, clientTNR, clientDate, clientConfirm) VALUES ('$cID','$rID','$vorname','$name','$mail','$tnr','$dateTime','$cf');";
         $query = $con -> query($sqlStatement) or die(); // Führe Query aus
         if($query === FALSE){ // Wenn INSERT Fehler hat
           echo "0";
@@ -295,7 +286,7 @@ if(isset($_POST['crDelete'])){
 if(isset($_POST['getTableActive'])){
   $id = $_POST['getTableActive'];
   $con = connect();
-  $statement = "SELECT tableActive FROM rTable WHERE tableID = '$id' LIMIT 1";
+  $statement = "SELECT tableActive FROM rtable WHERE tableID = '$id' LIMIT 1";
   $query = $con -> query($statement);
   $query = $query->fetch_array(MYSQLI_ASSOC);
   if($query['tableActive']){
@@ -311,7 +302,7 @@ if(isset($_POST['setTableActive']) && isset($_POST['value'])){
   $val = $_POST['value'];
   if($val == "true"){ $val = "open"; } else { $val = "closed"; }
   $con = connect();
-  $statement = "UPDATE rTable SET tableActive = '$val' WHERE tableID = '$id'";
+  $statement = "UPDATE rtable SET tableActive = '$val' WHERE tableID = '$id'";
   $query = $con -> query($statement);
 
   if($query === TRUE) {
@@ -326,7 +317,7 @@ if(isset($_POST['setTableActive']) && isset($_POST['value'])){
 
 function getReserveData($id) {
   $con = connect();
-  $statement = "SELECT tableID, clientID, reserveDate, reserveTime, reserveBlock, reserveAmount FROM rReserve WHERE reserveID = '$id'";
+  $statement = "SELECT tableID, clientID, reserveDate, reserveTime, reserveBlock, reserveAmount FROM rreserve WHERE reserveID = '$id'";
   $query = $con -> query($statement);
   $data = array();
   if($query){
@@ -345,7 +336,7 @@ function getReserveData($id) {
 
 function getClientsFromReserve($id) {
   $con = connect();
-  $statement = "SELECT clientID,clientVorname,clientName,clientMail,clientTNR FROM rClient WHERE reserveID = '$id'";
+  $statement = "SELECT clientID,clientVorname,clientName,clientMail,clientTNR FROM rclient WHERE reserveID = '$id'";
   $query = $con -> query($statement);
   $data = array();
 
@@ -384,16 +375,12 @@ function connect() {
 
 function reserveTable($tID,$cID,$rDate,$rT,$rB,$rA,$rC) {
   $con = connect();
-  $p = "INSERT INTO rReserve (reserveID, tableID, clientID, reserveDate, reserveTime, reserveBlock, reserveAmount, reserveCookie, reserveState) VALUES (null,'$tID','$cID','$rDate','$rT','$rB','$rA','$rC','0')";
+  $p = "INSERT INTO rreserve (reserveID, tableID, clientID, reserveDate, reserveTime, reserveBlock, reserveAmount, reserveCookie, reserveState) VALUES (null,'$tID','$cID','$rDate','$rT','$rB','$rA','$rC','0')";
   $query = $con->query($p) or die();
   if($query === TRUE){
-    $p2="SELECT reserveID FROM rReserve ORDER BY reserveID DESC LIMIT 1";
+    $p2="SELECT reserveID FROM rreserve ORDER BY reserveID DESC LIMIT 1";
     $query2 = $con->query($p2) or die();
-    if($query2){
-      foreach ($query2 as $key) {
-        return $key['reserveID'];
-      }
-    }
+    if($query2){ foreach ($query2 as $key) { return $key['reserveID']; } }
     return false;
   }
   return false;
@@ -402,7 +389,7 @@ function reserveTable($tID,$cID,$rDate,$rT,$rB,$rA,$rC) {
 function createClient($cID,$rID,$vorname,$name,$mail,$tnr,$cf) {
   $con = connect();
   $date = echoDateTime();
-  $p="INSERT INTO rClient (clientID, reserveID, clientVorname, clientName, clientMail, clientTNR, clientDate, clientConfirm) VALUES ('$cID','$rID','$vorname','$name','$mail','$tnr','$date','$cf')";
+  $p="INSERT INTO rclient (clientID, reserveID, clientVorname, clientName, clientMail, clientTNR, clientDate, clientConfirm) VALUES ('$cID','$rID','$vorname','$name','$mail','$tnr','$date','$cf')";
   $query = $con -> query($p) or die();
   if($query === TRUE){
     return true;
@@ -412,15 +399,13 @@ function createClient($cID,$rID,$vorname,$name,$mail,$tnr,$cf) {
 
 function getTimeBlockTime($id) {
   $con = connect();
-  $query= $con->query("SELECT timeStart, timeEnd FROM rTime WHERE timeActive = 1 AND timeID = $id");
-  if($query){
-    foreach ($query as $key) { return $key['timeStart'] . " - " . $key['timeEnd']; }
-  }
+  $query= $con->query("SELECT timeStart, timeEnd FROM rtime WHERE timeActive = 1 AND timeID = $id");
+  if($query){ foreach ($query as $key) { return $key['timeStart'] . " - " . $key['timeEnd']; } }
   return false;
 }
 function getTimeBlocks() {
   $con = connect();
-  $query= $con->query('SELECT timeID, timeStart, timeEnd, timeActive FROM rTime');
+  $query= $con->query('SELECT timeID, timeStart, timeEnd, timeActive FROM rtime');
   if($query){
     $arr = array(); $r=0;
     foreach ($query as $key) {
@@ -435,7 +420,7 @@ function getTimeBlocks() {
 
 function getTableData($date) {
   $con = connect();
-  $query = $con -> query("SELECT * FROM rTable") or die();
+  $query = $con -> query("SELECT * FROM rtable") or die();
   $data = array();
 
   // Überprüfe ob Datum größer als 6 Wochen in Zukunft
@@ -449,6 +434,8 @@ function getTableData($date) {
       $data[$c]['tableID'] = $table['tableID']; $data[$c]['tableType'] = $table['tableType'];
       $data[$c]['tableMax'] = $table['tableMax']; $data[$c]['tableMin'] = $table['tableMin'];
       $data[$c]['tableCode'] = $table['tableCode']; $data[$c]['tableActive'] = $table['tableActive'];
+      $data[$c]['width'] = $table['tableWidth']; $data[$c]['height'] = $table['tableHeight'];
+      $data[$c]['x'] = $table['tableX']; $data[$c]['y'] = $table['tableY'];
 
       // Wenn tableID in Array von ampelTables enthalten ist, dann sind Reservierungen für Tisch vorhanden
       $ampelBlocks = 0;
@@ -467,12 +454,12 @@ function getTableData($date) {
 
 function getTableDataID($id, $date) {
   $con = connect();
-  $queryTable = $con -> query("SELECT * FROM rTable WHERE tableID = '$id'") or die();
-  $queryTime = $con -> query("SELECT timeID, timeStart, timeEnd FROM rTime WHERE timeActive = 1") or die();
+  $queryTable = $con -> query("SELECT * FROM rtable WHERE tableID = '$id'") or die();
+  $queryTime = $con -> query("SELECT timeID, timeStart, timeEnd FROM rtime WHERE timeActive = 1") or die();
   $data = array();
 
   if($queryTable && $queryTime){
-    $ampelTable = loadAmpelForTable($id, $date);
+    $ampelTable = loadAmpelFortable($id, $date);
     // Lade queryTime in Array timeData
     $count = 1;
     foreach ($queryTime as $keyTime) { $timeData[$count]['timeStart'] = $keyTime['timeStart']; $timeData[$count]['timeEnd'] = $keyTime['timeEnd']; $count++; }
@@ -507,10 +494,10 @@ function getTableDataID($id, $date) {
   }
   return false;
 }
-
+// Tote Reservierung = Reservierung existiert aber Client nicht in Datenbank
 function getTableReserveTime($tableID, $date) {
   $con = connect();
-  $p = "SELECT rReserve.reserveID,rReserve.reserveDate,rReserve.reserveTime,rReserve.reserveBlock,rReserve.reserveState,rReserve.clientID,clientConfirm,clientName FROM rReserve INNER JOIN rClient ON rReserve.clientID=rClient.clientID WHERE rReserve.tableID = $tableID AND reserveDate = '$date' ORDER BY reserveBlock ASC";
+  $p = "SELECT rreserve.reserveID,rreserve.reserveDate,rreserve.reserveTime,rreserve.reserveBlock,rreserve.reserveState,clientConfirm,clientName FROM rreserve INNER JOIN rclient ON rreserve.clientID=rclient.clientID WHERE rreserve.tableID = $tableID AND reserveDate = '$date' ORDER BY reserveBlock ASC";
   $query = $con -> query($p) or die();
   $data = array();
 
@@ -521,9 +508,9 @@ function getTableReserveTime($tableID, $date) {
       $data[$r]['rDate'] = $key['reserveDate'];
       $data[$r]['rT'] = $key['reserveTime'];
       $data[$r]['rB'] = $key['reserveBlock'];
+	  $data[$r]['rState'] = $key['reserveState'];
       $data[$r]['cc'] = $key['clientConfirm'];
       $data[$r]['cn'] = $key['clientName'];
-      $data[$r]['rState'] = $key['reserveState'];
       $r++;
     }
     return $data;
@@ -535,22 +522,14 @@ function getIP() {
   $userIP = isset($_SERVER['HTTP_CLIENT_IP']) ? $_SERVER['HTTP_CLIENT_IP'] : isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
   return $userIP;
 }
-
-function encrypt($value, $key) { // verschlüsseln
-  return openssl_encrypt($value, "AES-128-ECB", $key);
+ // verschlüsseln
+function encrypt($value, $key) { return openssl_encrypt($value, "AES-128-ECB", $key); }
+// entschlüsseln
+function decrypt($value, $key) {  return openssl_decrypt($value, "AES-128-ECB", $key); 
 }
-function decrypt($value, $key) { // entschlüsseln
-  return openssl_decrypt($value, "AES-128-ECB", $key);
-}
-function echoDate() {
-  return date("Y-m-d");
-}
-function echoDateTime() {
-  return date("Y-m-d G:i:s");
-}
-function echoTime() {
-  return date("G:i");
-}
+function echoDate() { return date("Y-m-d"); }
+function echoDateTime() { return date("Y-m-d G:i:s"); }
+function echoTime() { return date("G:i"); }
 
 function r($str){
   if(strlen($str) >= 4){
@@ -571,25 +550,17 @@ function r($str){
 // Überprüfe ob Überschneidung mit Reservierung
 function checkReserveTime($block,$date,$tableID) {
   $con = connect();
-  $p = "SELECT reserveBlock FROM rReserve WHERE reserveDate LIKE '$date' AND tableID = $tableID AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)";
+  $p = "SELECT reserveBlock FROM rreserve WHERE reserveDate LIKE '$date' AND tableID = $tableID AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5)";
   $query = $con->query($p) or die();
 
   if($query){
     $arr = array(); $r=0;
-    foreach ($query as $key) {
-      $arr[$r] = $key['reserveBlock'];
-      $r++;
-    }
-    // Wenn beide Blöcke reserviert sind
-    if(sizeof($arr) == 2){ return false; }
-
-    for ($i = 0; $i < sizeof($arr); $i++) {
-      // Block in Datenbank ist gleich Block ausgewählt, heißt Block nicht frei
-      if($arr[$i] == $block){ return false; }
-    }
+    foreach ($query as $key) { $arr[$r] = $key['reserveBlock']; $r++; } // Daten in Array abspeichern
+    if(sizeof($arr) == 2){ return false; } // Wenn Anzahl an Blöcke in Datenbank grüßer als 2 (zwei Reserverierung an dem Tag)
+    for ($i = 0; $i < sizeof($arr); $i++) { if($arr[$i] == $block){ return false; } } // Block in Datenbank ist gleich Block ausgewählt, heißt Block nicht frei
     return true;
   }
-  return true;
+  return true; // Wenn keine Reservierung am besagten Tag gefunden wurde, trotzdem true zurückgeben
 }
 
 

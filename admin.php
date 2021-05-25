@@ -22,10 +22,10 @@ require_once('sync.php');
         <ul>
           <li><a href="?overview=Day<?php echo "&day=".date("Y-m-d"); ?>">Übersicht</a></li>
           <li><a href="?analyse=HubRaum">Analyse</a></li>
-          <li><a href="?noShow=HubRaum">NoShow Liste</a></li>
-          <li><a href="?abweichendeAnzahl=HubRaum">Black Liste</a></li>
+          <li><a href="?liste=noshow">Listen</a></li>
           <li><a href="?reservierungen=HubRaum">Reservierungen</a></li>
           <li><a href="?tische=HubRaum">Tische</a></li>
+          <li><a href="?zeit=HubRaum">Öffnungszeiten</a></li>
           <li><a href="index.php">Verlassen</a></li>
         </ul>
       </div>
@@ -60,15 +60,13 @@ require_once('sync.php');
           if($data != false && count($data) >= 1){
             echo '<div id="ow-table-container">';
             echo '<table id="ow-table">';
-            echo '<tr><th>Tisch ID</th><th>Name</th><th>Datum</th><th>Uhrzeit</th><th>Dauer</th><th>Anzahl</th><th>Telefon</th></tr>';
+            echo '<tr><th>Tisch ID</th><th>Name</th><th>Datum</th><th>Anzahl</th><th>Telefon</th></tr>';
             foreach ($data as $key) {
               echo '<tr>';
               $var = "'".$key['tID']."','".$key["rDate"]."'";
               echo '<td><i class="fa fa-table fa-1x" onClick="redirectAdminReservierungen('.$var.')"></i> Tisch ' . $key["tID"] . '</td>';
               echo '<td>'.$key["cName"].'</td>';
               echo '<td>'.$key["rDate"].'</td>';
-              echo '<td>'.$key["rStart"].' - '.$key["rEnd"].'</td>';
-              echo '<td>'.$key["rDuration"].'</td>';
               echo '<td>'.$key["rA"].'</td>';
               echo '<td>'.$key["cTNR"].'</td>';
               echo '</tr>';
@@ -79,29 +77,45 @@ require_once('sync.php');
             echo "<h2 style='width: 100%; text-align: center;'>Keine Daten vorhanden</h2>";
           }
 
-        } elseif(isset($_GET['noShow'])) {
-          echo '<div class="noShow-container">';
-            echo '<div class="noShow-top">';
-              echo '<h2>NoShow-Liste</h2>';
+        } elseif(isset($_GET['liste'])) {
+			$noshow = "'admin.php?liste=No-Show'"; $abwAnzahl = "'admin.php?liste=abwAnzahl'";
+			echo '<div class="liste-nav"><button onClick="window.location.href='.$noshow.'">No-Show</button><button onClick="window.location.href='.$abwAnzahl.'">Abw. Anzahl</button></div>';
+			$liste = $_GET['liste'];
+			
+			echo '<div class="liste-container">';
+		    echo '<div class="liste-top">';
+				if($liste == 'No-Show'){echo '<h2 id="ns">'.$liste.'</h2>';}else{echo '<h2 id="b">'.$liste.'</h2>';}
               echo '<i class="fas fa-user-plus fa-2x"></i>';
             echo '</div>';
+			
+				echo '<ul class="liste-content">';
+				if($liste == 'No-Show'){
+					$data = $admin->getNoShow();
+					foreach ($data as $key) {
+						echo '<li id="ns-'.$key["id"].'">';
+						echo '<p class="ns-mail">'.$key["mail"].'</p>';
+						echo '<p class="ns-tnr">'.$key["tnr"].'</p>';
+						echo '<p class="ns-amount">'.$key["amount"].'</p>';
+						//echo '<p class="ns-time">'.$key["time"].'</p>';
+						echo '</li>';
+					}
+				} else {
+					$data = $admin->getBlacklist();
+					foreach ($data as $key) {
+						echo '<li id="b-'.$key["id"].'">';
+						echo '<p class="b-mail">'.$key["mail"].'</p>';
+						echo '<p class="b-tnr">'.$key["tnr"].'</p>';
+						echo '<p class="b-amount">'.$key["amount"].'</p>';
+						echo '</li>';
+					}
+				}
+				echo '</ul>';
+			echo '</div>';
+			
 
-            echo '<ul class="noShow-content">';
-              $data = $admin->getNoShow();
-              foreach ($data as $key) {
-                echo '<li id="ns-'.$key["id"].'">';
-                  echo '<p class="ns-amount">'.$key["amount"].'</p>';
-                  echo '<p class="ns-mail">'.$key["mail"].'</p>';
-                  echo '<p class="ns-tnr">'.$key["tnr"].'</p>';
-                  echo '<p class="ns-time">'.$key["time"].'</p>';
-                echo '</li>';
-              }
-            echo '</ul>';
-          echo '</div>';
 
         } elseif(isset($_GET['reservierungen'])) {
-          $table = 0;
-          $day = date('Y-m-d');
+          $table = 0; $day = date('Y-m-d');
           if(isset($_GET['table'])){ $table = $_GET['table'];}
           if(isset($_GET['day'])){ $day = $_GET['day'];}
           echo '<div class="rs-container">';
@@ -139,30 +153,44 @@ require_once('sync.php');
                           echo '</select>';
                           echo '<input type="number" id="rs-amount" min="0" max="20">';
                           echo '<div class="edit-bottom-table">';
-                            echo '<img src="img/open/t-right-transparent.png">';
+                            echo '<h3>Tisch aktiv</h3>';
                             echo '<label class="switch"><input type="checkbox" id="switch-table"><span class="slider round"></span></label>';
                           echo '</div>';
+
+                          echo '<div class="list-edit-hh">';
+                            echo '<i class="fas fa-user-minus fa-2x" id="deleteClient"></i><input type="number" id="hh-number" value="0" min="0" max="19">';
+                          echo '</div>';
+
                       echo '</div>';
                     echo '</div>';
 
-                    echo '<div class="list-edit-hh">';
-                      echo '<i class="fas fa-user-minus fa-1x" id="deleteClient"></i><input type="number" id="hh-number" value="0" min="0" max="19">';
-                    echo '</div>';
+
                   echo '</div>';
                 echo '</div>';
               }
-
-
-
-
-
-
 
             } else {
               echo '<div class="rs-input-table"><h3>Bitte Tisch auswählen</h3><input type="text" placeholder="Tisch Nummer" id="rs-table"><input type="date" value="'.$day.'" id="rs-date"></div>';
             }
 
 
+        } elseif($_GET['tische']){
+          $overview = new Overview();
+          $tables = $overview->loadTables();
+          echo '<div class="tische-container">';
+          echo '<div class="tische-row"><label class="tische-label">TischID</label><label class="tische-label">Min. Anzahl</label><label class="tische-label">Max. Anzahl</label><label class="tische-label">Standort</label></div>';
+          foreach ($tables as $key) {
+            echo '<div class="tische-row" id="'.$key["tableID"].'">';
+              echo '<label class="tische-label"><input type="text" id="tische-id" value="'.$key["tableID"].'"></label>';
+              echo '<label class="tische-label"><input type="number" id="tische-min" value="'.$key["tableMin"].'"></label>';
+              echo '<label class="tische-label"><input type="number" id="tische-max" value="'.$key["tableMax"].'"></label>';
+              echo '<label class="tische-label"><input type="text" id="tische-place" value="'.$key["tablePlace"].'"></label>';
+              if($key['tableActive'] == "open"){ echo '<label class="switch" id="'.$key["tableID"].'"><input type="checkbox" id="switch-table" checked><span class="slider round"></span></label>'; }
+              else { echo '<label class="switch" id="'.$key["tableID"].'"><input type="checkbox" id="switch-table"><span class="slider round"></span></label>'; }
+              echo '<label class="tische-label"><button>Speichern</button></label>';
+            echo '</div>';
+          }
+          echo '</div>';
         }
 
         ?>
@@ -186,41 +214,39 @@ require_once('sync.php');
       }
     });
 
-    function redirectAdminReservierungen(table, date) {
-      window.location.href = "admin.php?reservierungen&table="+table+"&day="+date;
-    }
+    function redirectAdminReservierungen(table, date) { window.location.href = "admin.php?reservierungen&table="+table+"&day="+date; }
 
     /* NO SHOW CONTENT */
 
-    $(document).on("click",".noShow-content li",function(){
-      var id = $(this).attr("id");
-      if($('.noShow-edit-container').length<=0){
-        var idAmount = $('#'+id).children(".ns-amount").text();
-        var idTNR = $('#'+id).children(".ns-tnr").text();
-        var idMail = $('#'+id).children(".ns-mail").text();
-        var idTime = $('#'+id).children(".ns-time").text();
-
-        $('#'+id).append('<div class="noShow-edit-container"></div>');
-        $('.noShow-edit-container').append('<div class="edit-form"><input type="hidden" id="ns-id" value="'+id+'"><input type="number" id="ns-amount" value="'+idAmount+'"><input type="text" id="ns-mail" value="'+idMail+'"><input type="text" id="ns-tnr" value="'+idTNR+'"><input type="text" id="ns-time" value="'+idTime+'"></div>');
+    $(document).on("click",".liste-content li",function(){
+      var id = $(this).attr("id").split('-');
+      if($('.liste-edit-container').length<=0){
+        var idAmount = $('#'+id[0]+'-'+id[1]).children("."+id[0]+"-amount").text();
+        var idTNR = $('#'+id[0]+'-'+id[1]).children("."+id[0]+"-tnr").text();
+        var idMail = $('#'+id[0]+'-'+id[1]).children("."+id[0]+"-mail").text();
+        //var idTime = $('#'+id).children(".ns-time").text();
+        $('#'+id[0]+'-'+id[1]).append('<div class="liste-edit-container"></div>');
+        $('.liste-edit-container').append('<div class="edit-form"><input type="hidden" id="liste-id" value="'+id[0]+'-'+id[1]+'"><input type="number" id="liste-amount" value="'+idAmount+'"><input type="text" id="liste-mail" value="'+idMail+'"><input type="text" id="liste-tnr" value="'+idTNR+'"></div>');
         $('.edit-form').append('<div class="edit-container-bottom"></div>');
-        $('.edit-container-bottom').append('<button class="edit-button" onClick="closeEdit()">Schließen</button><button class="edit-button" id="delete-noShow">Entfernen</button><button class="edit-button"id="ns-submit">Speichern</button>');
+        $('.edit-container-bottom').append('<button class="edit-button" onClick="closeEdit()">Schließen</button><button class="edit-button" id="delete-liste">Entfernen</button><button class="edit-button"id="liste-submit">Speichern</button>');
       }
     });
-
-    $(document).on("click","#ns-submit",function(){
-      var amount = $('#ns-amount').val();
-      var mail = $('#ns-mail').val();
-      var tnr = $('#ns-tnr').val();
-      var time = $('#ns-time').val();
-      var id = $('#ns-id').val().split('-')[1];
-      if(amount.length >= 1 && mail.length >= 3 && time.length >= 3 && tnr.length >= 3){
+	
+    $(document).on("click","#liste-submit",function(){
+		var id = $('#liste-id').val().split('-');
+		var amount = $('#liste-amount').val();
+		var mail = $('#liste-mail').val();
+		var tnr = $('#liste-tnr').val();
+		var time = $('#liste-time').val();
+      if(amount.length >= 1 && mail.length >= 3 && tnr.length >= 3){
         $.ajax({
           url: "script/sync-admin.php",
           method: "POST",
-          data: { nsID: id, nsAmount: amount, nsMail: mail, nsTNR: tnr, nsTime: time},
+          data: { listeID: id[1], listeAmount: amount, listeMail: mail, listeTNR: tnr, listeType: id[0]},
           success: function(result) {
+			  console.log('result');
             if(result=="1"){
-              $(".noShow-content").load(" .noShow-content > *");
+              $(".liste-content").load(" .liste-content > *");
               return;
             }
             alert("Ein Fehler ist aufgetreten \n" + result);
@@ -231,13 +257,14 @@ require_once('sync.php');
     });
 
     $('.fa-user-plus').click(function(){
+		var id = $('.liste-top h2').attr('id');
       $.ajax({
         url: "script/sync-admin.php",
         method: "POST",
-        data: { nsEdit: "Create"},
+        data: { listeEdit: "Create", listeType: id},
         success: function(result) {
           if(result=="1"){
-            $(".noShow-content").load(" .noShow-content > *");
+            $(".liste-content").load(" .liste-content > *");
             return;
           }
           alert("Ein Fehler ist aufgetreten \n" +result);
@@ -245,15 +272,15 @@ require_once('sync.php');
       });
     });
 
-    $(document).on("click","#delete-noShow",function(){
-      var id = $('#ns-id').val().split('-')[1];
+    $(document).on("click","#delete-liste",function(){
+      var id = $('#liste-id').val().split('-');
       $.ajax({
         url: "script/sync-admin.php",
         method: "POST",
-        data: { nsEdit: id},
+        data: { listeEdit: id[1], listeType: id[0]},
         success: function(result) {
           if(result=="1"){
-            $(".noShow-content").load(" .noShow-content > *");
+            $(".liste-content").load(" .liste-content > *");
             return;
           }
           alert("Ein Fehler ist aufgetreten \n" +result);
@@ -284,15 +311,16 @@ require_once('sync.php');
       $('.rs-reservierung-list>ul>li.reservierung-list-current').removeClass('reservierung-list-current');
       $(this).addClass('reservierung-list-current');
 
-      $('.rs-reservierung-list ul').css("margin-left: 0%; margin-right: 0%; width: 15%;");
+      //$('.rs-reservierung-list ul').css("width: 50%;");
       $('#hh-number').val("0");
-
       var rID = $(this).attr("id");
+
       $.ajax({
         url: "script/sync-admin.php",
         method: "POST",
         data: { rsLoad: rID},
         success: function(result) {
+          console.log(result);
           if(result!="0"){
             $(".rs-list-edit-container").removeClass("css-animation-right");
             $(".rs-list-edit-container").width(); // trigger a DOM reflow
@@ -301,8 +329,8 @@ require_once('sync.php');
             var d = JSON.parse(result);
 
             // TABLE DATA
-            $('.edit-bottom-table img').attr("src","img/"+d[0]['tableActive']+"/t-"+d[0]['tableType']+"-transparent.png");
-            if(d[0]['tableActive'] == "open"){$('#switch-table').attr("checked","true");}
+            if(d[0]['tableActive'] == "open"){ $('#switch-table').attr("checked","true"); $('.edit-bottom-table h3').css('color','#006400'); }
+            else { $('.edit-bottom-table h3').css('color','#f94144'); $('.edit-bottom-table h3').text('Tisch gesperrt'); }
             $('.switch').attr("id",d[0]['tableID']);
 
             // FRONT DATA
@@ -351,20 +379,17 @@ require_once('sync.php');
         method: "POST",
         data: { setTableActive: id, value: check},
         success: function(result) {
-          var src = $('.edit-bottom-table img').attr("src").split("/");
+          console.log(result);
           if(result){
-            if(check == false){ $('.edit-bottom-table img').attr("src",src[0] + "/closed/" + src[2]);
-          } else {$('.edit-bottom-table img').attr("src",src[0] + "/open/" + src[2]); }
+            if(check == false){ $('.edit-bottom-table h3').text('Tisch gesperrt'); $('.edit-bottom-table h3').css('color','#f94144');
+          } else { $('.edit-bottom-table h3').text('Tisch aktiv'); $('.edit-bottom-table h3').css('color','#006400'); }
             return;
           }
           }
       });
     });
 
-    $('#hh-number').change(function(){
-      $('.edit-hh').css("display","none");
-      $('#hh-'+$(this).val()).css("display","block");
-    });
+    $('#hh-number').change(function(){ $('.edit-hh').css("display","none"); $('#hh-'+$(this).val()).css("display","block"); });
 
     $(document).on("click",".list-edit-top button",function(){
       // Erhalte Reservierung ID von list-current button
@@ -423,8 +448,7 @@ require_once('sync.php');
         temp[2] = name;
         temp[3] = $('#hh-'+i+' .hh-vorname').val();
         temp[4] = $('#hh-'+i+' .hh-mail').val();
-        temp[5] = $('#hh-'+i+' .hh-adresse').val();
-        temp[6] = $('#hh-'+i+' .hh-tnr').val();
+        temp[5] = $('#hh-'+i+' .hh-tnr').val();
         dataClients[i] = temp;
       }
 
@@ -476,17 +500,15 @@ require_once('sync.php');
     });
 
     $('#createReserveButton').click(function(){
-      var tID = $('#rs-table').val();
-      var tDate = $('#rs-date').val();
+      var tID = $('#rs-table').val(); var tDate = $('#rs-date').val();
+	  console.log(tID + " - " + tDate);
       $.ajax({
         url: "script/sync-admin.php",
         method: "POST",
         data: { createReserveButton: 'true', table: tID, date: tDate },
         success: function(result) {
-          if(result!="0"){
-            location.reload();
-            return;
-          }
+			console.log(result);
+          if(result!="0"){ location.reload(); return; }
           alert("Ein Fehler ist aufgetreten\n"+result);
           return;
         }
@@ -567,6 +589,31 @@ require_once('sync.php');
       });
     });
 
+    /* TISCHE */
+
+    $('.tische-row button').click(function(){
+      var tableID = $(this).parent().parent().attr('id');
+
+      var newTableID = $('#'+tableID+" #tische-id").val();
+      var newMin = $('#'+tableID+" #tische-min").val();
+      var newMax = $('#'+tableID+" #tische-max").val();
+      var newPlace = $('#'+tableID+" #tische-place").val();
+      var newCheck = $('#'+tableID+" #switch-table").prop("checked");
+      console.log(newCheck);
+      $.ajax({
+        url: "script/sync-admin.php",
+        method: "POST",
+        data: { updateAdminTables: tableID+";"+newTableID+";"+newMin+";"+newMax+";"+newPlace+";"+newCheck},
+        success: function(result) {
+          if(result == "0"){ alert('Ein Fehler ist aufgetreten! \nBitte Daten überprüfen bei Tisch '+tableID); } return;
+        }
+      });
+    });
+
+
+
+
+
     function getOverviewParameter() {
       var url = new URL(window.location.href);
       var c = url.searchParams.get("overview");
@@ -577,8 +624,8 @@ require_once('sync.php');
     }
 
     function closeEdit() {
-      $('.noShow-edit-container').empty();
-      $('.noShow-edit-container').remove();
+      $('.liste-edit-container').empty();
+      $('.liste-edit-container').remove();
     }
     </script>
   </body>

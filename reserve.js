@@ -8,41 +8,32 @@ $(document).ready(function(){
   if(tc != false){ viewTablewithCode(tc); }
 
   if(localStorage.getItem('rCalendar') === null){
-    viewCalendar();
+    viewCalendar(); return;
   } else {
     // Wenn Tag in localStorage kleiner als Tag heute
     var rc = localStorage.getItem('rCalendar').split(';');
-    if(dateToSQL() > rc[0] && rc[0] != 'admin'){ viewCalendar(); }
+    if(dateToSQL() > rc[0] && rc[0] != 'admin'){ viewCalendar(); return; }
   }
 
   // Lade Tische mit Ampelsystem
   (async() => { await loadTables(localStorage.getItem('rCalendar').split(';')[0]); })();
   // Überprüfe Login
-  (async() => { await userCheck().then(function(result){ if(result == true){ $('.icon-user').css("color","green"); } }); })();
+	(async() => { await userCheck().then(function(result){ if(result == true){ $('.icon-user').css("color","green"); } }); })();
 
 
-  $('.table').click(function(event){
+  $(document).on('click','.table', function(){
     if($('.form-table').length <= 0){
 	    (async() => {
-  			var id = jQuery(this).attr("id");
-  			const uc = await userCheck().then(function(result){
+  			var id = jQuery(this).attr("id").split("-")[1];
+  			await userCheck().then(function(result){
   				if(result == false){ viewTable(id, localStorage.getItem('rCalendar').split(';')[0]); } else { window.location.href = "admin.php?reservierungen&table="+id+"&date="; }
   			});
 		  })();
     }
   });
 
-  $('.table-close').click(function(){
-    $("#viewTable").css("display","none");
-    $('#viewTable').empty();
-    $('.container-reserve').css("background-color","white");
-  });
-
-  $('.icon-user').click(function(){
-    if($('#form-login').length <= 0){
-      viewLogin();
-    }
-  });
+	$('.table-close').click(function(){ $("#viewTable").css("display","none"); $('#viewTable').empty(); $('.container-reserve').css("background-color","white"); });
+	$('.icon-user').click(function(){ if($('#form-login').length <= 0){ viewLogin(); } });
 });
 
 async function userCheck() {
@@ -50,16 +41,10 @@ async function userCheck() {
 	try {
 		var d = "";
 		var c = getCookie('rSession');
-		result = $.ajax({ url: "sync.php", method: "POST", data: { user: c }, success: function(result) {
-			d = result;
-			}
+		result = $.ajax({ url: "sync.php", method: "POST", data: { user: c }, success: function(result) { d = result; }
 		});
-
 		await new Promise((resolve, reject) => setTimeout(resolve, 100));
-		if(d.toString() == CryptoJS.MD5(c).toString()){
-			return true;
-		}
-		return false;
+		if(d.toString() == CryptoJS.MD5(c).toString()){ return true; } return false;
 	} catch(err){
 		console.log("Error " + err);
 	}
@@ -71,13 +56,15 @@ async function loadTables(date) {
   let result;
   try {
     var data = "";
-    result =   $.ajax({ url: "sync.php", method: "POST", data: {loadTables: date}, success: function(result) { data = JSON.parse(result); } });
-    await new Promise((resolve, reject) => setTimeout(resolve, 100));
-    for (var i = 0; i < data.length; i++) {
-      var h3 = "#"+data[i]['tableID']+"-h3"; var img = "#"+data[i]['tableID']+"-img";
-      $(h3).text(data[i]['tableID']);
-      $(img).attr("src","img/"+data[i]['tableActive']+"/t-"+data[i]['tableType']+"-transparent.png");
-    }
+    $.ajax({ url: "sync.php", method: "POST", data: {loadTables: date}, success: function(result) {
+		$('#tischplan-svg').empty();
+		data = JSON.parse(result); 
+		data.forEach((item, i) => {
+		if(item['tableActive'] == 'open'){ item['tableActive'] = 'rgba(60, 179, 113,0.5)'; } else { item['tableActive'] = 'rgba(255, 0, 0,0.5)'; }
+		var xml = jQuery.parseXML('<rect xmlns="http://www.w3.org/2000/svg" class="table" id="tisch-'+item["tableID"]+'" height="'+item["height"]+'" width="'+item["width"]+'" y="'+item["y"]+'" x="'+item["x"]+'" stroke="#000" fill="'+item["tableActive"]+'"/>');
+		$('#tischplan-svg').append(xml.documentElement);
+		});
+	} });
     return true;
   } catch (e) {
     console.log("Error loadTables: " + e);
@@ -95,7 +82,7 @@ function viewCalendar(){
     var rc = localStorage.getItem('rCalendar').split(';');
     $('.calendar-inputs').append('<input type="date" id="calendar-date" value="'+rc[0]+'">');
     $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+    $.getJSON('https://www.mertero.de/html/Reservierung/script/load.timeblock.php', function(data) {
       data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
           if(item['id'] == rc[1]){
@@ -110,7 +97,7 @@ function viewCalendar(){
     document.getElementById('calendar-date').valueAsDate = new Date();
     $('.calendar-inputs').append('<select id="calendar-time"></select>');
     // http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php   http://localhost/html/Reservierung/script/load.timeblock.php
-    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+    $.getJSON('https://www.mertero.de/html/Reservierung/script/load.timeblock.php', function(data) {
       data.forEach((item, i) => {
         time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
         $('.calendar-inputs select').append('<option value="'+item["id"]+'">'+time+' Uhr</option>');
@@ -126,8 +113,8 @@ function viewCalendar(){
 
 $(document).on('click','#calendar-confirm',function(){
   const date = $('#calendar-date').val(); const time = $('#calendar-time').val();
-  //var today = new Date().toISOString().slice(0, 10);
-  var today = '2021-05-18';
+  if(time == null) { $('#calendar-time').css('background-color','#e63946'); return false; }
+  var today = new Date().toISOString().slice(0, 10);
   if(date.length == 10 && time.length >= 1 && date >= today && date <= todayPlusSixWeeks()){
     localStorage.setItem('rCalendar',date+';'+time);
     (async() => {
@@ -157,23 +144,27 @@ $(document).on('click','.fa-calendar-alt',function(){ viewCalendar(); });
 
 
 function viewTable(id, date) {
-  $.ajax({
+	$('#viewTable').append('<i class="fa fa-times fa-2x" onClick="tableClose()"></i>');
+	$('#viewTable').append('<div class="loader"></div>');
+	$('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
+	$('#viewTable').css("display","block");
+
+	$.ajax({
     url: "sync.php",
     method: "POST",
     data: {loadTableID: id, loadTableDate: date},
     success: function(result) {
-      console.log(result);
+		//console.log(result);
       var d = JSON.parse(result);
       var tID = "'"+d['tableID']+"'";
 
-      $('#viewTable').append('<i class="fa fa-times fa-2x" onClick="tableClose()"></i>');
       // Wenn Tisch aktiv ist und Reservierung nicht vorhanden, Tisch FREI andernfalls BELEGT
       if(d['tableActive'] == "open" && d['tableReserved'] == "open"){
         $('#viewTable').append('<h1>Tisch '+id+' <span style="color: green;">FREI</span></h1>');
       } else {
         $('#viewTable').append('<h1>Tisch '+id+' <span style="color: red;">BELEGT</span></h1>');
       }
-
+	$('#viewTable .loader').remove();
       $('#viewTable').append("<form method='POST' class='form-table' onsubmit='event.preventDefault();'></form>");
       $('.form-table').append("<div id='container-information'><h3>Reservierungen</h3><div id='container-information-content'></div></div>");
       getReservierungen(d['tableID'], date);
@@ -192,7 +183,7 @@ function viewTable(id, date) {
       $('.form-table-left-inputs').append('<select id="amount">'+options+'</select></div>');
       $('.form-table-left-inputs').append('<input type="date" id="timeDate" value="'+date+'">');
       var localBlock = localStorage.getItem('rCalendar').split(';')[1];
-      $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+      $.getJSON('https://www.mertero.de/html/Reservierung/script/load.timeblock.php', function(data) {
         $('.form-table-left-inputs').append('<select id="timeBlock"></select>');
         data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
@@ -236,8 +227,7 @@ function viewTable(id, date) {
         $('.form-table-submit').append('<input type="submit" id="submit-table" value="Reservieren">');
       }
 
-      $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
-      $('#viewTable').css("display","block");
+
     }
   });
 }
@@ -371,8 +361,10 @@ function getReservierungen(tableID, date) {
         d.forEach((item, i) => {
           if(item['rState'] != 3 && item['rState'] != 4){
             var colorNum = item['rState'];
-            var time = item['rT'].split(" - ");
-            $('#container-information-content').append("<div class='information-box' id='rsBlock"+item['rB']+"' style='background-color: "+colors[colorNum]+"'>Reserviert<br>"+time[0].slice(0,5)+" Uhr bis "+time[1].slice(0,5)+" Uhr</div>");
+            if(item['rT'].length > 0){
+              var time = item['rT'].split(" - ");
+              $('#container-information-content').append("<div class='information-box' id='rsBlock"+item['rB']+"' style='background-color: "+colors[colorNum]+"'>Reserviert<br>"+time[0].slice(0,5)+" Uhr bis "+time[1].slice(0,5)+" Uhr</div>");
+            }
           }
         });
         $('#timeBlock').css('color','black');
@@ -389,19 +381,17 @@ function viewTablewithCode(tc) {
         url: "sync.php",
         method: "POST",
         data: { qrCode: tc},
-        success: function(result) {
-          if(result != 0){
-            viewTable(result);
-          }
-        }
+        success: function(result) { if(result != 0){ viewTable(result); } }
       });
     }
 }
 
-async function viewLogin() {
-  $('#viewLogin').css("display","block");
-  $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
-  $('#viewLogin').append('<i class="fa fa-times fa-2x" onClick="loginClose()"></i><i class="fa fa-user-circle fa-5x login-icon"></i>');
+function viewLogin() {
+	$('#viewLogin').empty();
+	$('#viewLogin').css("display","block");
+	$('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
+	$('#viewLogin').append('<i class="fa fa-times fa-2x" onClick="loginClose()"></i><i class="fa fa-user-circle fa-5x login-icon"></i>');
+	
   if(getCookie("rSession") != ""){
     try {
 	   $('#viewLogin').css("height","300px");
@@ -409,11 +399,11 @@ async function viewLogin() {
 		const uc = await userCheck().then(function(result){
 			if(result == true){
 				$('#viewLogin').append('<h3>Bereits angemeldet</h3>');
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0'); var mm = String(today.getMonth() + 1).padStart(2, '0'); var yyyy = today.getFullYear();
-        today = "'" + yyyy + "-" + mm + "-" + dd + "'";
+				var today = new Date();
+				var dd = String(today.getDate()).padStart(2, '0'); var mm = String(today.getMonth() + 1).padStart(2, '0'); var yyyy = today.getFullYear();
+				today = "'" + yyyy + "-" + mm + "-" + dd + "'";
 
-        $('#viewLogin').append('<button id="login-NoShow">Übersicht</button>');
+				$('#viewLogin').append('<button id="login-NoShow">Übersicht</button>');
 				$('#viewLogin').append('<button onClick="submitLogoff()">Abmelden</button>');
 			} else {
 				submitLogoff();
@@ -421,10 +411,9 @@ async function viewLogin() {
 		});
 	  })();
     } catch(e){ console.log(e); }
-
   } else {
-    $('#viewLogin').append('<form id="form-login" onsubmit="event.preventDefault();"></form>');
-    $('#form-login').append('<input type="text" id="hubraumName" placeholder="Name..."><input type="password" id="hubraumSecure" placeholder="Passwort..."><input type="submit" onClick="submitLogin()" value="Login">');
+	$('#viewLogin').append('<form id="form-login" onsubmit="event.preventDefault();"></form>');
+	$('#form-login').append('<input type="text" id="hubraumName" placeholder="Name..."><input type="password" id="hubraumSecure" placeholder="Passwort..."><input type="submit" onClick="submitLogin()" value="Login">');
   }
 }
 
@@ -536,11 +525,11 @@ function verifyInput(id) {
 function sendReserve(tID) {
     var inputs = new Array();
     var haushalt = new Array();
+	
     const amount = $('#amount').val(); if(r(amount)){ inputs[0] = amount; } else { return false; }
-    const date = $('#timeDate').val(); if(r(date) && date >= getToday() && date <= todayPlusSixWeeks()){ inputs[1] = date; } else { return false; }
+    const date = $('#timeDate').val(); if(r(date)==true && date >= getTodaySQLFormat() && date <= todayPlusSixWeeks()){ inputs[1] = date; } else { return false; }
     const timeBlock = $('#timeBlock').val(); if(r(timeBlock)){ inputs[2] = timeBlock; } else { return false; }
     inputs[3] = tID;
-
     for (var i = 1; i < 6; i++) {
       const cv = $('.right-inputs-hh'+i+' .clientVorname').val();
       const cn = $('.right-inputs-hh'+i+' .clientName').val();
@@ -552,6 +541,7 @@ function sendReserve(tID) {
     }
     inputs[4] = haushalt;
     if(haushalt.length > 0){
+		const mailTO = $('.right-inputs-hh0 .clientMail').val();
       $.ajax({
         url: "sync.php", method: "POST", data: { createReserve: inputs },
         success: function(result) {
@@ -564,6 +554,10 @@ function sendReserve(tID) {
               break;
             case "2":
               viewError('Die E-Mail oder Telefonnummer wurde auf die Blacklist gesetzt. Eine Reservierung ist nicht möglich!');
+			case "3":
+				console.log('Reservierung bestätigt');
+				viewError('Reservierung wurde erfolgreich durchgeführt. Es konnte keine E-Mail an '+mailTO+' verschickt werden!');
+				viewReserved(tID,timeBlock,date,amount);
           }
         }
       });
@@ -571,7 +565,7 @@ function sendReserve(tID) {
 }
 
 function viewReserved(table, blockID, date, amount){
-  $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+  $.getJSON('https://www.mertero.de/html/Reservierung/script/load.timeblock.php', function(data) {
     $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
     $('.container-reserve').append('<div id="viewReserved"></div>');
     $('#viewReserved').append('<h2>Tisch '+table+' am '+date+' reserviert!</h2>');
@@ -603,9 +597,15 @@ function getToday() {
   return dd + "." + mm + "." + yyyy;
 }
 
+function getTodaySQLFormat() {
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0'); var mm = String(today.getMonth() + 1).padStart(2, '0'); var yyyy = today.getFullYear();
+  return yyyy + "-" + mm + "-" + dd;
+}
+
 // regex t=text | r=regex
 function r(t){
-  const regex = "/[+_\-:;\/*{}´^<>=&%$§#']+/gm";
+  const regex = "/[+_\:;\/*{}´^<>=&%$§#']+/gm";
   var m = regex.match(t, regex);
   if(m !== null){
     m.forEach((match, groupIndex) => { return false; });

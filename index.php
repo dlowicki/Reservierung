@@ -4,20 +4,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservierung | Hubraum</title>
-    <link rel="stylesheet" href="css/table.css">
-    <!--<link rel="stylesheet" href="css/reserve.css">-->
+    <!-- <link rel="stylesheet" href="css/table.css"> -->
     <link rel="stylesheet" href="css/change.css">
     <link rel="stylesheet" media="screen and (max-width: 700px)" href="css/reserve_small.css">
-    <link rel="stylesheet" media="screen and (max-width: 1200px) and (min-width: 700px)" href="css/reserve_mid.css">
+    <link rel="stylesheet" media="screen and (max-width: 1199px) and (min-width: 700px)" href="css/reserve_mid.css">
     <link rel="stylesheet" media="screen and (min-width: 1200px)" href="css/reserve.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+    <script src="script/md5.js"></script>
     <script src="jquery.min.js" charset="utf-8"></script>
     <script src="reserve.js" charset="utf-8"></script>
     <script src="fetch.js" charset="utf-8"></script>
+
+    <style media="screen">
+
+    </style>
+
   </head>
   <body>
-
     <!--
     Reservierung
     Table für qrCode Registrierung: clientID, clientVorname, clientName, clientMail, clientAdresse, clientTNR, clientDate, clientConfirm, tableID
@@ -29,9 +32,7 @@
     Online Tische Reservieren & Corona Registrierung  mit Name und Adresse
 
     Icon für Personenanzahl
-    
     DESIGN ändern 1120 pixel
-
     -->
 
     <?php
@@ -44,267 +45,115 @@
     }
     ?>
 
+    <div id="viewError"></div>
+    <div id="viewTable"></div>
+    <div id="viewLogin"></div>
+    <div id="viewOverview"></div>
+    <div id="viewCalendar"></div>
+
+    <div class="container-header">
+      <i class="far fa-calendar-alt fa-3x icon-calendar" style="padding: 0.5%;"></i>
+      <i class="fa fa-user-circle fa-3x icon-user" style="padding: 0.5%;"></i>
+    </div>
+
     <div class="container-reserve">
-      <div id="viewError">
-        <!--<p>Die eingegebene Telefonnummer befindet sich auf der Blacklist. Sie können keine Reservierung durchführen</p><button>Verstanden</button>-->
-      </div>
-      <div id="viewTable"></div>
-      <div id="viewLogin"></div>
-      <div id="viewOverview"></div>
-      <div id="viewCalendar"></div>
+      <div class="container-tischplan"><svg width="1900" height="1080" xmlns="http://www.w3.org/2000/svg" id="tischplan-svg"></svg></div>
+          <?php
+          /*$con = new mysqli("localhost", "shop", "123456", "reservierung"); // Create connection
+          if ($con->connect_error) {  die("Connection failed: " . $con->connect_error); return; }
 
-      <div class="container-header">
-        <i class="far fa-calendar-alt fa-3x icon-calendar" style="padding: 0.5%;"></i>
-        <i class="fa fa-user-circle fa-3x icon-user" style="padding: 0.5%;"></i>
-      </div>
+          $query = $con->query('SELECT tableID, tableWidth, tableHeight, tableX, tableY, tableActive FROM rTable');
+          if($query){
+            foreach ($query as $key) {
+              echo '<rect id="tisch-'.$key["tableID"].'" width="'.$key["tableWidth"].'" height="'.$key["tableHeight"].'" y="'.$key["tableY"].'" x="'.$key["tableX"].'" ';
+              if($key['tableActive'] == 'open'){ echo 'fill="rgba(60, 179, 113,0.5)"'; } else { echo 'fill="rgba(255, 0, 0,0.5)"'; }
+              echo '/>';
+            }
+          }*/
+          ?>
 
-      <div class="reserve-top">
-        <div class="reserve-top-left">
-          <div class="table object-t-right" id="99">
-            <h3 class="table-h3" id="99-h3">99</h3>
-            <img src="img/t-right-transparent.png" id="99-img" width="100%">
-          </div>
-          <div class="table" id="98">
-            <h3 class="table-h3" id="98-h3">98</h3>
-            <img src="img/t-pillar-transparent.png" id="98-img" width="100%">
-          </div>
-        </div>
 
-        <div class="reserve-top-middle">
-          <div class="reserve-top-middle-top">
-            <div class="table object-pillar" id="21">
-              <h3 class="table-h3" id="21-h3">21</h3>
-              <img src="img/t-pillar-transparent.png" id="21-img" width="100%">
-            </div>
-            <div class="table object-pillar" id="22">
-              <h3 class="table-h3" id="22-h3">22</h3>
-              <img src="img/t-pillar-transparent.png" id="22-img" width="100%">
-            </div>
-            <div class="table object-pillar" id="23">
-              <h3 class="table-h3" id="23-h3">23</h3>
-              <img src="img/t-pillar-transparent.png" id="23-img" width="100%">
-            </div>
-            <div class="table object-pillar" id="24">
-              <h3 class="table-h3" id="24-h3">24</h3>
-              <img src="img/t-pillar-transparent.png" id="24-img" width="100%">
-            </div>
+         <!--<g>
 
-          </div>
+    <rect id="svg_15" height="90" width="195" y="5" x="615" stroke="#000" class="tisch-41" fill="rgba(60, 179, 113,0.5)"/>
+    <rect id="svg_7" height="90" width="100" y="5" x="294" stroke="#000" class="tisch-42" fill="transparent"/>
+    <rect id="svg_6" height="90" width="100" y="5" x="100" stroke="#000" class="tisch-43" fill="transparent"/>
+    <rect id="svg_5" height="90" width="97" y="178" x="103" stroke="#000" class="tisch-44"  fill="transparent"/>
+    <rect id="svg_10" height="36" width="80" y="204" x="305" stroke="#000" class="tisch-45" fill="rgba(60, 179, 113,0.5)"/>
+    <rect id="svg_8" height="90" width="100" y="175" x="488" stroke="#000" class="tisch-46" fill="transparent"/>
+    <rect id="svg_11" height="36" width="80" y="203" x="693" stroke="#000" class="tisch-47" fill="transparent"/>
 
-          <div class="reserve-top-middle-bottom">
-            <div class="table object-small" id="27">
-              <h3 class="table-h3" id="27-h3">27</h3>
-              <img src="img/t-one-transparent.png" id="27-img" width="100%">
-            </div>
-            <div class="table object-small" id="26">
-              <h3 class="table-h3" id="26-h3">26</h3>
-              <img src="img/t-one-transparent.png" id="26-img" width="100%">
-            </div>
-            <div class="table object-small" id="25">
-              <h3 class="table-h3" id="25-h3">25</h3>
-              <img src="img/t-one-transparent.png" id="25-img" width="100%">
-            </div>
-          </div>
-        </div>
-      </div>
+
+
+    <rect id="svg_28" height="180" width="100" y="380" x="1310" stroke="#000" class="tisch-31" fill="transparent"/>
+    <rect id="svg_9" height="90" width="100" y="220" x="1310" stroke="#000" class="tisch-32" fill="transparent"/>
+    <rect id="svg_29" height="87" width="200" y="50" x="1212" stroke="#000" class="tisch-33" fill="transparent"/>
+    <rect id="svg_13" height="35" width="160" y="188" x="982" stroke="#000" class="tisch-34" fill="transparent"/>
+    <rect id="svg_26" height="36" width="197" y="372" x="982" stroke="#000" class="tisch-35" fill="transparent"/>
+    <rect id="svg_27" height="36" width="197" y="490" x="982" stroke="#000" class="tisch-36" fill="transparent"/>
+
+    <rect id="svg_23" height="73" width="40" y="338" x="728" stroke="#000" class="tisch-51" fill="transparent"/>
+    <rect id="svg_18" height="73" width="40" y="338" x="555" stroke="#000" class="tisch-52" fill="transparent"/>
+    <rect id="svg_17" height="73" width="40" y="338" x="385" stroke="#000" class="tisch-53" fill="transparent"/>
+    <rect id="svg_16" height="73" width="40" y="338" x="213" stroke="#000" class="tisch-54" fill="transparent"/>
+    <rect id="svg_19" height="38" width="38" y="474" x="215" stroke="#000" class="tisch-55" fill="transparent"/>
+    <rect id="svg_20" height="38" width="40" y="474" x="385" stroke="#000" class="tisch-56" fill="transparent"/>
+    <rect id="svg_24" height="72" width="40" y="485" x="555" stroke="#000" class="tisch-57" fill="transparent"/>
+    <rect id="svg_25" height="75" width="40" y="483" x="727" stroke="#000" class="tisch-58" fill="transparent"/>
+
+    <rect id="svg_21" height="38" width="40" y="490" x="855" stroke="#000" class="tisch-61" fill="transparent"/>
+    <rect id="svg_22" height="38" width="40" y="387" x="855" stroke="#000" class="tisch-62" fill="transparent"/>
+    <rect id="svg_12" height="35" width="40" y="204" x="854" stroke="#000" class="tisch-63" fill="transparent"/>
 
 
 
 
+          <rect id="svg_30" height="180" width="100" y="658" x="1775" stroke="#000" class="tisch-98" fill="transparent"/>
+          <rect id="svg_31" height="180" width="100" y="895" x="1775" stroke="#000" class="tisch-99" fill="transparent"/>
+
+
+    <rect id="svg_33" height="32" width="150" y="374" x="1638" stroke="#000" class="tisch-11" fill="transparent"/>
+    <rect id="svg_34" height="32" width="150" y="284" x="1638" stroke="#000" class="tisch-12" fill="transparent"/>
+    <rect id="svg_37" height="32" width="150" y="106" x="1637" stroke="#000" class="tisch-13" fill="transparent"/>
+    <rect id="svg_38" height="32" width="150" y="16" x="1637" stroke="#000" class="tisch-14" fill="transparent"/>
+    <rect id="svg_39" height="32" width="150" y="16" x="1430" stroke="#000" class="tisch-15" fill="transparent"/>
+    <rect id="svg_36" height="32" width="150" y="106" x="1430" stroke="#000" class="tisch-16" fill="transparent"/>
+    <rect id="svg_35" height="32" width="150" y="257" x="1430" stroke="#000" class="tisch-17" fill="transparent"/>
+    <rect id="svg_32" height="150" width="35" y="410" x="1444" stroke="#000" class="tisch-18" fill="transparent"/>
+
+
+    <rect id="svg_58" height="33" width="35" y="625" x="1254" stroke="#000" class="tisch-21" fill="transparent"/>
+    <rect id="svg_59" height="33" width="35" y="625" x="1133" stroke="#000" class="tisch-22" fill="transparent"/>
+    <rect id="svg_60" height="33" width="35" y="625" x="1010" stroke="#000" class="tisch-23" fill="transparent"/>
 
 
 
+    <rect id="svg_54" height="98" width="34" y="682" x="854" stroke="#000" class="tisch-24" fill="transparent"/>
+    <rect id="svg_55" height="98" width="34" y="682" x="974" stroke="#000" class="tisch-25" fill="transparent"/>
+    <rect id="svg_56" height="98" width="36" y="682" x="1092" stroke="#000" class="tisch-26" fill="transparent"/>
+    <rect id="svg_57" height="98" width="37" y="682" x="1211" stroke="#000" class="tisch-27" fill="transparent"/>
 
-      <div class="reserve-bottom">
 
-        <div class="reserve-bottom-left">
-          <div class="reserve-bottom-left-row">
-            <div class="table object-small" id="8">
-              <h3 class="table-h3" id="8-h3">8</h3>
-              <img src="img/t-one-transparent.png" id="8-img" width="100%">
-            </div>
-          </div>
+    <rect id="svg_41" height="32" width="60" y="951" x="1120" stroke="#000" class="tisch-76" fill="transparent"/>
+    <rect id="svg_40" height="32" width="60" y="1031" x="1120" stroke="#000" class="tisch-77" fill="transparent"/>
+    <rect id="svg_42" height="32" width="34" y="1031" x="1035" stroke="#000" class="tisch-78" fill="transparent"/>
+    <rect id="svg_43" height="32" width="34" y="951" x="1035" stroke="#000" class="tisch-79" fill="transparent"/>
 
-          <div class="reserve-bottom-left-row">
-            <div class="table object-small" id="1">
-              <h3 class="table-h3" id="1-h3">1</h3>
-              <img src="img/t-one-transparent.png" id="1-img" width="100%">
-            </div>
-            <div class="table object-row" id="9">
-              <h3 class="table-h3" id="9-h3">9</h3>
-              <img src="img/t-row-transparent.png" id="9-img" width="100%">
-            </div>
-          </div>
+          <rect id="svg_46" height="55" width="34" y="785" x="483" stroke="#000" class="tisch-81" fill="transparent"/>
+          <rect id="svg_47" height="55" width="34" y="785" x="585" stroke="#000" class="tisch-82" fill="transparent"/>
+          <rect id="svg_48" height="55" width="37" y="785" x="685" stroke="#000" class="tisch-83" fill="transparent"/>
+          <rect id="svg_44" height="32" width="36" y="870" x="637" stroke="#000" class="tisch-84" fill="transparent"/>
+          <rect id="svg_45" height="32" width="36" y="870" x="530" stroke="#000" class="tisch-85" fill="transparent"/>
 
-          <div class="reserve-bottom-left-row">
-            <div class="table object-row" id="10">
-              <h3 class="table-h3" id="10-h3">10</h3>
-              <img src="img/t-row-transparent.png" id="10-img" class="object-row" width="100%">
-            </div>
-          </div>
-
-          <div class="reserve-bottom-left-row">
-            <div class="table object-small" id="2">
-              <h3 class="table-h3" id="2-h3">2</h3>
-              <img src="img/open/t-one-transparent.png" id="2-img" width="100%">
-            </div>
-            <div class="table object-row" id="11">
-              <h3 class="table-h3" id="11-h3">11</h3>
-              <img src="img/t-row-transparent.png" id="11-img" class="object-row" width="100%">
-            </div>
-        </div>
-
-          <div class="reserve-bottom-left-row">
-            <div class="table object-small" id="3">
-              <h3 class="table-h3" id="3-h3">3</h3>
-              <img src="img/t-one-transparent.png" id="3-img" width="100%">
-            </div>
-            <div class="table object-row" id="12">
-              <h3 class="table-h3" id="12-h3">12</h3>
-              <img src="img/t-row-transparent.png" id="12-img" class="object-row" width="100%">
-            </div>
-          </div>
-        </div>
+    <rect id="svg_49" height="55" width="37" y="785" x="836" stroke="#000" class="tisch-71" fill="transparent"/>
+    <rect id="svg_50" height="55" width="37" y="785" x="938" stroke="#000" class="tisch-72" fill="transparent"/>
+    <rect id="svg_51" height="55" width="37" y="785" x="1040" stroke="#000" class="tisch-73" fill="transparent"/>
+    <rect id="svg_52" height="55" width="38" y="785" x="1140" stroke="#000" class="tisch-74" fill="transparent"/>
+    <rect id="svg_53" height="34" width="177" y="870" x="925" stroke="#000" class="tisch-75" fill="transparent"/>
+  </g>-->
 
 
 
-
-
-
-
-
-
-
-        <div class="reserve-bottom-middle">
-          <div class="reserve-bottom-middle-row">
-            <div class="table object-small" id="31">
-              <h3 class="table-h3" id="31-h3">31</h3>
-              <img src="img/t-one-transparent.png" id="31-img" width="100%">
-            </div>
-            <div class="table object-small" id="32">
-              <h3 class="table-h3" id="32-h3">32</h3>
-              <img src="img/t-one-transparent.png" id="32-img" width="100%">
-            </div>
-            <div class="table object-small" id="33">
-              <h3 class="table-h3" id="33-h3">33</h3>
-              <img src="img/t-one-transparent.png" id="33-img" width="100%">
-            </div>
-          </div>
-
-          <div class="reserve-bottom-middle-row">
-            <div class="table object-t-right" id="37">
-              <h3 class="table-h3" id="37-h3">37</h3>
-              <img src="img/t-right-transparent.png" id="37-img" width="100%">
-            </div>
-            <div class="table object-t-left" id="34">
-              <h3 class="table-h3" id="34-h3">34</h3>
-              <img src="img/t-left-transparent.png" id="34-img" width="100%">
-            </div>
-          </div>
-
-          <div class="reserve-bottom-middle-row">
-            <div class="table object-t-right-bottom" id="36">
-              <h3 class="bottom-h3" id="36-h3">36</h3>
-              <img src="img/open/t-right-bottom-transparent.png" id="36-img" width="100%">
-            </div>
-            <div class="table object-small" id="35">
-              <h3 class="table-h3" id="35-h3">35</h3>
-              <img src="img/t-one-transparent.png" id="35-img" width="100%">
-            </div>
-          </div>
-
-        </div>
-
-
-
-        <div class="reserve-bottom-right">
-          <div class="reserve-bottom-right-row">
-            <div class="table object-pillar" id="41">
-              <h3 class="table-h3" id="41-h3">41</h3>
-              <img src="img/t-pillar-transparent.png" id="41-img" width="100%">
-            </div>
-            <div class="table object-pillar" id="43">
-              <h3 class="table-h3" id="43-h3">43</h3>
-              <img src="img/t-pillar-transparent.png" id="43-img" width="100%">
-            </div>
-            <div class="table object-pillar" id="45">
-              <h3 class="table-h3" id="45-h3">45</h3>
-              <img src="img/t-pillar-transparent.png" id="45-img" width="100%">
-            </div>
-            <div class="table object-pillar" id="47">
-              <h3 class="table-h3" id="47-h3">47</h3>
-              <img src="img/t-pillar-transparent.png" id="47-img" width="100%">
-            </div>
-            <div class="table object-pillar" id="49">
-              <h3 class="table-h3" id="49-h3">49</h3>
-              <img src="img/t-pillar-transparent.png" id="49-img" width="100%">
-            </div>
-          </div>
-
-
-
-          <div class="reserve-bottom-right-row">
-            <div class="table object-pillar" id="42">
-              <h3 class="table-h3" id="42-h3">42</h3>
-              <img src="img/t-pillar-transparent.png" id="42-img" width="100%">
-            </div>
-            <div class="table object-pillar" id="44">
-              <h3 class="table-h3" id="44-h3">44</h3>
-              <img src="img/t-pillar-transparent.png" id="44-img" width="100%">
-            </div>
-            <div class="table object-pillar" id="46">
-              <h3 class="table-h3" id="46-h3">46</h3>
-              <img src="img/t-pillar-transparent.png" id="46-img" width="100%">
-            </div>
-            <div class="table object-pillar" id="48">
-              <h3 class="table-h3" id="48-h3">48</h3>
-              <img src="img/t-pillar-transparent.png" id="48-img" width="100%">
-            </div>
-            <div class="table object-pillar" id="50">
-              <h3 class="table-h3" id="50-h3">50</h3>
-              <img src="img/t-pillar-transparent.png" id="50-img" width="100%">
-            </div>
-          </div>
-
-
-
-          <div class="reserve-bottom-right-row">
-            <div class="table object-small" id="51">
-              <h3 class="table-h3" id="51-h3">51</h3>
-              <img src="img/t-one-transparent.png" id="51-img" width="100%">
-            </div>
-            <div class="table object-big" id="52">
-              <h3 class="table-h3" id="52-h3">52</h3>
-              <img src="img/t-big-transparent.png" id="52-img" width="100%">
-            </div>
-            <div class="table object-small" id="53">
-              <h3 class="table-h3" id="53-h3">53</h3>
-              <img src="img/t-one-transparent.png" id="53-img" width="100%">
-            </div>
-            <div class="table object-big" id="54">
-              <h3 class="table-h3" id="54-h3">54</h3>
-              <img src="img/t-big-transparent.png" id="54-img" width="100%">
-            </div>
-          </div>
-
-          <div class="reserve-bottom-right-row">
-            <div class="table object-layer" id="57">
-              <h3 class="table-h3" id="57-h3">57</h3>
-              <img src="img/open/t-right-layed-transparent.png" id="57-img" width="100%">
-            </div>
-            <div class="table object-big" id="56">
-              <h3 class="table-h3" id="56-h3">56</h3>
-              <img src="img/t-big-transparent.png" id="56-img" width="100%">
-            </div>
-            <div class="table object-big" id="55">
-              <h3 class="table-h3" id="55-h3">55</h3>
-              <img src="img/t-big-transparent.png" id="55-img" width="100%">
-            </div>
-          </div>
-
-
-        </div>
-      </div>
     </div>
   </body>
 </html>
