@@ -1,65 +1,13 @@
-* {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-}
-
-html,body {
-  width: 100%;
-  height: 100%;
-}
-
-.admin-container {
-  display: flex;
-  flex-wrap: nowrap;
-  width: 100%;
-  height: 100%;
-}
-
-.sidebar {
-  width: 15%;
-  min-width: 120px;
-  height: 100%;
-  background-color: rgba(192,95,95,0.8);
-  color: white;
-}
-
-.sidebar ul {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  padding-top: 100%;
-}
-
-.sidebar ul li {
-  width: 100%;
-}
-
-.sidebar ul li a {
-  text-decoration: none;
-  display: block;
-  width: 100%;
-  padding: 5% 0% 5% 0%;
-  border-bottom: 1px solid white;
-  text-align: center;
-  font-size: calc(12px + 0.5vw);
-  transition: 0.5s;
-  color: white;
-}
-
-.sidebar ul li:first-of-type {
-  border-top: 1px solid white;
-}
-
-.sidebar ul li a:hover {
-  background-color: rgba(192,95,95,1);
-  cursor: pointer;
-}
-
-.main {
-  width: 85%;
-  height: 100%;
-}
+* { margin: 0;padding: 0;font-family: sans-serif;}
+html,body {width: 100%;height: 100%;}
+.admin-container {display: flex;flex-wrap: nowrap;width: 100%;height: 100%;}
+.sidebar {width: 15%;min-width: 120px;height: 100%;background-color: rgba(192,95,95,0.8);color: white;}
+.sidebar ul {list-style: none;display: flex;flex-direction: column;padding-top: 50%;}
+.sidebar ul li {width: 100%;}
+.sidebar ul li a {text-decoration: none;display: block;width: 100%;padding: 5% 0% 5% 0%;border-bottom: 1px solid white;text-align: center;font-size: calc(12px + 0.5vw);transition: 0.5s;color: white;}
+.sidebar ul li:first-of-type {border-top: 1px solid white;}
+.sidebar ul li a:hover {background-color: rgba(192,95,95,1);cursor: pointer;}
+.main {width: 85%;height: 100%;}
 
 
 
@@ -163,40 +111,16 @@ html,body {
 
 /* NoShow Liste */
 
-.noShow-container {
-  width: 80%;
-  margin-left: auto;
-  margin-right:auto;
-  height: auto;
-  margin-top: 5%;
-}
+.liste-nav { text-align:center; width:100%; }
+.liste-nav button {width: 160px; padding: 5px; background-color: transparent; border: 1px solid black; font-size: 1.2rem; margin: 5% 5% 0% 5%; cursor: pointer; }
 
-.noShow-top {
-  background-color: rgba(192,95,95,1);
-  width: 100%;
-  height: 50px;
-  display: flex;
-  flex-wrap: nowrap;
-  color: white;
-  border: 1px solid transparent;
-}
+.liste-container { width: 80%;margin-left: auto;margin-right:auto;height: auto;margin-top: 5%; }
+.liste-top { background-color: rgba(192,95,95,1);width: 100%;height: 50px;display: flex;flex-wrap: nowrap;color: white;border: 1px solid transparent; }
+.liste-top h2 { font-size: 2rem;padding: 5px;font-weight: lighter; }
+.liste-top i { padding: 5px;margin-left: auto;}
+.liste-top i:hover { cursor: pointer; }
 
-.noShow-top h2 {
-  font-size: 2rem;
-  padding: 5px;
-  font-weight: lighter;
-}
-
-.noShow-top i {
-  padding: 5px;
-  margin-left: auto;
-}
-
-.noShow-top i:hover {
-  cursor: pointer;
-}
-
-.noShow-content {
+.liste-content {
   width: 100%;
   height: 30vw;
   max-height: 500px;
@@ -208,37 +132,16 @@ html,body {
   list-style: none;
 }
 
-.noShow-content li {
-  display: flex;
-  flex-wrap: nowrap;
-  font-size: 1.2rem;
-  transition: 0.5s;
-  border-bottom: 1px solid rgba(192,95,95,1);
-}
+.liste-content li {display: flex;flex-direction: row;font-size: 1.2rem;transition: 0.5s;border-bottom: 1px solid rgba(192,95,95,1);cursor: pointer;width: 100%;}
+.liste-content li:hover { background-color: rgba(192,95,95,0.5); color: white; }
+.liste-content li p {display: block;width: 150px;padding: 5px;margin-left: auto; margin-right: auto;overflow: hidden;}
 
-.noShow-content li:hover {
-  cursor: pointer;
-  background-color: rgba(192,95,95,0.5);
-  color: white;
-}
-
-.noShow-content li p {
-  width: 40%;
-  text-align: center;
-  padding: 0.5%;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.noShow-content li p:first-of-type {
-  width: 5%;
-}
 
 
 /* NoShow Edit */
 
 
-.noShow-edit-container {
+.liste-edit-container {
   background-color: rgba(192,95,95,1);
   position: fixed;
   width: 68%;
@@ -291,7 +194,7 @@ html,body {
   color: white;
 }
 
-#ns-submit:hover {
+#liste-submit:hover {
   background-color: #8ac926;
   color: white;
 }
@@ -299,13 +202,10 @@ html,body {
 
 /* Reservierungen */
 
-.rs-container {
-  width: 100%;
-  height: auto;
-}
+.rs-container { width: 100%; height: auto; }
 
 .rs-input-table {
-  width: 50%;
+  width: 80%; max-width: 500px;
   margin-left: auto;
   margin-right: auto;
   text-align: center;
@@ -329,26 +229,16 @@ html,body {
 
 /* RESERVIERUNG LISTE */
 
-.rs-reservierung-list {
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 2%;
-  height: 500px;
-  display: flex;
-  flex-wrap: nowrap;
-}
+.rs-reservierung-list { width: 80%; margin-left: auto; margin-right: auto; margin-top: 2%; height: 500px; display: flex; flex-wrap: nowrap; }
 
 .rs-reservierung-list ul {
   list-style: none;
   height: 100%;
+  width: 80%; max-width: 500px;
   background-color: rgba(192,95,95,1);
-  width: 30%;
   min-width: 150px;
-  margin-left: auto;
-  margin-right: auto;
-  overflow: auto;
-  z-index: 3;
+  margin-left: auto; margin-right: auto;
+  overflow: auto; z-index: 3;
 }
 
 .rs-reservierung-list ul button {
@@ -360,10 +250,7 @@ html,body {
   transition: 0.5s;
   border: 0;
 }
-.rs-reservierung-list ul button:hover {
-  cursor: pointer;
-  background-color: #ced4da;
-}
+.rs-reservierung-list ul button:hover { cursor: pointer; background-color: #ced4da; }
 
 .rs-reservierung-list ul li {
   width: 92%;
@@ -378,15 +265,13 @@ html,body {
 .state2 { background-color: #ee6c4d; }
 .state3 { background-color: #ba181b; }
 .state4 { background-color: #006d77; }
+.state5 { background-color: #7400b8; }
 
 .rs-reservierung-list ul li:hover {
   cursor: pointer;
   color: darkgray;
 }
-
-.reservierung-list-current {
-  font-weight: 800;
-}
+.reservierung-list-current { font-weight: 800; }
 
 
 /* RESERVIERUNG HAUPT CONTAINER */
@@ -394,39 +279,35 @@ html,body {
 
 .rs-list-edit-container {
   background-color: rgba(192,95,95,0.6);
-  width: 85%;
-  height: auto;
-  display: flex;
-  flex-wrap: nowrap;
+  width: 70%; height: auto;
+  display: flex; flex-wrap: nowrap;
   z-index: 2;
   display: none;
 }
 
 .list-edit-reservierung {
-  width: 75%;
-  height: auto;
+  width: 100%; height: auto;
+  display: flex; flex-wrap: wrap; flex-direction: column;
 }
 
 .list-edit-top {
-  width: 100%;
+  width: 40%;
+  height: 100%;
   text-align: center;
-  padding: 1%;
 }
 .list-edit-top button {
   font-size: 1rem;
   outline: none;
-  padding: 0.75%;
+  padding: 10px;
   border: 0;
-  margin-left: 1%;
-  margin-right:1%;
-  width: 160px;
+  margin-left: auto; margin-right: auto; margin-top: 5%; margin-bottom: 5%;
+  width: 80%;
+  border-radius: 10px;
   transition: 0.5s;
   cursor: pointer;
   color: white;
 }
-.list-edit-top button:hover {
-  color: darkgray;
-}
+.list-edit-top button:hover { color: darkgray; }
 
 #bt-eingetroffen {background-color: #2b9348;}
 #bt-freigeben {background-color: #ee6c4d;}
@@ -437,32 +318,26 @@ html,body {
 /* LIST EDIT BOTTOM */
 
 .list-edit-bottom {
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
+  width: 60%;
   margin-top: 5%;
   text-align: center;
 }
 
 .list-edit-bottom input {
-  width: 10%;
+  width: 50%;
   min-width: 70px;
-  height: 20px;
-  padding: 0.25%;
+  padding: 5px;
   font-size: 1.2rem;
-  margin-left: 2%;
-  margin-right: 2%;
+  margin-left: auto; margin-right: auto; margin-top: 2%; margin-bottom: 2%;
   text-align: center;
 }
 
 .list-edit-bottom select {
-  width: 15%;
+  width: 80%;
   min-width: 70px;
-  height: 30px;
-  padding: 0.25%;
+  padding: 5px;
   font-size: 1.2rem;
-  margin-left: 2%;
-  margin-right: 2%;
+  margin-left: auto; margin-right: auto;
   text-align: center;
 }
 
@@ -471,79 +346,46 @@ html,body {
 }
 
 .edit-bottom-table {
-  height: 250px;
-  overflow: hidden;
-  width: 100%;
-  margin-top: 5%;
+  width: 80%;
+  margin-top: 2%;
+  display: flex; flex-wrap: nowrap;
+  margin-left: auto; margin-right: auto;
 }
+.edit-bottom-table h3 { padding: 7px; width: 80%; }
 
-.edit-bottom-table img {
-  width: 3vw;
-  min-width: 100px;
-  height: auto;
-  max-height: 8vw;
-  margin-bottom: 3%;
-  display: block;
-  margin-left: auto;
-  margin-right:auto;
-}
 
 
 /* LIST EDIT HH */
 
-.list-edit-hh {
-  width: 25%;
-  height:auto;
-  background-color: rgba(192,95,95,1);
-}
-
-.list-edit-hh .fa-user-minus {
-  float: right;
-  margin: 4% 4% 0% -4%;
-  color: white;
-  cursor: pointer;
-  transition: 0.5s;
-}
-.fa-user-minus:hover {
-  color: red;
-}
-
-#hh-number {
-  width: 50%;
-  padding: 2px;
-  font-size: 1.2rem;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-  text-align: center;
-  margin-top: 2%;
-}
-
-.edit-hh {
-  width: 100%;
-  height: auto;
-  text-align: center;
-  margin-top: 5%;
-}
-
-.edit-hh input {
-  font-size: 1.2rem;
-  padding: 2px;
-  margin: 5% 0% 5% 0%;
-}
+.list-edit-hh { width: 96%; height: auto; /*background-color: rgba(192,95,95,1);*/ padding: 2%; margin-top: 5%; }
+.list-edit-hh .fa-user-minus { float: right; margin: 2% 0% 0% 0%; color: white; cursor: pointer; transition: 0.5s; }
+.fa-user-minus:hover { color: red; }
+#hh-number { width: 50%; padding: 2px; font-size: 1.2rem; margin-left: 24%; margin-right: 25%; display: block; text-align: center; }
+.edit-hh { width: 100%; height: auto; text-align: center; }
+.edit-hh input { width: 70%; font-size: 1.2rem; padding: 2px; margin: 1% 0% 1% 0%; }
 
 #submit-clients {
   background-color: transparent;
   display: block;
   border: 1px solid white;
   padding: 0.5% 2% 0.5% 2%;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: auto; margin-right: auto; margin-top: 2%; margin-bottom: 2%;
   font-size: 1.5rem;
-  margin-top: 2%;
   color: white;
   cursor: pointer;
 }
+
+
+
+/* Tische */
+
+.tische-container { width: 70%; height: 80%; overflow: auto; margin-left: auto; margin-right: auto; }
+.tische-row { margin-top: 0.5%; display: flex; flex-direction: row; }
+.tische-label { width: 20%; font-size: 1.5rem; font-weight: 600; }
+.tische-label input { font-size: 1.2rem; width: 80%; outline: none; text-align: center; }
+.tische-label button { margin-left: 10%; font-size: 1.2rem; padding: 1% 5% 1% 5%; background-color: white; border: 1px solid black; cursor: pointer; }
+
+
 
 
 /* SWITCH */
