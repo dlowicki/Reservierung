@@ -81,13 +81,13 @@ require_once('sync.php');
 			$noshow = "'admin.php?liste=No-Show'"; $abwAnzahl = "'admin.php?liste=abwAnzahl'";
 			echo '<div class="liste-nav"><button onClick="window.location.href='.$noshow.'">No-Show</button><button onClick="window.location.href='.$abwAnzahl.'">Abw. Anzahl</button></div>';
 			$liste = $_GET['liste'];
-			
+
 			echo '<div class="liste-container">';
 		    echo '<div class="liste-top">';
 				if($liste == 'No-Show'){echo '<h2 id="ns">'.$liste.'</h2>';}else{echo '<h2 id="b">'.$liste.'</h2>';}
               echo '<i class="fas fa-user-plus fa-2x"></i>';
             echo '</div>';
-			
+
 				echo '<ul class="liste-content">';
 				if($liste == 'No-Show'){
 					$data = $admin->getNoShow();
@@ -111,7 +111,7 @@ require_once('sync.php');
 				}
 				echo '</ul>';
 			echo '</div>';
-			
+
 
 
         } elseif(isset($_GET['reservierungen'])) {
@@ -174,7 +174,7 @@ require_once('sync.php');
             }
 
 
-        } elseif($_GET['tische']){
+        } elseif(isset($_GET['tische'])){
           $overview = new Overview();
           $tables = $overview->loadTables();
           echo '<div class="tische-container">';
@@ -190,6 +190,39 @@ require_once('sync.php');
               echo '<label class="tische-label"><button>Speichern</button></label>';
             echo '</div>';
           }
+          echo '</div>';
+        } elseif(isset($_GET['zeit'])){
+          echo '<div class="zeit-container">';
+            echo '<div class="arbeitstage-container">';
+              echo '<h2>Öffnungszeiten</h2>';
+              echo '<div class="arbeitstag">';
+                echo '<h3>Montag</h3><input type="time" id="arbeitstagVON-zeit"> - <input type="time" id="arbeitstagBIS-zeit">';
+              echo '</div>';
+              echo '<div class="arbeitstag">';
+                echo '<h3>Dienstag</h3><input type="time" id="arbeitstagVON-zeit"> - <input type="time" id="arbeitstagBIS-zeit">';
+              echo '</div>';
+              echo '<div class="arbeitstag">';
+                echo '<h3>Mittwoch</h3><input type="time" id="arbeitstagVON-zeit"> - <input type="time" id="arbeitstagBIS-zeit">';
+              echo '</div>';
+              echo '<div class="arbeitstag">';
+                echo '<h3>Donnerstag</h3><input type="time" id="arbeitstagVON-zeit"> - <input type="time" id="arbeitstagBIS-zeit">';
+              echo '</div>';
+              echo '<div class="arbeitstag">';
+                echo '<h3>Freitag</h3><input type="time" id="arbeitstagVON-zeit"> - <input type="time" id="arbeitstagBIS-zeit">';
+              echo '</div>';
+              echo '<div class="arbeitstag">';
+                echo '<h3>Samstag</h3><input type="time" id="arbeitstagVON-zeit"> - <input type="time" id="arbeitstagBIS-zeit">';
+              echo '</div>';
+              echo '<div class="arbeitstag">';
+                echo '<h3>Sonntag</h3><input type="time" id="arbeitstagVON-zeit"> - <input type="time" id="arbeitstagBIS-zeit">';
+              echo '</div>';
+              echo '</div>';
+            echo '</div>';
+
+            echo '<div class="feiertage-container">';
+              
+            echo '</div>';
+
           echo '</div>';
         }
 
@@ -231,7 +264,7 @@ require_once('sync.php');
         $('.edit-container-bottom').append('<button class="edit-button" onClick="closeEdit()">Schließen</button><button class="edit-button" id="delete-liste">Entfernen</button><button class="edit-button"id="liste-submit">Speichern</button>');
       }
     });
-	
+
     $(document).on("click","#liste-submit",function(){
 		var id = $('#liste-id').val().split('-');
 		var amount = $('#liste-amount').val();
