@@ -28,6 +28,12 @@ if(isset($_POST['nsAmount']) && isset($_POST['nsMail']) && isset($_POST['nsTNR']
   return;
 }
 
+// Öffnungszeiten
+if(isset($_POST['arbeitstag'])){
+  $data = explode(';',$_POST['arbeitstag']);
+  if(isset($data[0])&&isset($data[1])){ echo updateDays($data[0],$data[1]); }
+}
+
 if(isset($_POST['nsEdit'])){
   $edit = trim($_POST['nsEdit']);
   if(strlen($edit) >= 1){
@@ -318,6 +324,13 @@ function createNewReserve($table,$client,$date) {
     return $con->insert_id;
   }
   return false;
+}
+
+function updateDays($id,$time){
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  $query = $con->query("UPDATE rdays SET daysTime = '$time' WHERE daysID = $id") or die();
+  if($query === TRUE){ return true; } return false;
 }
 
 ?>

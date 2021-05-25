@@ -195,41 +195,52 @@ require_once('sync.php');
           echo '<div class="zeit-container">';
             echo '<div class="arbeitstage-container">';
               echo '<h2>Öffnungszeiten</h2>';
-              echo '<div class="arbeitstag">';
-                echo '<h3>Montag</h3><input type="time" id="arbeitstagVON-zeit"> - <input type="time" id="arbeitstagBIS-zeit">';
+              $overview = new Overview();
+              $days = $overview->loadDays();
+              if($days){
+                for ($i=0; $i < 7; $i++) {
+                  echo '<div class="arbeitstag">';
+                    $time = explode('-',$days[$i]["time"]);
+                    echo '<h3>'.$days[$i]["day"].'</h3><input type="time" id="arbeitstag-von-'.$days[$i]["id"].'" value="'.$time[0].'"> - <input type="time" id="arbeitstag-bis-'.$days[$i]["id"].'" value="'.$time[1].'">';
+                  echo '</div>';
+                }
+              }
               echo '</div>';
-              echo '<div class="arbeitstag">';
-                echo '<h3>Dienstag</h3><input type="time" id="arbeitstagVON-zeit"> - <input type="time" id="arbeitstagBIS-zeit">';
-              echo '</div>';
-              echo '<div class="arbeitstag">';
-                echo '<h3>Mittwoch</h3><input type="time" id="arbeitstagVON-zeit"> - <input type="time" id="arbeitstagBIS-zeit">';
-              echo '</div>';
-              echo '<div class="arbeitstag">';
-                echo '<h3>Donnerstag</h3><input type="time" id="arbeitstagVON-zeit"> - <input type="time" id="arbeitstagBIS-zeit">';
-              echo '</div>';
-              echo '<div class="arbeitstag">';
-                echo '<h3>Freitag</h3><input type="time" id="arbeitstagVON-zeit"> - <input type="time" id="arbeitstagBIS-zeit">';
-              echo '</div>';
-              echo '<div class="arbeitstag">';
-                echo '<h3>Samstag</h3><input type="time" id="arbeitstagVON-zeit"> - <input type="time" id="arbeitstagBIS-zeit">';
-              echo '</div>';
-              echo '<div class="arbeitstag">';
-                echo '<h3>Sonntag</h3><input type="time" id="arbeitstagVON-zeit"> - <input type="time" id="arbeitstagBIS-zeit">';
-              echo '</div>';
+              echo '<div class="feiertage-container">';
+                echo '<div class="feiertage-filter">';
+                  echo '<button id="ft-events">Hochzeiten</button>';
+                  echo '<button id="ft-events">Partys</button>';
+                  echo '<button id="ft-events">Auftritte</button>';
+                  echo '<i class="fas fa-calendar-plus fa-2x"></i>';
+                echo '</div>';
+
+                echo '<div class="feiertage-data">';
+                  echo '<div class="feiertag"><p>Hochzeit</p><p>2021-05-01</p><button id="ft-entfernen">Entfernen</button></div>';
+                  echo '<div class="feiertag"><p>Auftritt</p><p>2021-05-05</p><button id="ft-entfernen">Entfernen</button></div>';
+                echo '</div>';
               echo '</div>';
             echo '</div>';
-
-            echo '<div class="feiertage-container">';
-              
-            echo '</div>';
-
-          echo '</div>';
         }
 
         ?>
       </div>
     </div>
     <script type="text/javascript">
+
+    /* ZEITT */
+    $(document).on('change','.arbeitstag input', function(){
+      var id = $(this).attr('id').split('-')[2];
+      const valVON = $('#arbeitstag-von-'+id).val(); const valBIS = $('#arbeitstag-bis-'+id).val();
+    $.ajax({
+      url: "script/sync-admin.php",
+      method: "POST",
+      data: { arbeitstag: id+';'+valVON+'-'+valBIS},
+      success: function(result) {
+        if(result!="1"){ alert("Ein Fehler ist aufgetreten \n" + result); } return;
+      }
+    });
+  });
+
     $(document).on("change","#oInputDate", function(){
       var date = $(this).val();
       var ow = getOverviewParameter()

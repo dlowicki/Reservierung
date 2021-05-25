@@ -43,7 +43,7 @@ class Overview
       }
     return false;
   }
-  
+
     public function getBlacklist() {
     $con = $this->connectDatabase();
     $query = $con->query("SELECT * FROM rblacklist") or die();
@@ -150,7 +150,7 @@ class Overview
       } return $arr;
     } return false;
   }
-  
+
   public function loadBlacklist() {
     $con = $this->connectDatabase();
     $query = $con -> query('SELECT * FROM rblacklist');
@@ -164,6 +164,21 @@ class Overview
         $r++;
       } return $arr;
     } return false;
+  }
+
+  public function loadDays() {
+  $con = $this->connectDatabase();
+  $query = $con -> query('SELECT * FROM rdays');
+  if($query){
+    $arr=array(); $r=0;
+    foreach ($query as $key) {
+      $arr[$r]['id'] = $key['daysID'];
+      $arr[$r]['day'] = $key['daysDay'];
+      $arr[$r]['time'] = $key['daysTime'];
+      $arr[$r]['active'] = $key['daysActive'];
+      $r++;
+    } return $arr;
+  } return false;
   }
 
 }
