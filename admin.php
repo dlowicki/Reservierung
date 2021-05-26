@@ -84,9 +84,8 @@ require_once('sync.php');
 
 			echo '<div class="liste-container">';
 		    echo '<div class="liste-top">';
-				if($liste == 'No-Show'){echo '<h2 id="ns">'.$liste.'</h2>';}else{echo '<h2 id="b">'.$liste.'</h2>';}
-              echo '<i class="fas fa-user-plus fa-2x"></i>';
-            echo '</div>';
+				if($liste == 'No-Show'){echo '<h2 id="ns">'.$liste.'</h2><i class="fas fa-user-plus fa-2x"></i>';}elseif($liste=='abwAnzahl'){echo '<h2 id="b">'.$liste.'</h2><i class="fas fa-user-plus fa-2x"></i>';}
+        echo '</div>';
 
 				echo '<ul class="liste-content">';
 				if($liste == 'No-Show'){
@@ -99,7 +98,7 @@ require_once('sync.php');
 						//echo '<p class="ns-time">'.$key["time"].'</p>';
 						echo '</li>';
 					}
-				} else {
+				} elseif($liste == 'abwAnzahl') {
 					$data = $admin->getBlacklist();
 					foreach ($data as $key) {
 						echo '<li id="b-'.$key["id"].'">';

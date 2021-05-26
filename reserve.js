@@ -114,13 +114,6 @@ function viewCalendar(){
   $('#viewCalendar').css("display","block");
 }
 
-function confirmDay(date){
-
-
-
-
-}
-
 $(document).on('click','#calendar-confirm',function(){
   const date = $('#calendar-date').val(); const time = $('#calendar-time').val();
   var today = new Date().toISOString().slice(0, 10);
@@ -207,9 +200,6 @@ function viewTable(id, date) {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
           if(item['id'] == localBlock){
             $('#timeBlock').append('<option value="'+item["id"]+'" id="option'+item["id"]+'" selected>'+time+' Uhr</option>');
-            $('#container-information-content').children().each((index, element) => {
-              if(item["id"] == element['id'].slice(-1)){ $('#timeBlock').css('color','red'); $('#option'+item["id"]).css('color','red'); }
-            });
           } else { $('#timeBlock').append('<option value="'+item["id"]+'" id="option'+item["id"]+'">'+time+' Uhr</option>'); }
         });
       });
@@ -250,7 +240,7 @@ function viewTable(id, date) {
   });
 }
 
-
+// Klick auf neuen Haushalt, neuen Haushalt anzeigen
 $(document).on("click",".right-input-nav", function(event){
   $('.right-input-nav').css("border-bottom","1px solid darkgray");
   $('.right-input-nav').css("color","black");
@@ -270,11 +260,11 @@ $(document).on('change','#timeBlock',function(){
   }
 });
 
+// Beim ändern des Datum neuen Table anzeigen
+// Abfrage von Datum ob an Feiertag oder geschlossenen Tag
 $(document).on('change','#timeDate',function(){
   var tisch = $('#viewTable h1').text().split(' ')[1];
-  var date = $(this).val();
-  tableClose();
-  viewTable(tisch, date);
+  var date = $(this).val(); tableClose(); viewTable(tisch, date);
 });
 
 function checkTimeFrom(t) {
@@ -574,7 +564,8 @@ function sendReserve(tID) {
               viewError('Die E-Mail oder Telefonnummer wurde auf die Blacklist gesetzt. Eine Reservierung ist nicht möglich!');
 			case "3":
 				console.log('Reservierung bestätigt');
-				viewError('Reservierung wurde erfolgreich durchgeführt. Es konnte keine E-Mail an '+mailTO+' verschickt werden!');
+        tableClose();
+				viewError('Reservierung wurde erfolgreich durchgeführt. Es konnte keine E-Mail verschickt werden!');
 				viewReserved(tID,timeBlock,date,amount);
           }
         }
