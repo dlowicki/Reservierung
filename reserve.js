@@ -56,7 +56,7 @@ async function loadTables(date) {
   let result;
   try {
     var data = "";
-    $.ajax({ url: "sync.php", method: "POST", data: {loadTables: date}, success: function(result) {
+    $.ajax({ url: "sync.php", method: "POST", data: { loadTables: date }, success: function(result) {
 		$('#tischplan-svg').empty();
 		data = JSON.parse(result);
 		data.forEach((item, i) => {
@@ -83,7 +83,7 @@ function viewCalendar(){
     var rc = localStorage.getItem('rCalendar').split(';');
     $('.calendar-inputs').append('<input type="date" id="calendar-date" value="'+rc[0]+'">');
     $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+    $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
       data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
           if(item['id'] == rc[1]){
@@ -97,10 +97,10 @@ function viewCalendar(){
     $('.calendar-inputs').append('<input type="date" id="calendar-date">');
     document.getElementById('calendar-date').valueAsDate = new Date();
     $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    // http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php
     // http://localhost/html/Reservierung/script/load.timeblock.php
-    // http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php
-    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+    // http://localhost/html/Reservierung/script/load.timeblock.php
+    // http://localhost/html/Reservierung/script/load.timeblock.php
+    $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
       data.forEach((item, i) => {
         time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
         $('.calendar-inputs select').append('<option value="'+item["id"]+'">'+time+' Uhr</option>');
@@ -128,7 +128,7 @@ $(document).on('click','#calendar-confirm',function(){
       if(result=="1"){
         viewError('HubRaum hat am ' + date + ' nicht geöffnet!');
       } else { // Restaurant hat am ausgewählten Tag geöffnet
-        $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.feiertag.php',function(data){
+        $.getJSON('http://localhost/html/Reservierung/script/load.feiertag.php',function(data){
           var check = true;
           data.forEach((item, i) => { if(item['date'] == date){ check=false; } });
           if(date.length == 10 && time.length >= 1 && check==true){
@@ -194,7 +194,7 @@ function viewTable(id, date) {
       $('.form-table-left-inputs').append('<select id="amount">'+options+'</select><i class="fas fa-users"></i></div>');
       $('.form-table-left-inputs').append('<input type="date" id="timeDate" value="'+date+'">');
       var localBlock = localStorage.getItem('rCalendar').split(';')[1];
-      $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+      $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
         $('.form-table-left-inputs').append('<select id="timeBlock"></select>');
         data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
@@ -574,7 +574,7 @@ function sendReserve(tID) {
 }
 
 function viewReserved(table, blockID, date, amount){
-  $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+  $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
     $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
     $('.container-reserve').append('<div id="viewReserved"></div>');
     $('#viewReserved').append('<h2>Tisch '+table+' am '+date+' reserviert!</h2>');

@@ -24,7 +24,7 @@ require_once('sync.php');
           <li><a href="?analyse=HubRaum">Analyse</a></li>
           <li><a href="?liste=No-Show">Listen</a></li>
           <li><a href="?reservierungen=HubRaum">Reservierungen</a></li>
-          <li><a href="?tische=HubRaum">Tische</a></li>
+          <li><a href="?tische=HubRaum">Tischplan</a></li>
           <li><a href="?zeit=HubRaum">Öffnungszeiten</a></li>
           <li><a href="index.php">Verlassen</a></li>
         </ul>
@@ -179,18 +179,27 @@ require_once('sync.php');
           $overview = new Overview();
           $tables = $overview->loadTables();
           echo '<div class="tische-container">';
-          echo '<div class="tische-row"><label class="tische-label">TischID</label><label class="tische-label">Min. Anzahl</label><label class="tische-label">Max. Anzahl</label><label class="tische-label">Standort</label></div>';
+
+          echo '<div id="tische-panel">';
+            echo '<h2>Tisch Panel</h2>';
+            echo '<div class="t-panel"><h3>Alle Tische</h3><label class="switch"><input type="checkbox" id="switch-all"><span class="slider round"></span></label></div>';
+          echo '</div>';
+
+
+          echo '<table>';
+          echo '<tr><th>TischID</th><th>Min. Anzahl</th><th>Max. Anzahl</th><th>Standort</th></tr>';
           foreach ($tables as $key) {
-            echo '<div class="tische-row" id="'.$key["tableID"].'">';
-              echo '<label class="tische-label"><input type="text" id="tische-id" value="'.$key["tableID"].'"></label>';
-              echo '<label class="tische-label"><input type="number" id="tische-min" value="'.$key["tableMin"].'"></label>';
-              echo '<label class="tische-label"><input type="number" id="tische-max" value="'.$key["tableMax"].'"></label>';
-              echo '<label class="tische-label"><input type="text" id="tische-place" value="'.$key["tablePlace"].'"></label>';
-              if($key['tableActive'] == "open"){ echo '<label class="switch" id="'.$key["tableID"].'"><input type="checkbox" id="switch-table" checked><span class="slider round"></span></label>'; }
-              else { echo '<label class="switch" id="'.$key["tableID"].'"><input type="checkbox" id="switch-table"><span class="slider round"></span></label>'; }
-              echo '<label class="tische-label"><button>Speichern</button></label>';
-            echo '</div>';
+            echo '<tr class="tische-row" id="'.$key["tableID"].'">';
+              echo '<td class="tische-label"><input type="text" id="tische-id" value="'.$key["tableID"].'"></td>';
+              echo '<td class="tische-label td-number"><input type="number" id="tische-min" value="'.$key["tableMin"].'"></td>';
+              echo '<td class="tische-label td-number"><input type="number" id="tische-max" value="'.$key["tableMax"].'"></td>';
+              echo '<td class="tische-label"><input type="text" id="tische-place" value="'.$key["tablePlace"].'"></td>';
+              if($key['tableActive'] == "open"){ echo '<td><label class="switch" id="'.$key["tableID"].'"><input type="checkbox" id="switch-table" checked><span class="slider round"></span></label></td>'; }
+              else { echo '<td><label class="switch" id="'.$key["tableID"].'"><input type="checkbox" id="switch-table"><span class="slider round"></span></label></td>'; }
+              echo '<td class="tische-label"><button>Speichern</button></td>';
+            echo '</tr>';
           }
+          echo '</table>';
           echo '</div>';
         } elseif(isset($_GET['zeit'])){
           echo '<div class="zeit-container">';
@@ -686,23 +695,18 @@ require_once('sync.php');
     });
 
     /* TISCHE */
-
     $('.tische-row button').click(function(){
       var tableID = $(this).parent().parent().attr('id');
-
       var newTableID = $('#'+tableID+" #tische-id").val();
       var newMin = $('#'+tableID+" #tische-min").val();
       var newMax = $('#'+tableID+" #tische-max").val();
       var newPlace = $('#'+tableID+" #tische-place").val();
       var newCheck = $('#'+tableID+" #switch-table").prop("checked");
-      console.log(newCheck);
       $.ajax({
         url: "script/sync-admin.php",
         method: "POST",
         data: { updateAdminTables: tableID+";"+newTableID+";"+newMin+";"+newMax+";"+newPlace+";"+newCheck},
-        success: function(result) {
-          if(result == "0"){ alert('Ein Fehler ist aufgetreten! \nBitte Daten überprüfen bei Tisch '+tableID); } return;
-        }
+        success: function(result) { if(result == "0"){ alert('Ein Fehler ist aufgetreten! \nBitte Daten überprüfen bei Tisch '+tableID); } return; }
       });
     });
 

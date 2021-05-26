@@ -42,32 +42,37 @@ if(isset($_POST['specialDayDelete'])){
   if(strlen($id)>=1){ echo deleteSpecialDay($id); }
 }
 
+// Tischplan
+if(isset($_POST['updateAdminTables'])){
+  $exp = explode(';',$_POST['updateAdminTables']);
+  if(sizeof($exp) == 6){
+    $oldID=$exp[0];$newID=$exp[1];$min=$exp[2];$max=$exp[3];$place=$exp[4];$check=$exp[5];
+    if($check=='false'){$check="closed";}else{$check="open";}
+    $db = new Overview();
+    $con = $db->connectDatabase();
+    $query = $con->query("UPDATE rtable SET tablePlace='$place', tableMax=$max, tableMin=$min, tableID=$newID, tableActive='$check' WHERE tableID=$oldID");
+    if($query === TRUE){ echo '1'; return; } echo '0'; return;
+  }
+  echo '0'; return;
+}
+
+
+// Liste NoShow
 if(isset($_POST['nsEdit'])){
   $edit = trim($_POST['nsEdit']);
   if(strlen($edit) >= 1){
     $overview = new Overview();
     $result;
-    if($edit != 'Create'){
-      $result = $overview->deleteNoShow($edit);
-    } else {
-      $result = $overview->createNoShow();
-    }
-
-    if($result){ echo "1"; return;}
-    echo "0"; return;
+    if($edit != 'Create'){ $result = $overview->deleteNoShow($edit); } else { $result = $overview->createNoShow(); }
+    if($result){ echo "1"; return;} echo "0"; return;
   }
 }
 
+// Reservierung Laden
 if(isset($_POST['rsLoad'])){
   $rID = $_POST['rsLoad'];
   $rData = getReservierungData($rID);
-
-  if($rData != false){
-    echo json_encode($rData);
-    return;
-  }
-  echo "0";
-  return;
+  if($rData != false){ echo json_encode($rData); return; } echo "0"; return;
 }
 
 if(isset($_POST['acpButton']) && isset($_POST['acpReserveID']) && isset($_POST['acpDate'])){
