@@ -31,7 +31,7 @@ if(isset($_POST['nsAmount']) && isset($_POST['nsMail']) && isset($_POST['nsTNR']
 // Öffnungszeiten
 if(isset($_POST['arbeitstag'])){
   $data = explode(';',$_POST['arbeitstag']);
-  if(isset($data[0])&&isset($data[1])){ echo updateDays($data[0],$data[1]); }
+  if(isset($data[0])&&isset($data[1])){ echo updateDays($data[0],$data[1],$data[2]); }
 }
 if(isset($_POST['specialDay'])){
   $exp = explode(";",$_POST['specialDay']);
@@ -334,10 +334,11 @@ function createNewReserve($table,$client,$date) {
   return false;
 }
 
-function updateDays($id,$time){
+function updateDays($id,$time,$active){
+  if($active == "true"){ $active = "1"; } else { $active = "0"; }
   $db = new Overview();
   $con = $db->connectDatabase();
-  $query = $con->query("UPDATE rdays SET daysTime = '$time' WHERE daysID = $id") or die();
+  $query = $con->query("UPDATE rdays SET daysTime = '$time',daysActive='$active' WHERE daysID = $id") or die();
   if($query === TRUE){ return true; } return false;
 }
 function addSpecialDay($beschreibung, $date, $type){

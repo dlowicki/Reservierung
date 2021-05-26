@@ -21,7 +21,11 @@ if(isset($_GET['getReservierungen'])){
 	if($r){ echo json_encode($r); }
 	return;
   }
+}
 
+if(isset($_POST['confirmDay'])){
+   // Wenn return true dann Restaurant am Tag geschlossen
+  if(checkDayActive($_POST['confirmDay'])){ echo '1'; return; } else { echo '0'; return; }
 }
 
 if(isset($_POST['getOverview']) && isset($_POST['oDate'])){
@@ -92,6 +96,10 @@ if(isset($_POST['createReserve'])){
   $daten = $_POST['createReserve'];
   $amount = $daten[0];  // Anzahl von Personen z.B. 5
   $date = $daten[1];    // Genaues Datum der Reservierung 2021-05-20
+
+  // checkDayActive returned 1 Wenn ausgewählter Tag geschlossen ist
+  if(checkDayActive($date) || in_array($date, getFeiertage())){ echo '0'; return; }
+
   $block = $daten[2];   // BlockID z.B. 1
   $table = $daten[3];   // TischID 9
 
@@ -172,12 +180,12 @@ if(isset($_POST['user'])){
   $con = connect();
   $query = $con->prepare("SELECT userCookie FROM ruser WHERE userCookie = ?");
   $query->bind_param('s',$_POST['user']);
-  
+
   $query->execute();
 
   $result = $query->get_result();
   $row = $result->fetch_array(MYSQLI_ASSOC);
-	
+
   if(sizeof($row) >=1 ){ if($row['userCookie'] == $_POST['user']) { echo md5($row['userCookie']); return; } }
   echo "0"; return;
 }
@@ -525,7 +533,7 @@ function getIP() {
  // verschlüsseln
 function encrypt($value, $key) { return openssl_encrypt($value, "AES-128-ECB", $key); }
 // entschlüsseln
-function decrypt($value, $key) {  return openssl_decrypt($value, "AES-128-ECB", $key); 
+function decrypt($value, $key) {  return openssl_decrypt($value, "AES-128-ECB", $key);
 }
 function echoDate() { return date("Y-m-d"); }
 function echoDateTime() { return date("Y-m-d G:i:s"); }
@@ -538,13 +546,25 @@ function r($str){
   }
   return false;
 }
-/*function sanitize_mail($field) {
-  $field = filter_var($field, FILTER_SANITIZE_EMAIL);
-  if (filter_var($field, FILTER_VALIDATE_EMAIL)) {
-    return true;
+
+function checkDayActive($date) {
+  $names = array('Mon'=>'Montag','Tue'=>'Dienstag','Wed'=>'Mittwoch','Thu'=>'Donnerstag','Fri'=>'Freitag','Sat'=>'Samstag','Sun'=>'Sonntag');
+  $nameOfDay = date('D', strtotime($date));
+  $con = connect();
+  $query = $con->query("SELECT daysDay FROM rdays WHERE daysActive = '0'");
+  if($query){
+    foreach ($query as $key) { if($names[$nameOfDay] == $key['daysDay']){ return 1; } }
+    return 0;
   }
-  return false;
-}*/
+  return 0;
+}
+
+function getFeiertage(){
+  $arr = array();
+  $json = json_decode(file_get_contents('http://localhost:8012/Reservierung%20-%20Github/script/load.feiertag.php'));
+  foreach ($json as $key => $value) { array_push($arr, $value->{'date'}); }
+  return $arr;
+}
 
 
 // Überprüfe ob Überschneidung mit Reservierung

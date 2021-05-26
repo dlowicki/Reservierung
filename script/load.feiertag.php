@@ -18,7 +18,7 @@ $aHolidayList = [
     '26.12.' => 'Stefanitag',
     '31.12.' => 'Silvester'
  ];
- 
+
  $newHolidayList = array();
 
 date_default_timezone_set('Europe/Berlin');
@@ -26,15 +26,18 @@ $dtEaster = new DateTime();
 $year = $dtEaster->format('Y'); // aktuelles jahr
 $dtEaster = $dtEaster->setTimestamp( easter_date($year) ); // ostersonntag
 
-$format = 'Y-m-d';
+$format = 'Y-m-d'; $count = 0;
 
 foreach ($aHolidayList as $dateExpr => $desc) { // Für jeden Eintrag in Holiday List
     if ( strpos($dateExpr, 'E') === 0 ) { // Wenn Position von E nicht gefunden wird
-        $dateExpr = ltrim($dateExpr, 'E'); $dtCurr = clone $dtEaster; 
-		$newHolidayList[$dtCurr->modify($dateExpr.' day')->format($format)] = $desc;
+        $dateExpr = ltrim($dateExpr, 'E'); $dtCurr = clone $dtEaster;
+		$newHolidayList[$count]['desc'] = $desc;
+    $newHolidayList[$count]['date'] = $dtCurr->modify($dateExpr.' day')->format($format);
     } else {
-		$newHolidayList[(new DateTime($dateExpr.$year))->format($format)] = $desc;
+		$newHolidayList[$count]['desc'] = $desc;
+    $newHolidayList[$count]['date'] = (new DateTime($dateExpr.$year))->format($format);
     }
+    $count++;
 }
 echo json_encode($newHolidayList);
 ?>

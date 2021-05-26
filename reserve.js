@@ -77,6 +77,7 @@ async function loadTables(date) {
 
 
 function viewCalendar(){
+  if($('.calendar-inputs').length >= 1){ return false; }
   $('#viewCalendar').append('<div class="calendar-inputs"></div>');
   if(localStorage.getItem('rCalendar') !== null){
     var rc = localStorage.getItem('rCalendar').split(';');
@@ -113,18 +114,41 @@ function viewCalendar(){
   $('#viewCalendar').css("display","block");
 }
 
+function confirmDay(date){
+
+
+
+
+}
+
 $(document).on('click','#calendar-confirm',function(){
   const date = $('#calendar-date').val(); const time = $('#calendar-time').val();
-  if(time == null) { $('#calendar-time').css('background-color','#e63946'); return false; }
   var today = new Date().toISOString().slice(0, 10);
-  if(date.length == 10 && time.length >= 1 && date >= today && date <= todayPlusSixWeeks()){
-    localStorage.setItem('rCalendar',date+';'+time);
-    location.reload();
-  } else {
-    $('#calendar-date').css('background-color','#e63946');
-    $('#calendar-time').css('background-color','#e63946');
-  }
+  if(time == null) { $('#calendar-time').css('background-color','#e63946'); return; }
+  if(todayPlusSixWeeks() <= date) { $('#calendar-date').css('background-color','#e63946'); viewError('Reservierungen können maximal 6 Wochen im Voraus eingetragen werden!'); return; }
+  if(date < today) { $('#calendar-date').css('background-color','#e63946'); viewError('Datum kann nicht in der Vergangenheit liegen!'); return; }
 
+  var test = 0;
+  $.ajax({ url: "sync.php", method: "POST", data: { confirmDay: date},
+    success: function(result) {
+      // Wenn result==1 Dann Tag nicht geöffnet
+      if(result=="1"){
+        viewError('HubRaum hat am ' + date + ' nicht geöffnet!');
+      } else { // Restaurant hat am ausgewählten Tag geöffnet
+        $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.feiertag.php',function(data){
+          var check = true;
+          data.forEach((item, i) => { if(item['date'] == date){ check=false; } });
+          if(date.length == 10 && time.length >= 1 && check==true){
+            // Setze Datum in localStorage und lade Seite neu
+            localStorage.setItem('rCalendar',date+';'+time); location.reload();
+          } else {
+            $('#calendar-date').css('background-color','#e63946');
+            viewError('HubRaum hat am ' + date + ' nicht geöffnet!');
+          }
+        });
+      }
+    }
+  });
 });
 
 $(document).on('click','.fa-calendar-alt',function(){ viewCalendar(); });

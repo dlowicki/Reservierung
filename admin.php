@@ -130,7 +130,9 @@ require_once('sync.php');
                     echo '<ul>';
                       echo '<button id="createReserveButton">Neue Reservierung</button>';
                       if($rsList != false){
-                        foreach ($rsList as $key) { echo '<li id="'.$key["rID"].'" class="state'.$key["rState"].'">'.$key["rTime"].'</li>'; }
+                        foreach ($rsList as $key) {
+                          echo '<li id="'.$key["rID"].'" class="state'.$key["rState"].'">'.$key["rTime"].'</li>';
+                        }
                       } else {
                         echo '<p style="color: white; font-size: 1.4rem; display:block; text-align:center; padding: 1%;">Keine Reservierung vorhanden</p>';
                       }
@@ -202,6 +204,11 @@ require_once('sync.php');
                   echo '<div class="arbeitstag">';
                     $time = explode('-',$days[$i]["time"]);
                     echo '<h3>'.$days[$i]["day"].'</h3><input type="time" id="arbeitstag-von-'.$days[$i]["id"].'" value="'.$time[0].'"> - <input type="time" id="arbeitstag-bis-'.$days[$i]["id"].'" value="'.$time[1].'">';
+                    if($days[$i]['active'] == false){
+                      echo '<label class="switch"><input type="checkbox" id="switch-arbeitstag-'.$days[$i]["id"].'"><span class="slider round"></span></label>';
+                    } else {
+                      echo '<label class="switch"><input type="checkbox" id="switch-arbeitstag-'.$days[$i]["id"].'" checked><span class="slider round"></span></label>';
+                    }
                   echo '</div>';
                 }
               }
@@ -235,17 +242,31 @@ require_once('sync.php');
     $(document).on('change','.arbeitstag input', function(){
       var id = $(this).attr('id').split('-')[2];
       const valVON = $('#arbeitstag-von-'+id).val(); const valBIS = $('#arbeitstag-bis-'+id).val();
+      var check = $('#switch-arbeitstag-'+id).prop("checked");
     $.ajax({
       url: "script/sync-admin.php",
       method: "POST",
-      data: { arbeitstag: id+';'+valVON+'-'+valBIS},
+      data: { arbeitstag: id+';'+valVON+'-'+valBIS+';'+check},
       success: function(result) {
         if(result!="1"){ alert("Ein Fehler ist aufgetreten \n" + result); } return;
       }
     });
   });
+  $(document).on('change','#switch-arbeitstag',()=>{
+    var check = $(this).prop("checked");
+    const valVON = $('#arbeitstag-von-'+id).val(); const valBIS = $('#arbeitstag-bis-'+id).val();
+    var id = $(this).attr('id').split('-')[2];
+    $.ajax({
+      url: "script/sync-admin.php",
+      method: "POST",
+      data: { arbeitstag: id+';'+valVON+'-'+valBIS+";"+check},
+      success: function(result) {
+        console.log(result);
+        if(result!="1"){ alert("Ein Fehler ist aufgetreten \n" + result); } return;
+      }
+    });
+  });
   /* SPECIAL DAYS */
-
   $('.feiertage-filter i').click(()=>{
     var beschreibung = $('#ft-name').val(); if(beschreibung.length <= 0){ return false; }
     var date = $('#ft-date').val(); if(date.length < 10 || date == 'tt.mm.jjjj' || date == null){ return false; }
@@ -322,7 +343,6 @@ require_once('sync.php');
           method: "POST",
           data: { listeID: id[1], listeAmount: amount, listeMail: mail, listeTNR: tnr, listeType: id[0]},
           success: function(result) {
-			  console.log('result');
             if(result=="1"){
               $(".liste-content").load(" .liste-content > *");
               return;
@@ -451,7 +471,6 @@ require_once('sync.php');
     $('#switch-table').click(function(){
       var check = $(this).prop("checked");
       var id = $('.switch').attr("id");
-
       $.ajax({
         url: "sync.php",
         method: "POST",
