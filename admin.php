@@ -22,7 +22,7 @@ require_once('sync.php');
         <ul>
           <li><a href="?overview=Day<?php echo "&day=".date("Y-m-d"); ?>">Übersicht</a></li>
           <li><a href="?analyse=HubRaum">Analyse</a></li>
-          <li><a href="?liste=noshow">Listen</a></li>
+          <li><a href="?liste=No-Show">Listen</a></li>
           <li><a href="?reservierungen=HubRaum">Reservierungen</a></li>
           <li><a href="?tische=HubRaum">Tische</a></li>
           <li><a href="?zeit=HubRaum">Öffnungszeiten</a></li>
@@ -208,15 +208,19 @@ require_once('sync.php');
               echo '</div>';
               echo '<div class="feiertage-container">';
                 echo '<div class="feiertage-filter">';
-                  echo '<button id="ft-events">Hochzeiten</button>';
-                  echo '<button id="ft-events">Partys</button>';
-                  echo '<button id="ft-events">Auftritte</button>';
+                  echo '<input type="text" id="ft-name" placeholder="Beschreibung">';
+                  echo '<input type="date" id="ft-date">';
+                  echo '<select id="ft-select"><option>Hochzeit</option><option>Party</option><option>Auftritt</option></select>';
                   echo '<i class="fas fa-calendar-plus fa-2x"></i>';
                 echo '</div>';
 
                 echo '<div class="feiertage-data">';
-                  echo '<div class="feiertag"><p>Hochzeit</p><p>2021-05-01</p><button id="ft-entfernen">Entfernen</button></div>';
-                  echo '<div class="feiertag"><p>Auftritt</p><p>2021-05-05</p><button id="ft-entfernen">Entfernen</button></div>';
+                $specials = $overview->loadSpecialDays();
+                  if($specials){
+                    foreach ($specials as $key) {
+                      echo '<div class="feiertag"><p>'.$key["type"].'</p><p>'.$key["date"].'</p><button id="ft-entfernen" class="ft-'.$key["id"].'">Entfernen</button></div>';
+                    }
+                  }
                 echo '</div>';
               echo '</div>';
             echo '</div>';
@@ -240,6 +244,37 @@ require_once('sync.php');
       }
     });
   });
+  /* SPECIAL DAYS */
+
+  $('.feiertage-filter i').click(()=>{
+    var beschreibung = $('#ft-name').val(); if(beschreibung.length <= 0){ return false; }
+    var date = $('#ft-date').val(); if(date.length < 10 || date == 'tt.mm.jjjj' || date == null){ return false; }
+    var type = $('#ft-select').val(); if(type.length <= 0){ return false; }
+    console.log(beschreibung+";"+date+";"+type);
+    $.ajax({
+      url: "script/sync-admin.php",
+      method: "POST",
+      data: { specialDay: beschreibung+";"+date+";"+type},
+      success: function(result) {
+        if(result!="1"){ alert("Ein Fehler ist aufgetreten \n" + result); } else { window.location.href='admin.php?zeit=HubRaum' } return;
+      }
+    });
+  });
+  $('.feiertag').click(()=>{
+    if(confirm('Möchten Sie das Event wirklich löschen?')){
+      var cl = $('#'+event.target.id).attr('class');
+      $.ajax({
+        url: "script/sync-admin.php",
+        method: "POST",
+        data: { specialDayDelete: cl},
+        success: function(result) {
+          if(result!="1"){ alert("Ein Fehler ist aufgetreten \n" + result); } else { window.location.href='admin.php?zeit=HubRaum' } return;
+        }
+      });
+    }
+  });
+
+
 
     $(document).on("change","#oInputDate", function(){
       var date = $(this).val();
@@ -261,7 +296,6 @@ require_once('sync.php');
     function redirectAdminReservierungen(table, date) { window.location.href = "admin.php?reservierungen&table="+table+"&day="+date; }
 
     /* NO SHOW CONTENT */
-
     $(document).on("click",".liste-content li",function(){
       var id = $(this).attr("id").split('-');
       if($('.liste-edit-container').length<=0){

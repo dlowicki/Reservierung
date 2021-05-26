@@ -181,6 +181,21 @@ class Overview
   } return false;
   }
 
+  public function loadSpecialDays() {
+  $con = $this->connectDatabase();
+  $query = $con -> query('SELECT * FROM rspecial WHERE spDate >= CURDATE() ORDER BY spDate ASC');
+  if($query){
+    $arr=array(); $r=0;
+    foreach ($query as $key) {
+      $arr[$r]['id'] = $key['spID'];
+      $arr[$r]['type'] = $key['spType'];
+      $arr[$r]['name'] = $key['spName'];
+      $arr[$r]['date'] = $key['spDate'];
+      $r++;
+    } return $arr;
+  } return false;
+  }
+
 }
 
 ?>

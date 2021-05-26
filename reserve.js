@@ -58,7 +58,7 @@ async function loadTables(date) {
     var data = "";
     $.ajax({ url: "sync.php", method: "POST", data: {loadTables: date}, success: function(result) {
 		$('#tischplan-svg').empty();
-		data = JSON.parse(result); 
+		data = JSON.parse(result);
 		data.forEach((item, i) => {
 		if(item['tableActive'] == 'open'){ item['tableActive'] = 'rgba(60, 179, 113,0.5)'; } else { item['tableActive'] = 'rgba(255, 0, 0,0.5)'; }
 		var xml = jQuery.parseXML('<rect xmlns="http://www.w3.org/2000/svg" class="table" id="tisch-'+item["tableID"]+'" height="'+item["height"]+'" width="'+item["width"]+'" y="'+item["y"]+'" x="'+item["x"]+'" stroke="#000" fill="'+item["tableActive"]+'"/>');
@@ -82,7 +82,7 @@ function viewCalendar(){
     var rc = localStorage.getItem('rCalendar').split(';');
     $('.calendar-inputs').append('<input type="date" id="calendar-date" value="'+rc[0]+'">');
     $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    $.getJSON('https://www.mertero.de/html/Reservierung/script/load.timeblock.php', function(data) {
+    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
       data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
           if(item['id'] == rc[1]){
@@ -96,8 +96,10 @@ function viewCalendar(){
     $('.calendar-inputs').append('<input type="date" id="calendar-date">');
     document.getElementById('calendar-date').valueAsDate = new Date();
     $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    // http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php   http://localhost/html/Reservierung/script/load.timeblock.php
-    $.getJSON('https://www.mertero.de/html/Reservierung/script/load.timeblock.php', function(data) {
+    // http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php
+    // http://localhost/html/Reservierung/script/load.timeblock.php
+    // http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php
+    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
       data.forEach((item, i) => {
         time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
         $('.calendar-inputs select').append('<option value="'+item["id"]+'">'+time+' Uhr</option>');
@@ -117,15 +119,7 @@ $(document).on('click','#calendar-confirm',function(){
   var today = new Date().toISOString().slice(0, 10);
   if(date.length == 10 && time.length >= 1 && date >= today && date <= todayPlusSixWeeks()){
     localStorage.setItem('rCalendar',date+';'+time);
-    (async() => {
-      const uc = await loadTables(localStorage.getItem('rCalendar').split(';')[0]).then(function(result){
-        if(result == true){
-          $('.container-reserve').css("background-color","white");
-          $('#viewCalendar').css('display','none');
-          $('#viewCalendar').empty();
-        }
-      });
-    })();
+    location.reload();
   } else {
     $('#calendar-date').css('background-color','#e63946');
     $('#calendar-time').css('background-color','#e63946');
@@ -180,10 +174,10 @@ function viewTable(id, date) {
       $('.form-table-left').append("<div class='form-table-left-inputs'></div>");
 
       var options = ""; for (var i = parseInt(d['tableMin']); i <= parseInt(d['tableMax']); i++) { options = options + "<option value='"+i+"'>"+i+"</option>";}
-      $('.form-table-left-inputs').append('<select id="amount">'+options+'</select></div>');
+      $('.form-table-left-inputs').append('<select id="amount">'+options+'</select><i class="fas fa-users"></i></div>');
       $('.form-table-left-inputs').append('<input type="date" id="timeDate" value="'+date+'">');
       var localBlock = localStorage.getItem('rCalendar').split(';')[1];
-      $.getJSON('https://www.mertero.de/html/Reservierung/script/load.timeblock.php', function(data) {
+      $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
         $('.form-table-left-inputs').append('<select id="timeBlock"></select>');
         data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
@@ -391,7 +385,7 @@ function viewLogin() {
 	$('#viewLogin').css("display","block");
 	$('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
 	$('#viewLogin').append('<i class="fa fa-times fa-2x" onClick="loginClose()"></i><i class="fa fa-user-circle fa-5x login-icon"></i>');
-	
+
   if(getCookie("rSession") != ""){
     try {
 	   $('#viewLogin').css("height","300px");
@@ -525,7 +519,7 @@ function verifyInput(id) {
 function sendReserve(tID) {
     var inputs = new Array();
     var haushalt = new Array();
-	
+
     const amount = $('#amount').val(); if(r(amount)){ inputs[0] = amount; } else { return false; }
     const date = $('#timeDate').val(); if(r(date)==true && date >= getTodaySQLFormat() && date <= todayPlusSixWeeks()){ inputs[1] = date; } else { return false; }
     const timeBlock = $('#timeBlock').val(); if(r(timeBlock)){ inputs[2] = timeBlock; } else { return false; }
@@ -565,7 +559,7 @@ function sendReserve(tID) {
 }
 
 function viewReserved(table, blockID, date, amount){
-  $.getJSON('https://www.mertero.de/html/Reservierung/script/load.timeblock.php', function(data) {
+  $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
     $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
     $('.container-reserve').append('<div id="viewReserved"></div>');
     $('#viewReserved').append('<h2>Tisch '+table+' am '+date+' reserviert!</h2>');

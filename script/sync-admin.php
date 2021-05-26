@@ -33,6 +33,14 @@ if(isset($_POST['arbeitstag'])){
   $data = explode(';',$_POST['arbeitstag']);
   if(isset($data[0])&&isset($data[1])){ echo updateDays($data[0],$data[1]); }
 }
+if(isset($_POST['specialDay'])){
+  $exp = explode(";",$_POST['specialDay']);
+  if(strlen($exp[0])>=1 && strlen($exp[1])>=1 && strlen($exp[2])>=1){ echo addSpecialDay($exp[0],$exp[1],$exp[2]); }
+}
+if(isset($_POST['specialDayDelete'])){
+  $id = explode("-",$_POST['specialDayDelete'])[1];
+  if(strlen($id)>=1){ echo deleteSpecialDay($id); }
+}
 
 if(isset($_POST['nsEdit'])){
   $edit = trim($_POST['nsEdit']);
@@ -330,6 +338,18 @@ function updateDays($id,$time){
   $db = new Overview();
   $con = $db->connectDatabase();
   $query = $con->query("UPDATE rdays SET daysTime = '$time' WHERE daysID = $id") or die();
+  if($query === TRUE){ return true; } return false;
+}
+function addSpecialDay($beschreibung, $date, $type){
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  $query = $con->query("INSERT INTO rspecial (spID,spType,spName,spDate) VALUES (null,'$type','$beschreibung','$date')") or die();
+  if($query === TRUE){ return true; } return false;
+}
+function deleteSpecialDay($id){
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  $query = $con->query("DELETE FROM rspecial WHERE spID = $id") or die();
   if($query === TRUE){ return true; } return false;
 }
 

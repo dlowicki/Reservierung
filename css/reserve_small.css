@@ -566,9 +566,10 @@ body,html { margin:0; padding:0; height: 100%; width: 100%; }
 .form-table-left-inputs input[type=text] {min-width: 180px; width: 35%; max-width: 200px;padding: 1%;margin-left: auto;margin-right: auto;margin-top: 1%;margin-bottom: 1%;outline: none;font-size: 1.2rem;border-radius: 5px;border: 1px solid black;text-align: center;}
 .left-inputs-icon i {position: absolute;margin-left: -16px;margin-top: 15px;}
 
-#amount {border-top-right-radius: 10px;border-bottom-right-radius: 10px;margin-left: auto; margin-right: auto;width: 84%;margin-bottom: 1%;background-color: rgba(200,200,200,0.5);}
-#timeDate { border-top-right-radius: 10px; border-bottom-right-radius: 10px; margin-left: auto; margin-right: auto; width: 80%; margin-bottom: 1%;}
-#timeBlock {border-top-right-radius: 10px;border-bottom-right-radius: 10px;margin-left: auto; margin-right: auto;width: 84%;margin-bottom: 1%;background-color: rgba(200,200,200,0.5);}
+#amount {border-top-right-radius: 10px;border-bottom-right-radius: 10px;margin-left: auto; margin-right: auto;width: 250px;margin-bottom: 1%;background-color: rgba(200,200,200,0.5);}
+.fa-users { background-color: rgba(200,200,200,0.5); position: absolute; margin-top: 15px; margin-left: 260px; }
+#timeDate { border-top-right-radius: 10px; border-bottom-right-radius: 10px; margin-left: auto; margin-right: auto;width: 240px;margin-bottom: 1%;}
+#timeBlock {border-top-right-radius: 10px;border-bottom-right-radius: 10px;margin-left: auto; margin-right: auto;width: 250px;margin-bottom: 1%;background-color: rgba(200,200,200,0.5);}
 
 
 
