@@ -14,6 +14,8 @@
     <script src="jquery.min.js" charset="utf-8"></script>
     <script src="reserve.js" charset="utf-8"></script>
     <script src="fetch.js" charset="utf-8"></script>
+    <script src="js/script.calendar.js"> </script>
+    <script src="js/script.login.js"> </script>
 
     <style media="screen">
 

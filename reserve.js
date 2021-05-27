@@ -19,8 +19,7 @@ $(document).ready(function(){
 
   // Lade Tische mit Ampelsystem
   (async() => { await loadTables(localStorage.getItem('rCalendar').split(';')[0]); })();
-  // Überprüfe Login
-	(async() => { await userCheck().then(function(result){ if(result == true){ $('.icon-user').css("color","green"); } }); })();
+
 
 
   $(document).on('click','.table', function(){
@@ -38,6 +37,7 @@ $(document).ready(function(){
 	$('.icon-user').click(function(){ if($('#form-login').length <= 0){ viewLogin(); } });
 });
 
+
 async function userCheck() {
 	let result;
 	try {
@@ -51,8 +51,6 @@ async function userCheck() {
 		console.log("Error " + err);
 	}
 }
-
-
 
 async function loadTables(date) {
   let result;
@@ -72,82 +70,6 @@ async function loadTables(date) {
     console.log("Error loadTables: " + e);
   }
 }
-
-
-
-
-
-
-function viewCalendar(){
-  if($('.calendar-inputs').length >= 1){ return false; }
-  $('#viewCalendar').append('<div class="calendar-inputs"></div>');
-  if(localStorage.getItem('rCalendar') !== null){
-    var rc = localStorage.getItem('rCalendar').split(';');
-    $('.calendar-inputs').append('<input type="date" id="calendar-date" value="'+rc[0]+'">');
-    $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
-      data.forEach((item, i) => {
-          time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
-          if(item['id'] == rc[1]){
-            $('.calendar-inputs select').append('<option value="'+item["id"]+'" selected>'+time+' Uhr</option>');
-          } else {
-            $('.calendar-inputs select').append('<option value="'+item["id"]+'">'+time+' Uhr</option>');
-          }
-      });
-    });
-  } else {
-    $('.calendar-inputs').append('<input type="date" id="calendar-date">');
-    document.getElementById('calendar-date').valueAsDate = new Date();
-    $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    // http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php
-    // http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php
-    // http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php
-    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
-      data.forEach((item, i) => {
-        time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
-        $('.calendar-inputs select').append('<option value="'+item["id"]+'">'+time+' Uhr</option>');
-      });
-    });
-  }
-  $('#viewCalendar').append('<div class="calendar-buttons"></div>');
-  var link = "'https://www.hubraum-durlach.de/'";
-  $('.calendar-buttons').append('<button onClick="window.location.href='+link+';">Reservierung verlassen</button><button id="calendar-confirm">Tisch auswählen</button>');
-  $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
-  $('#viewCalendar').css("display","block");
-}
-
-$(document).on('click','#calendar-confirm',function(){
-  const date = $('#calendar-date').val(); const time = $('#calendar-time').val();
-  var today = new Date().toISOString().slice(0, 10);
-  if(time == null) { $('#calendar-time').css('background-color','#e63946'); return; }
-  if(todayPlusSixWeeks() <= date) { $('#calendar-date').css('background-color','#e63946'); viewError('Reservierungen können maximal 6 Wochen im Voraus eingetragen werden!'); return; }
-  if(date < today) { $('#calendar-date').css('background-color','#e63946'); viewError('Datum kann nicht in der Vergangenheit liegen!'); return; }
-
-  var test = 0;
-  $.ajax({ url: "sync.php", method: "POST", data: { confirmDay: date},
-    success: function(result) {
-      // Wenn result==1 Dann Tag nicht geöffnet
-      if(result=="1"){
-        viewError('HubRaum hat am ' + date + ' nicht geöffnet!');
-      } else { // Restaurant hat am ausgewählten Tag geöffnet
-        $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.feiertag.php',function(data){
-          var check = true;
-          data.forEach((item, i) => { if(item['date'] == date){ check=false; } });
-          if(date.length == 10 && time.length >= 1 && check==true){
-            // Setze Datum in localStorage und lade Seite neu
-            localStorage.setItem('rCalendar',date+';'+time); location.reload();
-          } else {
-            $('#calendar-date').css('background-color','#e63946');
-            viewError('HubRaum hat am ' + date + ' nicht geöffnet!');
-          }
-        });
-      }
-    }
-  });
-});
-
-$(document).on('click','.fa-calendar-alt',function(){ viewCalendar(); });
-
 
 
 
@@ -196,7 +118,7 @@ function viewTable(id, date) {
       $('.form-table-left-inputs').append('<select id="amount">'+options+'</select><i class="fas fa-users"></i></div>');
       $('.form-table-left-inputs').append('<input type="date" id="timeDate" value="'+date+'">');
       var localBlock = localStorage.getItem('rCalendar').split(';')[1];
-      $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+      $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
         $('.form-table-left-inputs').append('<select id="timeBlock"></select>');
         data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
@@ -269,6 +191,10 @@ $(document).on('change','#timeDate',function(){
   var date = $(this).val(); tableClose(); viewTable(tisch, date);
 });
 
+
+
+
+/*
 function checkTimeFrom(t) {
   $('#timeDuration').css("color","black");
   $('#timeLabel').css("color","black");
@@ -355,7 +281,7 @@ function checkTimeFrom(t) {
     }
   });
 }
-
+*/
 function getReservierungen(tableID, date) {
   $('#container-information-content').empty();
   // 0 = Reserviert | 1 = Eingetroffen | 2 = Frühzeitig beendet | 3 = Abgesagt | 4 = NoShow | 5 = Abweichende Anzahl + Eingetroffen
@@ -396,36 +322,7 @@ function viewTablewithCode(tc) {
     }
 }
 
-function viewLogin() {
-	$('#viewLogin').empty();
-	$('#viewLogin').css("display","block");
-	$('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
-	$('#viewLogin').append('<i class="fa fa-times fa-2x" onClick="loginClose()"></i><i class="fa fa-user-circle fa-5x login-icon"></i>');
 
-  if(getCookie("rSession") != ""){
-    try {
-	   $('#viewLogin').css("height","300px");
-	  (async() => {
-		const uc = await userCheck().then(function(result){
-			if(result == true){
-				$('#viewLogin').append('<h3>Bereits angemeldet</h3>');
-				var today = new Date();
-				var dd = String(today.getDate()).padStart(2, '0'); var mm = String(today.getMonth() + 1).padStart(2, '0'); var yyyy = today.getFullYear();
-				today = "'" + yyyy + "-" + mm + "-" + dd + "'";
-
-				$('#viewLogin').append('<button id="login-NoShow">Übersicht</button>');
-				$('#viewLogin').append('<button onClick="submitLogoff()">Abmelden</button>');
-			} else {
-				submitLogoff();
-			}
-		});
-	  })();
-    } catch(e){ console.log(e); }
-  } else {
-	$('#viewLogin').append('<form id="form-login" onsubmit="event.preventDefault();"></form>');
-	$('#form-login').append('<input type="text" id="hubraumName" placeholder="Name..."><input type="password" id="hubraumSecure" placeholder="Passwort..."><input type="submit" onClick="submitLogin()" value="Login">');
-  }
-}
 
 function viewCoronaInfo() {
   $('#viewCoronaInfo').css("display","block");
@@ -440,7 +337,7 @@ function viewCoronaInfo() {
 
 
 
-function getTableACP(id) {
+/*function getTableACP(id) {
   $.ajax({
     url: "sync.php",
     method: "POST",
@@ -457,11 +354,11 @@ function getTableACP(id) {
       $('#acp-table').append('<label class="switch"><input type="checkbox" onChange="updateTable('+tid+')"><span class="slider round"></span></label>');
     }
   });
-}
+}*/
 
 
 
-function getReservierungenACP(t){
+/*function getReservierungenACP(t){
   $('#container-information-content').empty();
   // 0 = Reserviert | 1 = Eingetroffen | 2 = Frühzeitig beendet | 3 = Abgesagt | 4 = NoShow
   var colors = ['#4ea8de','#2b9348','#ee6c4d','#ba181b','#006d77'];
@@ -494,15 +391,11 @@ function getReservierungenACP(t){
       }
     }
   });
-}
+}*/
 
 
 
-function loginClose() {
-  $('#viewLogin').empty();
-  $("#viewLogin").css("display","none");
-  $('.container-reserve').css("background-color","transparent");
-}
+
 
 function tableClose() {
   $('#viewTable').empty();
@@ -576,7 +469,7 @@ function sendReserve(tID) {
 }
 
 function viewReserved(table, blockID, date, amount){
-  $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
+  $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
     $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
     $('.container-reserve').append('<div id="viewReserved"></div>');
     $('#viewReserved').append('<h2>Tisch '+table+' am '+date+' reserviert!</h2>');
@@ -590,17 +483,7 @@ function viewReserved(table, blockID, date, amount){
   });
 }
 
-function submitLogin(){
-  var n = $('#hubraumName').val(); var p = $('#hubraumSecure').val();
-  if(n.length >= 5 && p.length >= 7){
-    $.ajax({
-      url: "sync.php", method: "POST", data: { hubName: CryptoJS.MD5(n).toString(), hubSecure: CryptoJS.MD5(p).toString() },
-      success: function(result) { location.reload(); loginClose(); }
-    });
-  }
-}
 
-function submitLogoff() { setCookie("rSession","",-1); location.reload(); }
 
 function getToday() {
   var today = new Date();
@@ -624,7 +507,7 @@ function r(t){
   return true;
 }
 
-function acpSubmit(tID) {
+/*function acpSubmit(tID) {
   // Wenn keine ID in INPUT HIDDEN ist
   if(!$('#acpReserveID').val() && $('#acpSubmit').val() == "Bearbeiten"){ alert("Sie müssen eine Reservierung zum bearbeiten auswählen!"); return; }
   (async() => {
@@ -670,7 +553,7 @@ function acpSubmit(tID) {
     }
   });
   })();
-}
+}*/
 
 function viewError(text){
   if($('#viewError p').length <= 0){
@@ -708,45 +591,8 @@ function removeReserve(cc){
 
 }
 
-function decodeDuration(dd){
-  if(dd=="1"){
-    return "2:30h";
-  }else if(dd=="2"){
-    return "bis 22 Uhr";
-  }
-  return false;
-}
-
-function getCookie(cname) {
-  var name = cname + "=";
-  var decodedCookie = decodeURIComponent(document.cookie);
-  var ca = decodedCookie.split(';');
-  for(var i = 0; i <ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
-
-function setCookie(cname, cvalue, exdays) {
-  var d = new Date();
-  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-  var expires = "expires="+d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
-
 function getTableParameter() {
-  var url = new URL(window.location.href);
-  var c = url.searchParams.get("table");
-  if(c != null){
-    return c.split("&")[0];
-  }
-  return false;
+  var url = new URL(window.location.href); var c = url.searchParams.get("table"); if(c != null){ return c.split("&")[0]; } return false;
 }
 
 function dateToSQL() { return new Date().toISOString().slice(0, 10); }
