@@ -2,6 +2,8 @@ $(document).ready(function(){
   // DEBUG
   //viewTable(98);
   //viewReserved('36',1,'2021-05-21','6');
+  //viewError('test123');
+
 
   // Table Parameter for QR Code
   tc=getTableParameter();
@@ -83,7 +85,7 @@ function viewCalendar(){
     var rc = localStorage.getItem('rCalendar').split(';');
     $('.calendar-inputs').append('<input type="date" id="calendar-date" value="'+rc[0]+'">');
     $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
+    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
       data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
           if(item['id'] == rc[1]){
@@ -97,10 +99,10 @@ function viewCalendar(){
     $('.calendar-inputs').append('<input type="date" id="calendar-date">');
     document.getElementById('calendar-date').valueAsDate = new Date();
     $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    // http://localhost/html/Reservierung/script/load.timeblock.php
-    // http://localhost/html/Reservierung/script/load.timeblock.php
-    // http://localhost/html/Reservierung/script/load.timeblock.php
-    $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
+    // http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php
+    // http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php
+    // http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php
+    $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
       data.forEach((item, i) => {
         time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
         $('.calendar-inputs select').append('<option value="'+item["id"]+'">'+time+' Uhr</option>');
@@ -128,7 +130,7 @@ $(document).on('click','#calendar-confirm',function(){
       if(result=="1"){
         viewError('HubRaum hat am ' + date + ' nicht geöffnet!');
       } else { // Restaurant hat am ausgewählten Tag geöffnet
-        $.getJSON('http://localhost/html/Reservierung/script/load.feiertag.php',function(data){
+        $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.feiertag.php',function(data){
           var check = true;
           data.forEach((item, i) => { if(item['date'] == date){ check=false; } });
           if(date.length == 10 && time.length >= 1 && check==true){
@@ -185,7 +187,7 @@ function viewTable(id, date) {
 
       $('.form-table-left').append("<h2>Tisch reservieren</h2>");
       $('.form-table-left').append("<p>Damit ein Tisch reserviert werden kann werden folgende Daten benötigt</p>");
-      $('.form-table-left').append("<ul><li>Personenanzahl <b>"+d['tableMin']+" - "+d['tableMax']+"</b></li><li>Zeit zwischen <b>17 Uhr</b> und <b>21:30 Uhr</b> wählen</li><li>Personendaten eintragen</li></ul>");
+      $('.form-table-left').append("<ul><li>Personenanzahl <b>"+d['tableMin']+" - "+d['tableMax']+"</b></li><li><b>Datum</b> auswählen</li><li>Blockzeit zwischen <b>17:00 - 19:30 Uhr</b> und <b>19:30 - 22:00 Uhr</b> wählen</li></ul>");
 
 
       $('.form-table-left').append("<div class='form-table-left-inputs'></div>");
@@ -194,7 +196,7 @@ function viewTable(id, date) {
       $('.form-table-left-inputs').append('<select id="amount">'+options+'</select><i class="fas fa-users"></i></div>');
       $('.form-table-left-inputs').append('<input type="date" id="timeDate" value="'+date+'">');
       var localBlock = localStorage.getItem('rCalendar').split(';')[1];
-      $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
+      $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
         $('.form-table-left-inputs').append('<select id="timeBlock"></select>');
         data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
@@ -574,7 +576,7 @@ function sendReserve(tID) {
 }
 
 function viewReserved(table, blockID, date, amount){
-  $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
+  $.getJSON('http://localhost:8012/Reservierung%20-%20Github/script/load.timeblock.php', function(data) {
     $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
     $('.container-reserve').append('<div id="viewReserved"></div>');
     $('#viewReserved').append('<h2>Tisch '+table+' am '+date+' reserviert!</h2>');

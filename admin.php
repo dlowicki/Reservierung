@@ -182,7 +182,25 @@ require_once('sync.php');
 
           echo '<div id="tische-panel">';
             echo '<h2>Tisch Panel</h2>';
-            echo '<div class="t-panel"><h3>Alle Tische</h3><label class="switch"><input type="checkbox" id="switch-all"><span class="slider round"></span></label></div>';
+            $tAll = 'checked'; $standorte = array();
+            foreach ($tables as $key) { if($key['tableActive'] == 'closed'){ $tAll = ''; } if(!in_array($key['tablePlace'],$standorte)){ array_push($standorte,$key['tablePlace']); } }
+            echo '<div class="t-panel"><h3>Alle Tische</h3><label class="switch"><input type="checkbox" id="switch-all" '.$tAll.'><span class="slider round"></span></label></div>';
+            echo '<div class="t-panel">';
+              echo '<select id="t-standort">';
+              for ($i=0; $i < sizeof($standorte); $i++) { echo '<option value="'.$standorte[$i].'">'.$standorte[$i].'</option>'; }
+              echo '</select>';
+              $checkPlace = $overview->checkPlaceActive($standorte[0]);
+              if($checkPlace == 'open'){
+                echo '<label class="switch"><input type="checkbox" id="switch-standort" checked><span class="slider round"></span></label>';
+              } else {
+                echo '<label class="switch"><input type="checkbox" id="switch-standort"><span class="slider round"></span></label>';
+              }
+
+            echo '</div>';
+            echo '<div class="t-panel">';
+            $link = "'tischplan.php'";
+            echo '<button onClick="window.location.href='.$link.'">Tischplan</button><button id="t-speichern">Speichern</button>';
+            echo '</div>';
           echo '</div>';
 
 
@@ -333,7 +351,7 @@ require_once('sync.php');
         var idMail = $('#'+id[0]+'-'+id[1]).children("."+id[0]+"-mail").text();
         //var idTime = $('#'+id).children(".ns-time").text();
         $('#'+id[0]+'-'+id[1]).append('<div class="liste-edit-container"></div>');
-        $('.liste-edit-container').append('<div class="edit-form"><input type="hidden" id="liste-id" value="'+id[0]+'-'+id[1]+'"><input type="number" id="liste-amount" value="'+idAmount+'"><input type="text" id="liste-mail" value="'+idMail+'"><input type="text" id="liste-tnr" value="'+idTNR+'"></div>');
+        $('.liste-edit-container').append('<div class="edit-form"><input type="hidden" id="liste-id" value="'+id[0]+'-'+id[1]+'"><input type="text" id="liste-mail" value="'+idMail+'"><input type="text" id="liste-tnr" value="'+idTNR+'"><input type="number" id="liste-amount" value="'+idAmount+'"></div>');
         $('.edit-form').append('<div class="edit-container-bottom"></div>');
         $('.edit-container-bottom').append('<button class="edit-button" onClick="closeEdit()">Schließen</button><button class="edit-button" id="delete-liste">Entfernen</button><button class="edit-button"id="liste-submit">Speichern</button>');
       }
@@ -344,12 +362,11 @@ require_once('sync.php');
 		var amount = $('#liste-amount').val();
 		var mail = $('#liste-mail').val();
 		var tnr = $('#liste-tnr').val();
-		var time = $('#liste-time').val();
       if(amount.length >= 1 && mail.length >= 3 && tnr.length >= 3){
         $.ajax({
           url: "script/sync-admin.php",
           method: "POST",
-          data: { listeID: id[1], listeAmount: amount, listeMail: mail, listeTNR: tnr, listeType: id[0]},
+          data: { updateListen: id[1]+";"+amount+";"+mail+";"+tnr+";"+id[0]},
           success: function(result) {
             if(result=="1"){
               $(".liste-content").load(" .liste-content > *");
@@ -369,10 +386,7 @@ require_once('sync.php');
         method: "POST",
         data: { listeEdit: "Create", listeType: id},
         success: function(result) {
-          if(result=="1"){
-            $(".liste-content").load(" .liste-content > *");
-            return;
-          }
+          if(result=="1"){$(".liste-content").load(" .liste-content > *"); return; }
           alert("Ein Fehler ist aufgetreten \n" +result);
         }
       });
@@ -707,6 +721,36 @@ require_once('sync.php');
         method: "POST",
         data: { updateAdminTables: tableID+";"+newTableID+";"+newMin+";"+newMax+";"+newPlace+";"+newCheck},
         success: function(result) { if(result == "0"){ alert('Ein Fehler ist aufgetreten! \nBitte Daten überprüfen bei Tisch '+tableID); } return; }
+      });
+    });
+    $('#t-speichern').click(()=>{
+      var all = $('#switch-all').prop("checked"); var stCheck = $('#switch-standort').prop("checked"); var st = $('#t-standort').val();
+      $.ajax({
+        url: "script/sync-admin.php",
+        method: "POST",
+        data: { tischPanel: all+";"+stCheck+";"+st},
+        success: function(result) { if(result == "0"){ alert('Ein Fehler ist aufgetreten! \nBitte Daten überprüfen bei Tisch '+tableID); } location.reload(); return; }
+      });
+    });
+    $(document).on('change','#t-standort',function(event){
+      var place = event.target.value;
+      $.ajax({
+        url: "script/sync-admin.php",
+        method: "POST",
+        data: { loadStandort: place},
+        success: function(result) {
+          switch (result) {
+            case 'open':
+              $('#switch-standort').prop('checked', true);
+              break;
+            case 'closed':
+              $('#switch-standort').prop('checked', false);
+              break;
+            default:
+              alert('Ein Fehler ist aufgetreten! \nBitte Daten überprüfen bei Tisch '+tableID);
+          }
+          return;
+        }
       });
     });
 

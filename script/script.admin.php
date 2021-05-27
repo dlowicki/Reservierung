@@ -115,10 +115,10 @@ class Overview
   public function createListeRow($type) {
     $con = $this->connectDatabase();
 	if($type == "b"){
-		$statement = "INSERT INTO rblacklist (bID, bMail, bTNR, bAnzahl) VALUES (null, 'mail@domain.de','0','1')";
+		$statement = "INSERT INTO rblacklist (bID, bMail, bTNR, bAnzahl) VALUES (null, 'mail@domain.de','TNR','1')";
 	} elseif($type == "ns"){
 		$time = date('Y-m-d');
-		$statement = "INSERT INTO rnoshow (nsID, nsMail, nsTNR, nsAmount, nsDate) VALUES (null, 'mail@domain.de','0','1','$time')";
+		$statement = "INSERT INTO rnoshow (nsID, nsMail, nsTNR, nsAmount, nsDate) VALUES (null, 'mail@domain.de','TNR','1','$time')";
 	}
     $query = $con->query($statement) or die();
     if($query === TRUE){ return true; } return false;
@@ -194,6 +194,14 @@ class Overview
       $r++;
     } return $arr;
   } return false;
+  }
+
+  public function checkPlaceActive($place){
+    $con = $this->connectDatabase();
+    $query = $con -> query("SELECT tableActive FROM rtable WHERE tablePlace = '$place'");
+    if($query){
+      foreach ($query as $key) { if($key['tableActive'] == 'closed'){ return 'closed'; } } return 'open';
+    } return false;
   }
 
 }

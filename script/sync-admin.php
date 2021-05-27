@@ -55,18 +55,56 @@ if(isset($_POST['updateAdminTables'])){
   }
   echo '0'; return;
 }
+if(isset($_POST['tischPanel'])){
+  $exp = explode(';',$_POST['tischPanel']); $all = $exp[0]; $stCheck = $exp[1];
+  if(strlen($all)>= 1 && strlen($stCheck)>= 1){
+    if($all=='false'){$all="closed";}else{$all="open";}
+    if($stCheck=='false'){$stCheck="closed";}else{$stCheck="open";}
+    $statement = ""; $st = $exp[2];
+
+    if($stCheck == 'closed' && $all == 'open'){ // Standort closed aber alle auf (Nur Standort wird geschlossen)
+      $statement = "UPDATE rtable SET tableActive = 'closed' WHERE tablePlace = '$st'";
+    } elseif($stCheck == 'closed' && $all == 'closed') { // Beide sind closed, also alle Tische schließen
+      $statement = "UPDATE rtable SET tableActive = 'closed'";
+    } elseif($stCheck == 'open' && $all == 'open'){ // Beide sind open, also alle Tische auf
+      $statement = "UPDATE rtable SET tableActive = 'open'";
+    } elseif($stCheck == 'open' && $all == 'closed') { // Standort auf aber alle schließen
+      $statement = "UPDATE rtable SET tableActive = 'open' WHERE tablePlace = '$st'";
+    }
+
+    $db = new Overview(); $con = $db->connectDatabase();
+    $query = $con->query($statement);
+    if($query===TRUE){ echo '1'; return; } echo '0'; return;
+  }
+}
+if(isset($_POST['loadStandort'])){
+  $standort = $_POST['loadStandort']; if(strlen($standort) <= 0){ echo '0'; return; }
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  $query = $con->query("SELECT tableActive FROM rtable WHERE tablePlace = '$standort'");
+  if($query == TRUE){ foreach ($query as $key) { if($key['tableActive'] == 'closed'){ echo 'closed'; return; } } echo 'open'; return; }
+  echo '0'; return;
+}
 
 
 // Liste NoShow
-if(isset($_POST['nsEdit'])){
-  $edit = trim($_POST['nsEdit']);
+if(isset($_POST['listeEdit']) && isset($_POST['listeType'])){
+  $edit = trim($_POST['listeEdit']); $type = trim($_POST['listeType']);
   if(strlen($edit) >= 1){
-    $overview = new Overview();
-    $result;
-    if($edit != 'Create'){ $result = $overview->deleteNoShow($edit); } else { $result = $overview->createNoShow(); }
+    $overview = new Overview(); $result;
+    if($edit != 'Create'){ $result = $overview->deleteListeRow($edit, $type); } else { $result = $overview->createListeRow($type); }
     if($result){ echo "1"; return;} echo "0"; return;
   }
 }
+if(isset($_POST['updateListen'])){
+  $exp = explode(";",$_POST['updateListen']);
+  $overview = new Overview();
+  echo $overview->updateListe($exp[0],$exp[1],$exp[2],$exp[3],$exp[4]);
+}
+
+
+
+
 
 // Reservierung Laden
 if(isset($_POST['rsLoad'])){
@@ -109,7 +147,7 @@ if(isset($_POST['submitClients'])){
   $error = false;
   foreach ($data as $key) {
     if(strlen($key[2]) >= 2){ // Wenn Name Länge >= 2
-      $updateClient = updateClient($key[0],$key[1],$key[3],$key[2],$key[4],$key[5],$key[6],date("Y-m-d"),uniqid());
+      $updateClient = updateClient($key[0],$key[1],$key[3],$key[2],$key[4],$key[5],date("Y-m-d"),uniqid());
       if($updateClient == false){ $error = true; }
     }
   }
@@ -125,7 +163,7 @@ if(isset($_POST['createReserveButton']) && isset($_POST['table']) && isset($_POS
   $tID = $_POST['table']; $date = $_POST['date']; $clientID = uniqid();
   $cnrID = createNewReserve($tID,$clientID,$date);
   if($cnrID != false){
-    if(updateClient($clientID,$cnrID,'Vorname','Nachname','E-Mail','Adresse','Telefon',date("Y-m-d"),uniqid())){
+    if(updateClient($clientID,$cnrID,'Vorname','Nachname','E-Mail','Telefon',date("Y-m-d"),uniqid())){
       echo "1";
       return;
     }
@@ -160,18 +198,14 @@ if(isset($_POST['updateReserveAmount']) && isset($_POST['amount'])){
 function isAdmin(){
   $db = new Overview();
   $con = $db->connectDatabase();
-  $query = $con->prepare("SELECT userCookie FROM rUser WHERE userCookie = ?");
+  $query = $con->prepare("SELECT userCookie FROM ruser WHERE userCookie = ?");
   $query->bind_param('s',$_COOKIE['rSession']);
   $query->execute();
 
   $result = $query->get_result();
   $row = $result->fetch_array(MYSQLI_ASSOC);
 
-  if(sizeof($row) >=1 ){
-    if($row['userCookie'] == $_COOKIE['rSession']) {
-      return true;
-    }
-  }
+  if(sizeof($row) >=1 ){ if($row['userCookie'] == $_COOKIE['rSession']) { return true; } }
   return false;
 }
 
@@ -305,12 +339,12 @@ function addNoShow($rID) {
   return false;
 }
 
-function updateClient($cID,$rID,$vn,$nn,$ma,$adr,$tnr,$date,$cc) {
+function updateClient($cID,$rID,$vn,$nn,$ma,$tnr,$date,$cc) {
   $db = new Overview();
   $con = $db->connectDatabase();
   if(strlen($cID)<=0){ $cID = uniqid(); }
   $temp = "clientID,reserveID,clientVorname,clientName,clientMail,clientTNR,clientDate,clientConfirm";
-  $temp2 = "'$cID','$rID','$vn','$nn','$ma','$adr','$tnr','$date','$cc'";
+  $temp2 = "'$cID','$rID','$vn','$nn','$ma','$tnr','$date','$cc'";
   $statement = "INSERT INTO rClient ($temp) VALUES ($temp2) ON DUPLICATE KEY UPDATE clientVorname = '$vn', clientName = '$nn', clientMail = '$ma', clientTNR='$tnr'";
   $query = $con -> query($statement);
   if($query===TRUE){
