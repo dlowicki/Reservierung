@@ -182,8 +182,8 @@ require_once('sync.php');
 
           echo '<div id="tische-panel">';
             echo '<h2>Tisch Panel</h2>';
-            $tAll = 'checked'; $standorte = array();
-            foreach ($tables as $key) { if($key['tableActive'] == 'closed'){ $tAll = ''; } if(!in_array($key['tablePlace'],$standorte)){ array_push($standorte,$key['tablePlace']); } }
+            $tAll = ''; $standorte = array();
+            foreach ($tables as $key) { if($key['tableActive'] == 'open'){ $tAll = 'checked'; } if(!in_array($key['tablePlace'],$standorte)){ array_push($standorte,$key['tablePlace']); } }
             echo '<div class="t-panel"><h3>Alle Tische</h3><label class="switch"><input type="checkbox" id="switch-all" '.$tAll.'><span class="slider round"></span></label></div>';
             echo '<div class="t-panel">';
               echo '<select id="t-standort">';
