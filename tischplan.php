@@ -4,104 +4,225 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservierung | Hubraum</title>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
     <script src="jquery.min.js" charset="utf-8"></script>
-    <script src="reserve.js" charset="utf-8"></script>
-    <script src="fetch.js" charset="utf-8"></script>
+    <script src="script/md5.js"></script>
+    <script src="js/script.login.js" charset="utf-8"></script>
+
+    <style media="screen">
+      * { margin: 0; padding: 0; }
+      .tischplan-header { height: 0px; width: 100%; position: fixed; }
+      .tischplan-header i { transition: 0.5s; }
+      .tischplan-header i:hover { color: darkgray; cursor: pointer; }
+      .container-tischplan { width: 1900px; height:1080px; background-image: url('tischplan.jpg'); background-size: 100% 100%; image-rendering: pixelated; }
+      rect { cursor: pointer; transition: 0.5s; touch-action: none; }
+      rect:hover { opacity: 0.3; }
+
+      #viewEdit {
+        display: none; position: fixed; top: 0; left: 0;
+        min-height: 100%; height: auto; width: 300px;
+        font-family: sans-serif; background-color: rgba(255,255,255,0.9);
+        border: 2px solid black;
+      }
+      #viewEdit i { float: right; padding: 5px 15px 0px 0px; cursor: pointer; transition: 0.5s; }
+      #viewEdit i:hover { color: red; }
+      #viewEdit h2 { width: 100%; padding: 5px; font-size: 2rem; text-align: center; }
+      #viewEdit h5 { font-size: 1.2rem; padding: 5px; margin: 20px 0px 20px 0px; border-top: 2px solid darkgray;}
+      .colorBox { width: 100%; height: 120px; text-align: center; }
+      .radio-label { cursor: pointer; width: 35px; height: 35px; margin: 2%; display: inline-block; border: 3px solid transparent; }
+      .radio-label-current { border: 3px solid black; }
+
+      .uploadBox { width: 100%; height: auto; margin-top: 10px; text-align: center; overflow: hidden; }
+      .uploadBox input { font-size: 1rem;  }
+      .uploadBox input[type=button] { cursor: pointer; background-color: white; margin-top: 20px; border: 1px solid black; width: 100px; padding: 2px;}
+
+      .objektBox { width: 75%; height: auto; margin-top: 10px; margin-left: auto; margin-right: auto; }
+      .objektBox h3 { text-align: center; }
+      .objekt-data { display: flex;  font-size: 1.3rem; flex-direction: row; width: 100%; margin: 10px 0px 0px 0px; }
+      .objekt-data label { width: 65px; margin: 0px 10px 0px 10px; text-align: center; }
+      .objekt-data input { width: 100px; outline: none; font-size: 1.3rem;  }
+      .objektBox button { width: 100px; margin-left: auto; margin-right: auto; margin-top: 15px; padding: 5px; border: 1px solid black; cursor: pointer; }
+
+      /* SWITCH */
+      .switch { position: relative; display: inline-block; width: 62px; height: 34px; }
+      .switch input { opacity: 0; width: 0; height: 0; }
+      .slider { position: absolute; cursor: pointer;   top: 0; left: 0; right: 0; bottom: 0; background-color: blue; -webkit-transition: .4s; transition: .4s; }
+      .slider:before { position: absolute; content: ""; height: 26px;   width: 26px; left: 4px; bottom: 4px; background-color: white; -webkit-transition: .4s; transition: .4s; }
+      input:checked + .slider { background-color: green; }
+      input:focus + .slider { box-shadow: 0 0 1px green; }
+      input:checked + .slider:before { -webkit-transform: translateX(26px); -ms-transform: translateX(26px); transform: translateX(26px); }
+      .slider.round { border-radius: 34px; }
+      .slider.round:before { border-radius: 50%; }
+    </style>
+
   </head>
 
 
   <body>
 
-    <div class="container-reserve">
-      <div id="viewError"></div>
-      <div id="viewTable"></div>
-      <div id="viewLogin"></div>
-      <div id="viewOverview"></div>
-      <div id="viewCalendar"></div>
-
-      <div class="container-header">
-        <i class="far fa-calendar-alt fa-3x icon-calendar" style="padding: 0.5%;"></i>
-        <i class="fa fa-user-circle fa-3x icon-user" style="padding: 0.5%;"></i>
-      </div>
-
-      <div class="container-tischplan">
-        <svg width="1900" height="1080" xmlns="http://www.w3.org/2000/svg">
-         <g>
-          <title>Layer 1</title>
-          <rect id="svg_5" height="90" width="97" y="178" x="103" stroke="#000" class="tisch-44"  fill="none"/>
-          <rect id="svg_6" height="90" width="100" y="5" x="100" stroke="#000" class="tisch-43" fill="none"/>
-          <rect id="svg_7" height="90" width="100" y="5" x="294" stroke="#000" class="tisch-42" fill="none"/>
-          <rect id="svg_8" height="90" width="100" y="175" x="488" stroke="#000" class="tisch-46" fill="none"/>
-          <rect id="svg_10" height="36" width="80" y="204" x="305" stroke="#000" class="tisch-45" fill="none"/>
-          <rect id="svg_11" height="36" width="80" y="203" x="693" stroke="#000" class="tisch-47" fill="none"/>
-          <rect id="svg_12" height="35" width="40" y="204" x="854" stroke="#000" class="tisch-63" fill="none"/>
-          <rect id="svg_15" height="90" width="195" y="5" x="615" stroke="#000" class="tisch-41" fill="none"/>
-
-          <rect id="svg_9" height="90" width="100" y="220" x="1310" stroke="#000" class="tisch-32" fill="none"/>
-          <rect id="svg_13" height="35" width="160" y="188" x="982" stroke="#000" class="tisch-34" fill="none"/>
-
-
-          <rect id="svg_16" height="73" width="40" y="338" x="213" stroke="#000" class="tisch-54" fill="none"/>
-          <rect id="svg_17" height="73" width="40" y="338" x="385" stroke="#000" class="tisch-53" fill="none"/>
-          <rect id="svg_18" height="73" width="40" y="338" x="555" stroke="#000" class="tisch-52" fill="none"/>
-          <rect id="svg_19" height="38" width="38" y="474" x="215" stroke="#000" class="tisch-55" fill="none"/>
-          <rect id="svg_20" height="38" width="40" y="474" x="385" stroke="#000" class="tisch-56" fill="none"/>
-
-          <rect id="svg_21" height="38" width="40" y="490" x="855" stroke="#000" class="tisch-61" fill="none"/>
-          <rect id="svg_22" height="38" width="40" y="387" x="855" stroke="#000" class="tisch-62" fill="none"/>
-          <rect id="svg_23" height="73" width="40" y="338" x="728" stroke="#000" class="tisch-51" fill="none"/>
-          <rect id="svg_24" height="72" width="40" y="485" x="555" stroke="#000" class="tisch-57" fill="none"/>
-          <rect id="svg_25" height="75" width="40" y="483" x="727" stroke="#000" class="tisch-58" fill="none"/>
-          <rect id="svg_26" height="36" width="197" y="372" x="982" stroke="#000" class="tisch-35" fill="none"/>
-          <rect id="svg_27" height="36" width="197" y="490" x="982" stroke="#000" class="tisch-36" fill="none"/>
-
-          <rect id="svg_28" height="180" width="100" y="380" x="1310" stroke="#000" class="tisch-31" fill="none"/>
-          <rect id="svg_29" height="87" width="200" y="50" x="1212" stroke="#000" class="tisch-33" fill="none"/>
-
-          <rect id="svg_30" height="180" width="100" y="658" x="1775" stroke="#000" class="tisch-98" fill="none"/>
-          <rect id="svg_31" height="180" width="100" y="895" x="1775" stroke="#000" class="tisch-99" fill="none"/>
-
-          <rect id="svg_32" height="150" width="35" y="410" x="1444" stroke="#000" class="tisch-18" fill="none"/>
-          <rect id="svg_33" height="32" width="150" y="374" x="1638" stroke="#000" class="tisch-11" fill="none"/>
-          <rect id="svg_34" height="32" width="150" y="284" x="1638" stroke="#000" class="tisch-12" fill="none"/>
-          <rect id="svg_35" height="32" width="150" y="257" x="1430" stroke="#000" class="tisch-17" fill="none"/>
-          <rect id="svg_36" height="32" width="150" y="106" x="1430" stroke="#000" class="tisch-16" fill="none"/>
-          <rect id="svg_37" height="32" width="150" y="106" x="1637" stroke="#000" class="tisch-13" fill="none"/>
-          <rect id="svg_38" height="32" width="150" y="16" x="1637" stroke="#000" class="tisch-14" fill="none"/>
-          <rect id="svg_39" height="32" width="150" y="16" x="1430" stroke="#000" class="tisch-15" fill="none"/>
-
-          <rect id="svg_59" height="33" width="35" y="625" x="1133" stroke="#000" class="tisch-22" fill="none"/>
-          <rect id="svg_58" height="33" width="35" y="625" x="1254" stroke="#000" class="tisch-21" fill="none"/>
-          <rect id="svg_60" height="33" width="35" y="625" x="1010" stroke="#000" class="tisch-23" fill="none"/>
-
-          <rect id="svg_57" height="98" width="37" y="682" x="1211" stroke="#000" class="tisch-27" fill="none"/>
-          <rect id="svg_56" height="98" width="36" y="682" x="1092" stroke="#000" class="tisch-26" fill="none"/>
-          <rect id="svg_55" height="98" width="34" y="682" x="974" stroke="#000" class="tisch-25" fill="none"/>
-          <rect id="svg_54" height="98" width="34" y="682" x="854" stroke="#000" class="tisch-24" fill="none"/>
-
-          <rect id="svg_40" height="32" width="59.99999" y="1031" x="1120" stroke="#000" class="tisch-77" fill="none"/>
-          <rect id="svg_41" height="32" width="60" y="951" x="1120" stroke="#000" class="tisch-76" fill="none"/>
-          <rect id="svg_42" height="32" width="34" y="1031" x="1035" stroke="#000" class="tisch-78" fill="none"/>
-          <rect id="svg_43" height="32" width="34" y="951" x="1035" stroke="#000" class="tisch-79" fill="none"/>
-
-          <rect id="svg_44" height="32" width="36" y="870" x="637" stroke="#000" class="tisch-84" fill="none"/>
-          <rect id="svg_45" height="32" width="36" y="870" x="530" stroke="#000" class="tisch-85" fill="none"/>
-          <rect id="svg_46" height="55" width="34" y="785" x="483" stroke="#000" class="tisch-81" fill="none"/>
-          <rect id="svg_47" height="55" width="34" y="785" x="585" stroke="#000" class="tisch-82" fill="none"/>
-          <rect id="svg_48" height="55" width="37" y="785" x="685" stroke="#000" class="tisch-83" fill="none"/>
-
-          <rect id="svg_49" height="55" width="37" y="785" x="836" stroke="#000" class="tisch-71" fill="none"/>
-          <rect id="svg_50" height="55" width="37" y="785" x="938" stroke="#000" class="tisch-72" fill="none"/>
-          <rect id="svg_51" height="55" width="37" y="785" x="1040" stroke="#000" class="tisch-73" fill="none"/>
-          <rect id="svg_52" height="55" width="38" y="785" x="1140" stroke="#000" class="tisch-74" fill="none"/>
-          <rect id="svg_53" height="34" width="177" y="870" x="925" stroke="#000" class="tisch-75" fill="none"/>
-         </g>
-        </svg>
-      </div>
-
+    <div class="tischplan-header">
+      <i class="fas fa-edit fa-3x" style="padding: 0.5%;"></i>
     </div>
+
+    <div class="container-tischplan">
+      <?php
+        require_once('sync.php');
+        $con = connect();
+        $querySettings = $con->query('SELECT * FROM rsettings');
+        if($querySettings){
+          $settings = array();
+          foreach ($querySettings as $key) { $settings[$key['sEinstellung']] = $key['sWert']; }
+        }
+      ?>
+      <div id="viewEdit">
+        <i class="fas fa-times fa-2x"></i>
+        <!-- Farbe ändern | ausgewähltes Objekt x,y,width,height ändern | Bild zum hochladen Button | Speichern button -->
+        <h2>Einstellungen</h2>
+        <h5>Farben</h5>
+        <div class="colorBox">
+          <?php
+          $farben = array('rgba(255, 0, 0, 0.9)','rgba(0, 0, 255, 0.9)','rgba(0, 255, 0, 0.9)','rgba(255, 255, 0, 0.9)','rgba(255, 0, 255, 0.9)','rgba(0, 255, 255, 0.9)');
+          $r=0;
+          foreach ($farben as $key => $value) {
+            if($value == $settings['farbe']){
+              echo '<label class="radio-label radio-label-current" id="farbe'.$r.'" style="background-color: '.$value.'"></label>';
+            } else {
+              echo '<label class="radio-label" id="farbe'.$r.'" style="background-color: '.$value.'"></label>';
+            }
+            $r++;
+          }
+          ?>
+        </div>
+        <h5>Objekt</h5>
+        <div class="objektBox">
+          <h3>Unbekannt</h3>
+          <div class="objekt-data"><label>X</label><input type="number" id="obj-x" placeholder="X..."></div>
+          <div class="objekt-data"><label>Y</label><input type="number" id="obj-y" placeholder="Y..."></div>
+          <div class="objekt-data"><label>Width</label><input type="number" id="obj-width" placeholder="Width..."></div>
+          <div class="objekt-data"><label>Height</label><input type="number" id="obj-height" placeholder="Height..."></div>
+          <div class="objekt-data"><label>Place</label><input type="text" id="obj-place" placeholder="Place..."></div>
+          <div class="objekt-data"><button id="button-speichern">Speichern</button></div>
+        </div>
+        <h5>Hintergrund</h5>
+        <div class="uploadBox">
+          <form enctype="multipart/form-data"> <input name="file" type="file" /> <input type="button" value="Upload" /> </form>
+        </div>
+      </div>
+      <svg width="1900" height="1080" xmlns="http://www.w3.org/2000/svg" id="tischplan-svg">
+        <?php
+        $query = $con -> query("SELECT * FROM rtable") or die();
+        if($query){
+          foreach ($query as $key) {
+            echo '<rect id="'.$key["tableID"].'" class="draggable" height="'.$key["tableHeight"].'" width="'.$key["tableWidth"].'" x="'.$key["tableX"].'" data-x="" y="'.$key["tableY"].'" data-y="" place="'.$key["tablePlace"].'" stroke="#000" fill="'.$settings["farbe"].'" />';
+          }
+        }
+        ?>
+      </svg>
+    </div>
+
+    <script type="text/javascript">
+      $('.fa-edit').click(()=>{
+        if($('#viewEdit:visible').length == 0){
+          $('.container-tischplan').css('margin-left','300px');
+          $('#viewEdit').css('display','block');
+        }
+      });
+      $('.fa-times').click(()=>{
+        $('#viewEdit').css('display','none');
+        $('.container-tischplan').css('margin-left','0px');
+      });
+      $('.radio-label').click((event)=>{
+        const current_color = $('#'+event.target.id).css('background-color');
+        $.ajax({ url: "script/sync-tischplan.php", method: "POST", data: { changeColor: current_color },
+        success: function(result) {
+          if(result=='1'){
+            location.reload(); return; //$('#tischplan-svg').load(" #tischplan-svg > *");
+          }
+          alert('Ein Fehler ist aufgetreten! \n'+result); return;
+        }
+        });
+      });
+
+      $('.objekt-data input').change((event)=>{
+        if($('.objektBox h3').text() == "Unbekannt"){ alert('Bitte zuerst einen Tisch auswählen!'); return; }
+        var objID = $('.objektBox h3').text();
+        if(event.target.id == 'obj-x'){ $('#'+objID).attr('x',event.target.value); }
+        if(event.target.id == 'obj-y'){ $('#'+objID).attr('y',event.target.value); }
+        if(event.target.id == 'obj-width'){ $('#'+objID).attr('width',event.target.value); }
+        if(event.target.id == 'obj-height'){ $('#'+objID).attr('height',event.target.value); }
+      });
+
+      $('rect').click(function(){
+        if($('#viewEdit:visible').length == 0){
+          $('.container-tischplan').css('margin-left','300px');
+          $('#viewEdit').css('display','block');
+        }
+        $('.objektBox h3').text($(this).attr('id'));
+        $('#obj-x').val($(this).attr('x'));
+        $('#obj-y').val($(this).attr('y'));
+        $('#obj-width').val($(this).attr('width'));
+        $('#obj-height').val($(this).attr('height'));
+        $('#obj-place').val($(this).attr('place'));
+      });
+
+      $('#button-speichern').click(()=>{
+        var objID = $('.objektBox h3').text();
+        if(objID == "Unbekannt"){ alert('Bitte zuerst einen Tisch auswählen!'); return; }
+        var place = $('#obj-place').val(); var objX = $('#obj-x').val(); var objY = $('#obj-y').val();
+        var objW = $('#obj-width').val(); var objH = $('#obj-height').val();
+        $.ajax({ url: "script/sync-tischplan.php", method: "POST", data: { saveTisch:objID+";"+objX+";"+objY+";"+objW+";"+objH+";"+place },
+        success: function(result) {
+          if(result=='1'){ location.reload(); return; }
+          alert('Tisch konnte nicht aktualisiert werden! \n Fehler: '+result); return;
+        }
+        });
+      });
+    </script>
+
+    <script type="module">
+    import interact from 'https://cdn.interactjs.io/v1.10.11/interactjs/index.js';
+    $('.draggable').click(function(){
+      var element = $(this).attr('id'); var x = 0; var y = 0;
+      interact('.draggable')
+      .draggable({
+        modifiers: [
+          interact.modifiers.snap({
+            targets: [ interact.snappers.grid({ x: 1, y: 1 }) ]
+          }),
+          interact.modifiers.restrictRect({
+            restriction: 'parent', endOnly: true
+          })
+        ],
+        listeners: {
+          move: dragMoveListener,
+          end (event){
+            var dataY = $('#'+element).attr('data-y'); var dataX = $('#'+element).attr('data-x');
+            var newY = (parseInt($('#'+element).attr('y')) + parseInt(dataY)); var newX = (parseInt($('#'+element).attr('x')) + parseInt(dataX));
+            updateTisch(newX,newY,element);
+          }
+        },
+        inertia: false,
+        autoScroll: true
+      })
+
+      function dragMoveListener (event) {
+        var target = event.target;
+        //target.style.zIndex = 2;
+        var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+        var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+        target.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+        target.setAttribute('data-x', x); target.setAttribute('data-y', y);
+        $('#obj-x').val(x); $('#obj-y').val(y);
+      }
+
+      function updateTisch(x,y,id) {
+        $.ajax({ url: "script/sync-tischplan.php", method: "POST", data: { updateTisch: x+";"+y+";"+id },
+        success: function(result) {
+          if(result!='1'){ alert('Tisch konnte nicht aktualisiert werden! \n Fehler: '+result); return; }
+        }
+        });
+      }
+    });
+    </script>
   </body>
 </html>

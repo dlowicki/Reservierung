@@ -4,6 +4,7 @@ $(document).ready(()=>{
 
 });
 
+// UserCheck nochmal überprüfen. Daten mittels PHP abgleichen nicht Javascript weil unsicher manipulation
 async function userCheck() {
 	let result;
 	try {
