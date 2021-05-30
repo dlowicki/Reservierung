@@ -17,10 +17,8 @@ $(document).ready(function(){
     if(dateToSQL() > rc[0] && rc[0] != 'admin'){ viewCalendar(); return; }
   }
 
-  // Lade Tische mit Ampelsystem
+  // Lade Tische async mit Ampelsystem
   (async() => { await loadTables(localStorage.getItem('rCalendar').split(';')[0]); })();
-
-
 
   $(document).on('click','.table', function(){
     if($('.form-table').length <= 0){
@@ -118,7 +116,7 @@ function viewTable(id, date) {
       $('.form-table-left-inputs').append('<select id="amount">'+options+'</select><i class="fas fa-users"></i></div>');
       $('.form-table-left-inputs').append('<input type="date" id="timeDate" value="'+date+'">');
       var localBlock = localStorage.getItem('rCalendar').split(';')[1];
-      $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
+      $.getJSON('script/load.timeblock.php', function(data) {
         $('.form-table-left-inputs').append('<select id="timeBlock"></select>');
         data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
@@ -128,6 +126,8 @@ function viewTable(id, date) {
         });
       });
 
+      // Setze Data für Überprüfung von Feiertag, Öffnungszeit oder Event bei onChange
+      $('#timeDate').data('before', date);
 
       $('.form-table-right').append("<h2>Registrierung zwecks Corona</h2>");
       $('.form-table-right').append('<p>Damit ein Tisch bei uns reserviert werden kann, müssen wir den Anforderungen entsprechend die Daten einer Person bei uns abspeichern.<br>Bitte Denken Sie daran, dass bei mehreren Haushalten an einem Tisch, <b>pro Haushalt eine Kontakperson</b> registriert werden muss.<br>Die Daten werden <a href="#">Datenschutzkonform</a> abgespeichert</p');
@@ -184,11 +184,39 @@ $(document).on('change','#timeBlock',function(){
   }
 });
 
+
 // Beim ändern des Datum neuen Table anzeigen
 // Abfrage von Datum ob an Feiertag oder geschlossenen Tag
-$(document).on('change','#timeDate',function(){
+$(document).on('change','#timeDate',function(event){
   var tisch = $('#viewTable h1').text().split(' ')[1];
-  var date = $(this).val(); tableClose(); viewTable(tisch, date);
+  var date = $(this).val(); const today = new Date().toISOString().slice(0, 10);
+  if(todayPlusSixWeeks() <= date) { $('#timeDate').css('background-color','#e63946'); viewError('Reservierungen können maximal 6 Wochen im Voraus eingetragen werden!'); $(this).val($(this).data('before')); return; }
+  if(date < today) { $('#timeDate').css('background-color','#e63946'); viewError('Datum kann nicht in der Vergangenheit liegen!'); $(this).val($(this).data('before')); return; }
+
+  $.ajax({ url: "sync.php", method: "POST", data: { confirmDay: date},
+    success: function(result) {
+      // Wenn result==1 Dann Tag nicht geöffnet bzw. Event an dem Tag
+      if(result=="1"){
+        viewError('HubRaum hat am ' + date + ' nicht geöffnet!'); $(this).val($(this).data('before')); return;
+      } else { // Restaurant hat am ausgewählten Tag geöffnet
+        $.getJSON('script/load.feiertag.php',function(data){
+          var check = true;
+          data.forEach((item, i) => { if(item['date'] == date){ check=false; } });
+          if(date.length == 10 && time.length >= 1 && check==true){
+            // Schließe Window Table und öffne neues Window
+            tableClose(); viewTable(tisch, date);
+          } else {
+            $('#timeDate').css('background-color','#e63946');
+            viewError('HubRaum hat am ' + date + ' nicht geöffnet!');
+            $(this).val($(this).data('before')); return;
+          }
+        });
+      }
+    }
+  });
+
+
+
 });
 
 

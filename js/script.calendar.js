@@ -5,7 +5,7 @@ function viewCalendar(){
     var rc = localStorage.getItem('rCalendar').split(';');
     $('.calendar-inputs').append('<input type="date" id="calendar-date" value="'+rc[0]+'">');
     $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
+    $.getJSON('script/load.timeblock.php', function(data) {
       data.forEach((item, i) => {
           time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
           if(item['id'] == rc[1]){
@@ -19,7 +19,7 @@ function viewCalendar(){
     $('.calendar-inputs').append('<input type="date" id="calendar-date">');
     document.getElementById('calendar-date').valueAsDate = new Date();
     $('.calendar-inputs').append('<select id="calendar-time"></select>');
-    $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
+    $.getJSON('script/load.timeblock.php', function(data) {
       data.forEach((item, i) => {
         time = item['start'].substring(0,item['start'].length - 3) + " - " + item['end'].substring(0,item['end'].length - 3);
         $('.calendar-inputs select').append('<option value="'+item["id"]+'">'+time+' Uhr</option>');
@@ -40,14 +40,13 @@ $(document).on('click','#calendar-confirm',function(){
   if(todayPlusSixWeeks() <= date) { $('#calendar-date').css('background-color','#e63946'); viewError('Reservierungen können maximal 6 Wochen im Voraus eingetragen werden!'); return; }
   if(date < today) { $('#calendar-date').css('background-color','#e63946'); viewError('Datum kann nicht in der Vergangenheit liegen!'); return; }
 
-  var test = 0;
-  $.ajax({ url: "http://localhost/html/Reservierung/sync.php", method: "POST", data: { confirmDay: date},
+  $.ajax({ url: "sync.php", method: "POST", data: { confirmDay: date},
     success: function(result) {
-      // Wenn result==1 Dann Tag nicht geöffnet
+      // Wenn result==1 Dann Tag nicht geöffnet bzw. Event an dem Tag
       if(result=="1"){
-        viewError('HubRaum hat am ' + date + ' nicht geöffnet!');
+        viewError('HubRaum hat am ' + date + ' nicht geöffnet!'); return;
       } else { // Restaurant hat am ausgewählten Tag geöffnet
-        $.getJSON('http://localhost/html/Reservierung/script/load.feiertag.php',function(data){
+        $.getJSON('script/load.feiertag.php',function(data){
           var check = true;
           data.forEach((item, i) => { if(item['date'] == date){ check=false; } });
           if(date.length == 10 && time.length >= 1 && check==true){

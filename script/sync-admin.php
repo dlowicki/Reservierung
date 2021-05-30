@@ -122,7 +122,7 @@ if(isset($_POST['acpButton']) && isset($_POST['acpReserveID']) && isset($_POST['
       break;
     case '2':
       /* Setze ReserveEnd auf jetzige Uhrzeit */
-      if(updateReserveEnd($rID,date("G:i:s"))){ $func = true; }
+      $func = true;
       break;
     case '3':
       /*Hierfür muss checkTime usw. angepasst werden*/
@@ -172,12 +172,9 @@ if(isset($_POST['createReserveButton']) && isset($_POST['table']) && isset($_POS
   return;
 }
 
-if(isset($_POST['updateReserveStart']) && isset($_POST['startTime']) && isset($_POST['endTime'])){
-  $rID = $_POST['updateReserveStart']; $startTime = $_POST['startTime']; $endTime = $_POST['endTime'];
-  if(updateReserveStart($rID,$startTime, $endTime)){
-    echo "1"; return;
-  }
-  echo "0"; return;
+if(isset($_POST['updateReserveBlock'])){
+  $exp = explode(';',$_POST['updateReserveBlock']);
+  if(sizeof($exp) == 3){ if(updateReserveBlock($exp[0],$exp[1], $exp[2])){ echo '1'; return; }  } echo "0"; return;
 }
 if(isset($_POST['updateReserveDuration']) && isset($_POST['duration'])&& isset($_POST['endTime'])){
   $rID = $_POST['updateReserveDuration']; $duration = $_POST['duration']; $endTime = $_POST['endTime'];
@@ -217,7 +214,7 @@ function isAdmin(){
 function getReservierungData($id) {
   $db = new Overview();
   $con = $db->connectDatabase();
-  $statement = "SELECT rreserve.tableID, rreserve.clientID, reserveDate, reserveTime, reserveBlock, reserveAmount, rClient.clientID, rClient.clientName, rClient.clientVorname, rClient.clientMail, rClient.clientTNR, rTable.tableType,rTable.tableActive FROM rReserve INNER JOIN rClient ON rReserve.reserveID = rClient.reserveID INNER JOIN rTable ON rreserve.tableID = rtable.tableID WHERE rReserve.reserveID = '$id'";
+  $statement = "SELECT rreserve.tableID, rreserve.clientID, reserveDate, reserveTime, reserveBlock, reserveAmount, rclient.clientID, rclient.clientName, rclient.clientVorname, rclient.clientMail, rclient.clientTNR, rtable.tableType,rtable.tableActive FROM rreserve INNER JOIN rclient ON rreserve.reserveID = rclient.reserveID INNER JOIN rtable ON rreserve.tableID = rtable.tableID WHERE rreserve.reserveID = '$id'";
   $query = $con->query($statement) or die();
 
   if($query){
@@ -247,7 +244,7 @@ function getReservierungData($id) {
 function updateReserveState($state, $rID) {
   $db = new Overview();
   $con = $db->connectDatabase();
-  $statement = "UPDATE rReserve SET reserveState = '$state' WHERE reserveID = '$rID'";
+  $statement = "UPDATE rreserve SET reserveState = '$state' WHERE reserveID = '$rID'";
   $query = $con -> query($statement);
   if($query === TRUE){
     return true;
@@ -258,7 +255,7 @@ function updateReserveState($state, $rID) {
 function updateReserveEnd($rID,$time) {
   $db = new Overview();
   $con = $db->connectDatabase();
-  $statement = "UPDATE rReserve SET reserveEnd = '$time' WHERE reserveID = '$rID'";
+  $statement = "UPDATE rreserve SET reserveEnd = '$time' WHERE reserveID = '$rID'";
   $query = $con -> query($statement);
   if($query === TRUE){
     return true;
@@ -266,20 +263,17 @@ function updateReserveEnd($rID,$time) {
   return false;
 }
 
-function updateReserveStart($rID, $startTime, $endTime) {
+function updateReserveBlock($rID, $block, $time) {
   $db = new Overview();
   $con = $db->connectDatabase();
-  $query = $con -> query("UPDATE rReserve SET reserveStart = '$startTime', reserveEnd = '$endTime' WHERE reserveID = '$rID'");
-  if($query === TRUE){
-    return true;
-  }
-  return false;
+  $query = $con -> query("UPDATE rreserve SET reserveTime = '$time', reserveBlock = '$block' WHERE reserveID = '$rID'");
+  if($query === TRUE){ return true; } return false;
 }
 
 function updateReserveDuration($rID,$duration,$endTime) {
   $db = new Overview();
   $con = $db->connectDatabase();
-  $statement = "UPDATE rReserve SET reserveEnd = '$endTime', reserveDuration = '$duration' WHERE reserveID = '$rID'";
+  $statement = "UPDATE rreserve SET reserveEnd = '$endTime', reserveDuration = '$duration' WHERE reserveID = '$rID'";
   $query = $con -> query($statement);
   if($query === TRUE){
     return true;
@@ -290,7 +284,7 @@ function updateReserveDuration($rID,$duration,$endTime) {
 function updateReserveAmount($rID,$amount) {
   $db = new Overview();
   $con = $db->connectDatabase();
-  $statement = "UPDATE rReserve SET reserveAmount = '$amount' WHERE reserveID = '$rID'";
+  $statement = "UPDATE rreserve SET reserveAmount = '$amount' WHERE reserveID = '$rID'";
   $query = $con -> query($statement);
   if($query === TRUE){
     return true;
@@ -303,14 +297,14 @@ function addBlacklist($rID) {
   $db = new Overview();
   $con = $db->connectDatabase();
   $date = date("Y-m-d G:i:s");
-  $statement = "SELECT rClient.clientID, clientMail, clientTNR FROM rReserve INNER JOIN rClient ON rReserve.clientID = rClient.clientID WHERE rReserve.reserveID = '$rID'";
+  $statement = "SELECT rclient.clientID, clientMail, clientTNR FROM rreserve INNER JOIN rclient ON rreserve.clientID = rclient.clientID WHERE rreserve.reserveID = '$rID'";
   $query = $con -> query($statement);
   foreach ($query as $key) {
     if($key['clientID'] && $key['clientMail']){
       $clientID = $key['clientID'];
       $clientMail = $key['clientMail'];
       $clientTNR = $key['clientTNR'];
-      $statement2 = "INSERT INTO rBlacklist (bID,bMail,bTNR,bAnzahl) VALUES (null,'$clientMail','$clientTNR',1) ON DUPLICATE KEY UPDATE bAnzahl = bAnzahl +1";
+      $statement2 = "INSERT INTO rblacklist (bID,bMail,bTNR,bAnzahl) VALUES (null,'$clientMail','$clientTNR',1) ON DUPLICATE KEY UPDATE bAnzahl = bAnzahl +1";
       $query2 = $con -> query($statement2);
       if($query2 === TRUE) { return true; }
       return false;
@@ -324,13 +318,13 @@ function addNoShow($rID) {
   $db = new Overview();
   $con = $db->connectDatabase();
   $date = date("Y-m-d G:i:s");
-  $statement = "SELECT rClient.clientID, clientMail FROM rReserve INNER JOIN rClient ON rReserve.clientID = rClient.clientID WHERE rReserve.reserveID = '$rID'";
+  $statement = "SELECT rclient.clientID, clientMail FROM rreserve INNER JOIN rclient ON rreserve.clientID = rclient.clientID WHERE rreserve.reserveID = '$rID'";
   $query = $con -> query($statement);
   foreach ($query as $key) {
     if($key['clientID'] && $key['clientMail']){
       $clientID = $key['clientID'];
       $clientMail = $key['clientMail'];
-      $statement2 = "INSERT INTO rNoshow (nsID,nsMail,nsAmount,nsDate) VALUES (null,'$clientMail','1','$date') ON DUPLICATE KEY UPDATE nsAmount = nsAmount +1";
+      $statement2 = "INSERT INTO rnoshow (nsID,nsMail,nsAmount,nsDate) VALUES (null,'$clientMail','1','$date') ON DUPLICATE KEY UPDATE nsAmount = nsAmount +1";
       $query2 = $con -> query($statement2);
       if($query2 === TRUE) { return true; }
       return false;
@@ -345,7 +339,7 @@ function updateClient($cID,$rID,$vn,$nn,$ma,$tnr,$date,$cc) {
   if(strlen($cID)<=0){ $cID = uniqid(); }
   $temp = "clientID,reserveID,clientVorname,clientName,clientMail,clientTNR,clientDate,clientConfirm";
   $temp2 = "'$cID','$rID','$vn','$nn','$ma','$tnr','$date','$cc'";
-  $statement = "INSERT INTO rClient ($temp) VALUES ($temp2) ON DUPLICATE KEY UPDATE clientVorname = '$vn', clientName = '$nn', clientMail = '$ma', clientTNR='$tnr'";
+  $statement = "INSERT INTO rclient ($temp) VALUES ($temp2) ON DUPLICATE KEY UPDATE clientVorname = '$vn', clientName = '$nn', clientMail = '$ma', clientTNR='$tnr'";
   $query = $con -> query($statement);
   if($query===TRUE){
     return true;
@@ -355,7 +349,7 @@ function updateClient($cID,$rID,$vn,$nn,$ma,$tnr,$date,$cc) {
 function deleteClient($cID) {
   $db = new Overview();
   $con = $db->connectDatabase();
-  $statement = "DELETE FROM rClient WHERE clientID = '$cID'";
+  $statement = "DELETE FROM rclient WHERE clientID = '$cID'";
   $query = $con -> query($statement);
   if($query===TRUE){return true;}
   return false;
@@ -365,11 +359,9 @@ function createNewReserve($table,$client,$date) {
   $db = new Overview();
   $con = $db->connectDatabase();
   $rC = uniqid();
-  $p = "INSERT INTO rReserve (reserveID, tableID, clientID, reserveDate, reserveStart, reserveEnd, reserveDuration, reserveAmount, reserveCookie, reserveState) VALUES (null,'$table','$client','$date','00:00:00','00:00:00','2:30','0','$rC','0')";
+  $p = "INSERT INTO rreserve (reserveID, tableID, clientID, reserveDate, reserveTime,reserveBlock, reserveAmount, reserveCookie, reserveState) VALUES (null,'$table','$client','$date','00:00:00 - 00:00:00','1','0','$rC','0')";
   $query = $con->query($p) or die();
-  if($query === TRUE){
-    return $con->insert_id;
-  }
+  if($query === TRUE){ return $con->insert_id; }
   return false;
 }
 

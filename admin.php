@@ -26,6 +26,7 @@ require_once('sync.php');
           <li><a href="?reservierungen=HubRaum">Reservierungen</a></li>
           <li><a href="?tische=HubRaum">Tischplan</a></li>
           <li><a href="?zeit=HubRaum">Öffnungszeiten</a></li>
+          <li><a href="?rechte=HubRaum">Rechte</a></li>
           <li><a href="index.php">Verlassen</a></li>
         </ul>
       </div>
@@ -40,19 +41,34 @@ require_once('sync.php');
         if(isset($_GET['overview'])){
           // Wenn Anfangstag gesetzt ist
           if(isset($_GET['day'])){
-            $type = $_GET['overview']; // $type = Day oder $type = Week
+            $type = $_GET['overview']; // $type = Day oder $type = Week oder $type = full
             $day = $_GET['day'];
             $data = $admin->getOverview($type, $day);
           }
 
           echo '<input type="date" id="oInputDate" value="'.$day.'">';
           echo "<ul class='ow-nav'>";
-            if($type == "Day"){
+            switch ($type) {
+              case 'Week':
+                echo '<li>Tagesbericht</li>';
+                echo '<li class="ow-nav-current">Wochenbericht</li>';
+                echo '<li>Ganzer Bericht</li>';
+                  break;
+              case 'full':
+                echo '<li>Tagesbericht</li>';
+                echo '<li>Wochenbericht</li>';
+                echo '<li class="ow-nav-current">Ganzer Bericht</li>';
+                  break;
+              case 'Day':
+                echo '<li class="ow-nav-current">Tagesbericht</li>';
+                echo '<li>Wochenbericht</li>';
+                echo '<li>Ganzer Bericht</li>';
+                  break;
+              default:
               echo '<li class="ow-nav-current">Tagesbericht</li>';
               echo '<li>Wochenbericht</li>';
-            } else {
-              echo '<li>Tagesbericht</li>';
-              echo '<li class="ow-nav-current">Wochenbericht</li>';
+              echo '<li>Ganzer Bericht</li>';
+                break;
             }
           echo "</ul>";
 
@@ -150,7 +166,7 @@ require_once('sync.php');
                         echo '<div class="list-edit-bottom">';
                           echo '<select id="rs-block">';
                           $block = getTimeBlocks();
-                          foreach ($block as $key) { echo '<option value="'.$key["id"].'">'.$key["start"].' - '.$key["end"].'</option>'; }
+                          foreach ($block as $key) { echo '<option value="block-'.$key["id"].'" id="block-'.$key["id"].'">'.$key["start"].' - '.$key["end"].'</option>'; }
                           echo '</select>';
                           echo '<input type="number" id="rs-amount" min="0" max="20">';
                           echo '<div class="edit-bottom-table">';
@@ -325,7 +341,7 @@ require_once('sync.php');
 
     $(document).on("change","#oInputDate", function(){
       var date = $(this).val();
-      var ow = getOverviewParameter()
+      var ow = getOverviewParameter();
       if(ow != false){
         window.location.href = "admin.php?overview="+ow+"&day="+date;
       }
@@ -335,8 +351,10 @@ require_once('sync.php');
       var type = $(this).text();
       if(type == "Tagesbericht"){
         window.location.href = "admin.php?overview=Day&day="+$('#oInputDate').val();
-      } else {
+      } else if(type == "Wochenbericht") {
         window.location.href = "admin.php?overview=Week&day="+$('#oInputDate').val();
+      } else {
+        window.location.href = "admin.php?overview=full&day="+$('#oInputDate').val();
       }
     });
 
@@ -431,7 +449,6 @@ require_once('sync.php');
       $('.rs-reservierung-list>ul>li.reservierung-list-current').removeClass('reservierung-list-current');
       $(this).addClass('reservierung-list-current');
 
-      //$('.rs-reservierung-list ul').css("width: 50%;");
       $('#hh-number').val("0");
       var rID = $(this).attr("id");
 
@@ -454,9 +471,9 @@ require_once('sync.php');
             $('.switch').attr("id",d[0]['tableID']);
 
             // FRONT DATA
-            //$('#rs-time').val(d[0]['reserveStart']);
-            //$('#rs-block').val(d[0]['reserveDuration']);
             $('#rs-amount').val(parseInt(d[0]['reserveAmount']));
+            $('#rs-block').val('block-'+d[0]['reserveBlock']);
+            $('#rs-block').change();
 
             // Client
             $('.edit-hh').remove();
@@ -637,59 +654,22 @@ require_once('sync.php');
 
     /* Change Buttons FRONT DATA */
 
-    $('#rs-time').change(function(){
-      var rTime = $(this).val()+":00";
-      var rDuration = $('#rs-duration').val();
+    $('#rs-block').change(function(){
+      var rsBlock = $(this).val().split('-')[1]; var rsTime = $('#block-'+rsBlock).text();
       var rID = $('.reservierung-list-current').attr('id');
-
-      var r = "22:00:00";
-      if(rDuration == "2:30"){
-        var eTime = new Date($('#rs-date').val() + " " + $('#rs-time').val());
-        r = eTime.getHours()+2 + ":"+(eTime.getMinutes()+30)+":00";
-        if(eTime.getMinutes()+30 >= 60){r = eTime.getHours()+3+":"+((eTime.getMinutes()+30)-60)+":00";}
-      }
-
       $.ajax({
         url: "script/sync-admin.php",
         method: "POST",
-        data: { updateReserveStart: rID, startTime: rTime, endTime: r },
+        data: { updateReserveBlock: rID+";"+rsBlock+";"+rsTime },
         success: function(result) {
-          if(result=="1"){
-            $(".reservierung-list-current").text(rTime + " - "+r);
-            return;
-          }
+          console.log(result);
+          if(result=="1"){ $(".reservierung-list-current").text(rsTime); return; }
           alert("Ein Fehler ist aufgetreten\n"+result);
           return;
         }
       });
     });
 
-    $('#rs-duration').change(function(){
-      var rDuration = $(this).val();
-      var rID = $('.reservierung-list-current').attr('id');
-      var r = "22:00:00";
-      if(rDuration == "2:30"){
-        var eTime = new Date($('#rs-date').val() + " " + $('#rs-time').val());
-        r = eTime.getHours()+2 + ":"+(eTime.getMinutes()+30)+":00";
-        if(eTime.getMinutes()+30 >= 60){r = eTime.getHours()+3+":"+((eTime.getMinutes()+30)-60)+":00";}
-      }
-
-      $.ajax({
-        url: "script/sync-admin.php",
-        method: "POST",
-        data: { updateReserveDuration: rID, duration: rDuration, endTime: r },
-        success: function(result) {
-
-          if(result == "1"){
-            var startTime = $(".reservierung-list-current").text().split(" - ")[0];
-            $(".reservierung-list-current").text(startTime + " - "+r);
-            return;
-          }
-          alert("Ein Fehler ist aufgetreten\n"+result);
-          return;
-        }
-      });
-    });
 
     $('#rs-amount').change(function(){
       var rAmount = $(this).val();

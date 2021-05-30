@@ -19,10 +19,8 @@
       rect:hover { opacity: 0.3; }
 
       #viewEdit {
-        display: none; position: fixed; top: 0; left: 0;
-        min-height: 100%; height: auto; width: 300px;
-        font-family: sans-serif; background-color: rgba(255,255,255,0.9);
-        border: 2px solid black;
+        display: none; position: fixed; top: 0; left: 0; min-height: 100%; height: auto; width: 300px;
+        font-family: sans-serif; background-color: rgba(255,255,255,0.9); border: 2px solid black;
       }
       #viewEdit i { float: right; padding: 5px 15px 0px 0px; cursor: pointer; transition: 0.5s; }
       #viewEdit i:hover { color: red; }
@@ -42,6 +40,9 @@
       .objekt-data label { width: 65px; margin: 0px 10px 0px 10px; text-align: center; }
       .objekt-data input { width: 100px; outline: none; font-size: 1.3rem;  }
       .objektBox button { width: 100px; margin-left: auto; margin-right: auto; margin-top: 15px; padding: 5px; border: 1px solid black; cursor: pointer; }
+
+      .navBox { text-align: center; }
+      .navBox button { margin-left: 10px; margin-right: 10px; padding: 5px 5px 5px 5px; background-color: white; cursor: pointer; border: 1px solid black; width: 100px; font-size: 1.2rem; }
 
       /* SWITCH */
       .switch { position: relative; display: inline-block; width: 62px; height: 34px; }
@@ -106,6 +107,11 @@
         <h5>Hintergrund</h5>
         <div class="uploadBox">
           <form enctype="multipart/form-data"> <input name="file" type="file" /> <input type="button" value="Upload" /> </form>
+        </div>
+        <h5>Navigation</h5>
+        <div class="navBox">
+          <button onclick="window.location.href='index.php'">Tischplan</button>
+          <button onclick="window.location.href='admin.php'">Admin</button>
         </div>
       </div>
       <svg width="1900" height="1080" xmlns="http://www.w3.org/2000/svg" id="tischplan-svg">
@@ -198,6 +204,8 @@
           end (event){
             var dataY = $('#'+element).attr('data-y'); var dataX = $('#'+element).attr('data-x');
             var newY = (parseInt($('#'+element).attr('y')) + parseInt(dataY)); var newX = (parseInt($('#'+element).attr('x')) + parseInt(dataX));
+            //event.target.setAttribute('x', newX); event.target.setAttribute('y', newY);
+            $('#obj-x').val(newX); $('#obj-y').val("");
             updateTisch(newX,newY,element);
           }
         },
@@ -212,13 +220,18 @@
         var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
         target.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
         target.setAttribute('data-x', x); target.setAttribute('data-y', y);
-        $('#obj-x').val(x); $('#obj-y').val(y);
+
+        //var newY = (parseInt($('#'+element).attr('y')) + parseInt(y)); var newX = (parseInt($('#'+element).attr('x')) + parseInt(x));
+        //console.log(newX + " - " + newY);
       }
 
       function updateTisch(x,y,id) {
         $.ajax({ url: "script/sync-tischplan.php", method: "POST", data: { updateTisch: x+";"+y+";"+id },
         success: function(result) {
-          if(result!='1'){ alert('Tisch konnte nicht aktualisiert werden! \n Fehler: '+result); return; }
+          if(result!='1'){
+            alert('Tisch konnte nicht aktualisiert werden! \n Fehler: '+result); return;
+          }
+          $('#obj-x').val(x); $('#obj-y').val(y);
         }
         });
       }

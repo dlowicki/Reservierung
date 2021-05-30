@@ -20,9 +20,14 @@ class Overview
     $para = "rreserve.reserveID,rreserve.tableID,reserveDate,reserveTime,reserveAmount,clientName,clientTNR";
     if($type == "Day"){
       $query = $con -> query("SELECT $para FROM rreserve INNER JOIN rclient ON rreserve.clientID=rclient.clientID WHERE reserveDate = '$day' AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5) ORDER BY reserveDate ASC");
-    } else {
+    } elseif($type == "Week") {
       $date = new DateTime($day);
       $date->modify('+7 day');
+      $newDay = $date->format('Y-m-d');
+      $query = $con -> query("SELECT $para FROM rreserve INNER JOIN rclient ON rreserve.clientID=rclient.clientID WHERE reserveDate BETWEEN '$day' AND '$newDay' AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5) ORDER BY reserveDate ASC");
+    } else {
+      $date = new DateTime($day);
+      $date->modify('+6 Weeks');
       $newDay = $date->format('Y-m-d');
       $query = $con -> query("SELECT $para FROM rreserve INNER JOIN rclient ON rreserve.clientID=rclient.clientID WHERE reserveDate BETWEEN '$day' AND '$newDay' AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5) ORDER BY reserveDate ASC");
     }

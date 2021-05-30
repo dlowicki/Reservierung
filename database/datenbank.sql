@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 20. Mai 2021 um 14:35
--- Server-Version: 10.4.14-MariaDB
--- PHP-Version: 7.3.22
+-- Erstellungszeit: 29. Mai 2021 um 19:00
+-- Server-Version: 10.4.17-MariaDB
+-- PHP-Version: 7.4.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,28 @@ SET time_zone = "+00:00";
 --
 -- Datenbank: `reservierung`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `rblacklist`
+--
+
+CREATE TABLE `rblacklist` (
+  `bID` int(11) NOT NULL,
+  `bMail` varchar(50) COLLATE utf8mb4_german2_ci NOT NULL,
+  `bTNR` varchar(25) COLLATE utf8mb4_german2_ci NOT NULL,
+  `bAnzahl` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_german2_ci;
+
+--
+-- Daten für Tabelle `rblacklist`
+--
+
+INSERT INTO `rblacklist` (`bID`, `bMail`, `bTNR`, `bAnzahl`) VALUES
+(1, 'karl.ralf@web.de', 'Telefon', 2),
+(2, 'admin@mertero.de', '049159', 1),
+(4, 'mail@domain.de', '0', 1);
 
 -- --------------------------------------------------------
 
@@ -43,25 +65,9 @@ CREATE TABLE `rclient` (
 --
 
 INSERT INTO `rclient` (`clientID`, `reserveID`, `clientVorname`, `clientName`, `clientMail`, `clientTNR`, `clientDate`, `clientConfirm`) VALUES
-('5fabc6e5bce0d', 101, 'test', 'test', 'test', 'test', '2020-11-11 12:11:33', '5fabc6e5c09f65fabc6e5c09f8'),
-('5fabdd3fb396c', 102, 'test1', 'test1', 'test1', 'test1', '2020-11-11 13:46:55', '5fabdd3fb75915fabdd3fb7594'),
-('5fabdd3fb79f8', 102, 'test', 'test', 'test', 'test', '2020-11-11 13:46:55', '5fabdd3fb7a025fabdd3fb7a03'),
-('5fc5efd67711c', 103, 'hans', 'okl', 'hnn@web.de', '554123661', '2020-12-01 00:00:00', '5fc5efd678861'),
-('5fc5f692e0612', 104, 'David', 'Lowicki', 'dlowicki@ibs-ka.de', '774415221', '2020-12-01 00:00:00', '5fc5f692e13e2'),
-('5fdaf6b388ac0', 105, 'Vorname', 'Nachname', 'E-Mail', 'Telefon', '2020-12-17 00:00:00', '5fdaf6b38a06f'),
-('60461d684ae82', 106, 'David', 'Lowicki', 'dlowicki@ibs-ka.de', '882399283', '2021-03-08 13:49:44', '60461d684ce1a60461d684ce1b'),
-('6046223472208', 107, 'Karl', 'Gustav', 'karl@web.de', '77834728432', '2021-03-08 00:00:00', '6046223474ca6'),
-('6046247ed596b', 108, 'David', 'Lowicki', 'lowicki@gmx.de', '9879472943', '2021-03-08 14:19:58', '6046247ed7ada6046247ed7add'),
-('604625587b6c2', 109, 'Vorname', 'Nachname', 'E-Mail', 'Telefon', '2021-03-08 00:00:00', '604625587cb82'),
-('6049e4d6e1c8b', 110, 'Vorname', 'Nachname', 'E-Mail', 'Telefon', '2021-03-11 00:00:00', '6049e4d6e30dd'),
-('60546780d1e32', 111, 'Vorname', 'Nachname', 'E-Mail', 'Telefon', '2021-03-19 00:00:00', '60546780d38b1'),
-('605467eeacf53', 112, 'Kazim', 'Isik', 'kisik@elleyzo.de', '01629001487', '2021-03-19 00:00:00', '605467eeaeb9f'),
-('60a3a6a372e7d', 113, 'David', 'Lowicki', 'lowicki@web.de', '98327434', '2021-05-18 13:36:03', '60a3a6a3744a860a3a6a3744a9'),
-('60a3a7f9d3a98', 114, 'Vorname', 'Nachname', 'E-Mail', 'Telefon', '2021-05-18 00:00:00', '60a3a7f9d4d90'),
-('60a3aa9600a21', 115, 'Test', 'test', 'twtadt', 'dwtadtwadwad', '2021-05-18 13:52:54', '60a3aa960200860a3aa960200a'),
 ('60a3abe198ee3', 116, 'Vorname', 'Nachname', 'E-Mail', 'Telefon', '2021-05-18 00:00:00', '60a3abe19a047'),
 ('60a3b0e034ceb', 117, 'Vorname', 'Nachname', 'E-Mail', 'Telefon', '2021-05-18 00:00:00', '60a3b0e0366cb'),
-('60a3b0e647d01', 118, 'Vorname', 'Nachname', 'E-Mail', 'Telefon', '2021-05-18 00:00:00', '60a3b0e64904b'),
+('60a3b0e647d01', 118, 'test', 'test1', 'karl.ralf@web.de', '8932z4872364', '2021-05-18 00:00:00', '60a3b0e64904b'),
 ('60a3b13d45582', 119, 'Vorname', 'Nachname', 'E-Mail', 'Telefon', '2021-05-18 00:00:00', '60a3b13d467e1'),
 ('60a3b14071e44', 120, 'Vorname', 'Nachname', 'E-Mail', 'Telefon', '2021-05-18 00:00:00', '60a3b14073306'),
 ('60a3b1ddc10b9', 121, 'Vorname', 'Nachname', 'E-Mail', 'Telefon', '2021-05-18 00:00:00', '60a3b1ddc23d6'),
@@ -71,7 +77,7 @@ INSERT INTO `rclient` (`clientID`, `reserveID`, `clientVorname`, `clientName`, `
 ('60a4bb8f408a8', 124, 'David', 'Lowicki', 'test@web.de', '98264983', '2021-05-19 09:17:35', '60a4bb8f4b48060a4bb8f4b483'),
 ('60a51c2fc3552', 125, 'wadwa', 'wadawda', 'wdaadwada', 'wadadwadad', '2021-05-19 16:09:51', '60a51c2fc64d460a51c2fc64d7'),
 ('60a51d5852b9a', 126, 'wadawd', 'wadawd', 'wadawdad', 'awdawdadw', '2021-05-19 16:14:48', '60a51d58562f060a51d58562f4'),
-('60a51e2debe8a', 127, 'wadad', 'awdadw', 'adwadad', 'awdadwada', '2021-05-19 16:18:21', '60a51e2def2aa60a51e2def2af'),
+('60a51e2debe8a', 127, 'wadad', 'awdadw', 'adwadad', '', '2021-05-19 16:18:21', '60a51e2def2aa60a51e2def2af'),
 ('60a61f13913c6', 129, 'wada', 'dwadawd', 'adadawd', 'adwadwada', '2021-05-20 10:34:27', '60a61f1399ea760a61f1399ea9'),
 ('60a61f414ed4d', 130, 'wada', 'dwadawd', 'adadawd', 'adwadwada', '2021-05-20 10:35:13', '60a61f415a0cd60a61f415a0d0'),
 ('60a61f7b89f01', 131, 'wwwww', 'wwwwww', 'wwwwww', 'wwwwwwww', '2021-05-20 10:36:11', '60a61f7b932b660a61f7b932b9'),
@@ -93,7 +99,47 @@ INSERT INTO `rclient` (`clientID`, `reserveID`, `clientVorname`, `clientName`, `
 ('60a6523662b4d', 146, 'wadwa', 'David Lowicki', 'dlowicki@ibs-ka.de', '072195071338', '2021-05-20 14:12:38', '60a652366a37e60a652366a381'),
 ('60a6568882976', 147, 'wdawa', 'wdadwawd', 'wadwadadwad', 'wasd', '2021-05-20 14:31:04', '60a656888b4c060a656888b4c3'),
 ('60a656e129e54', 148, 'wad2', 'wasd2', 'wasd2', 'wasd2', '2021-05-20 14:32:33', '60a656e13512760a656e13512a'),
-('f93b6ec4aaec', 100, 'Luca', 'Yavsan', '', '', '2020-10-28 14:51:59', '5f99777f321f8');
+('60a6866c86b54', 149, 'lllll', 'David Lowicki', 'lowicki.david@gmail.com', '049159066401', '2021-05-20 17:55:24', '60a6866c8a7bc60a6866c8a7bd'),
+('60a69c8c915c9', 151, 'Karl', 'Ralf', 'karl.ralf@web.de', '8932z4872364', '2021-05-20 00:00:00', '60a69c8c91a4b'),
+('60a6b5b5cbf28', 151, 'Lieber', 'Mark', 'mark.lieber@web.de', '432343242324', '2021-05-20 00:00:00', '60a6b5c3e2b4b'),
+('60a93caaf3332', 152, 'wadawd', 'awdawdwa', 'wadawda', 'awdawdawd', '2021-05-22 19:17:30', '60a93caaf3d7060a93caaf3d71'),
+('60a93cdc5246f', 153, 'grgdrg', 'drgdr', 'drgdrgd', 'rdgrdgrdgr', '2021-05-22 19:18:20', '60a93cdc52c2060a93cdc52c21'),
+('60a93d1a19502', 154, 'David', 'Lowicki', 'lowicki@gmx.de', '3242342342', '2021-05-22 19:19:22', '60a93d1a1a62f60a93d1a1a630'),
+('60aba5666c146', 162, 'awdawd', 'awdawdad', 'awdadwwadwa', 'dwadwadawdawd', '2021-05-24 15:08:54', '60aba5666d18260aba5666d183'),
+('60abaa740fb2c', 163, 'wadw', 'awdawdaw', 'admin@mertero.de', '049159066401', '2021-05-24 15:30:28', '60abaa7410d9a60abaa7410d9b'),
+('60abb4b0a202c', 164, 'Klaus', 'Karl', 'admin@mertero.de', '2e342432', '2021-05-24 16:14:08', '60abb4b0a40b760abb4b0a40b8'),
+('60abb5c593324', 165, 'Uli', 'Hönes', 'admin@mertero.de', '049159066401', '2021-05-24 16:18:45', '60abb5c59449160abb5c594492'),
+('60abb796d0cab', 166, 'Mark', 'Mustermann', 'lowicki.david@gmail.com', '6432784284', '2021-05-24 16:26:30', '60abb796d494260abb796d4944'),
+('60ac10e71cfe6', 167, 'Luca', 'Yavsan', 'yuumi16@yahoo.com', '342234234', '2021-05-24 22:47:35', '60ac10e71e5e160ac10e71e5e2'),
+('60ac187965a5c', 168, 'Vorname', 'Nachname', 'E-Mail', 'Telefon', '2021-05-24 00:00:00', '60ac187966c03'),
+('60ac323f9f0a5', 169, 'Vorname', 'Nachname', 'E-Mail', 'Telefon', '2021-05-25 00:00:00', '60ac323f9fab3'),
+('60ac330f8aed7', 170, 'Vorname', 'Nachname', 'E-Mail', 'Telefon', '2021-05-25 00:00:00', '60ac330f8ba4c');
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `rdays`
+--
+
+CREATE TABLE `rdays` (
+  `daysID` int(11) NOT NULL,
+  `daysDay` varchar(15) COLLATE utf8mb4_german2_ci NOT NULL,
+  `daysTime` varchar(25) COLLATE utf8mb4_german2_ci NOT NULL,
+  `daysActive` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_german2_ci;
+
+--
+-- Daten für Tabelle `rdays`
+--
+
+INSERT INTO `rdays` (`daysID`, `daysDay`, `daysTime`, `daysActive`) VALUES
+(1, 'Montag', '15:00:00-22:00:00', 0),
+(2, 'Dienstag', '15:00-22:00', 0),
+(3, 'Mittwoch', '15:00:00-22:00:00', 1),
+(4, 'Donnerstag', '15:00:00-22:00:00', 1),
+(5, 'Freitag', '15:00:00-22:00:00', 1),
+(6, 'Samstag', '15:00:00-22:00:00', 1),
+(7, 'Sonntag', '15:00:00-22:00:00', 1);
 
 -- --------------------------------------------------------
 
@@ -106,7 +152,7 @@ CREATE TABLE `rnoshow` (
   `nsMail` varchar(50) COLLATE utf8mb4_german2_ci NOT NULL,
   `nsTNR` varchar(25) COLLATE utf8mb4_german2_ci NOT NULL,
   `nsAmount` int(11) NOT NULL,
-  `nsDate` datetime NOT NULL
+  `nsDate` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_german2_ci;
 
 --
@@ -114,13 +160,12 @@ CREATE TABLE `rnoshow` (
 --
 
 INSERT INTO `rnoshow` (`nsID`, `nsMail`, `nsTNR`, `nsAmount`, `nsDate`) VALUES
-(4, 'flowicki@web.de', '0', 2, '2020-10-19 11:00:26'),
-(14, 'test@web.de', '0', 1, '2020-11-17 09:06:49'),
-(17, 'test@domain.de', '0', 1, '2020-11-17 09:43:23'),
-(21, 'wasd@domain.de', '0', 3, '2020-11-17 12:31:46'),
-(29, 'test@etst.de', '0', 1, '2020-11-25 11:22:07'),
-(31, 'hnn@web.de', '0', 3, '2020-12-01 08:51:23'),
-(37, 'mail@domai.de', 'wasd', 3, '2021-03-19 09:57:26');
+(4, 'flowicki@web.de', '0', 2, '2020-10-19'),
+(14, 'test@web.de', '0', 1, '2020-11-17'),
+(17, 'test@domain.de', '464894869', 1, '2020-11-17'),
+(21, 'wasd@domain.de', '0', 3, '2020-11-17'),
+(29, 'test@etst.de', '0', 1, '2020-11-25'),
+(31, 'hnn@web.de', 'null', 2, '2020-12-01');
 
 -- --------------------------------------------------------
 
@@ -145,56 +190,47 @@ CREATE TABLE `rreserve` (
 --
 
 INSERT INTO `rreserve` (`reserveID`, `tableID`, `clientID`, `reserveDate`, `reserveTime`, `reserveBlock`, `reserveAmount`, `reserveCookie`, `reserveState`) VALUES
-(34, 8, '5f44a085c0e43', '2020-10-20', '', '0', 5, '', 0),
-(73, 34, '5f869ad0ef8e7', '2020-11-11', '', '0', 5, '5f869ad0ef8e9', 4),
-(85, 34, '5f8d41d624334', '2020-10-20', '', '0', 3, '5f8d41d624339', 1),
-(92, 32, '5f8d6295e7c7c', '2020-10-20', '', '0', 1, '5f8d6295e7c7e', 0),
-(93, 34, '5f917476db540', '2020-10-22', '', '0', 5, '5f917476db543', 0),
-(99, 34, '5f91820f4a1c2', '2020-10-22', '', '0', 5, '5f91820f4a1c6', 0),
-(100, 34, '5f97d70f0670d', '2020-10-27', '', '0', 5, '5f97d70f06712', 1),
-(101, 9, '5fabc6e5bce0d', '2020-11-11', '', '0', 5, '5fabc6e5bce11', 0),
-(102, 34, '5fabdd3fb396c', '2020-11-11', '', '0', 3, '5fabdd3fb3970', 0),
-(103, 34, '5fc5efd67711c', '2020-12-01', '', '0', 3, '5fc5efd67738b', 1),
-(104, 51, '5fc5f692e0612', '2020-12-01', '', '0', 4, '5fc5f692e072d', 2),
-(105, 43, '5fdaf6b388ac0', '2020-12-17', '', '0', 0, '5fdaf6b388cb8', 4),
-(106, 98, '60461d684ae82', '2021-03-08', '', '0', 2, '60461d684ae85', 0),
-(107, 99, '6046223472208', '2021-03-08', '', '0', 0, '604622347247c', 3),
-(108, 34, '6046247ed596b', '2021-03-08', '', '0', 5, '6046247ed596f', 0),
-(109, 34, '604625587b6c2', '2021-03-08', '', '0', 0, '604625587b90a', 0),
-(110, 41, '6049e4d6e1c8b', '2021-03-11', '', '0', 5, '6049e4d6e1dda', 0),
-(111, 1, '60546780d1e32', '2021-03-19', '', '0', 2, '60546780d203e', 1),
-(112, 1, '605467eeacf53', '2021-03-19', '', '0', 2, '605467eead09d', 1),
-(113, 9, '60a3a6a372e7d', '2021-05-18', '', '2', 5, '60a3a6a372e7f', 1),
-(114, 9, '60a3a7f9d3a98', '2021-05-18', '', '0', 3, '60a3a7f9d3bca', 4),
-(116, 37, '60a3abe198ee3', '2021-05-18', '', '0', 0, '60a3abe199019', 0),
-(117, 9, '60a3b0e034ceb', '2021-05-19', '19:30:00 - 22:00:00', '2', 0, '60a3b0e034eec', 0),
-(118, 9, '60a3b0e647d01', '2021-05-20', '17:00:00 - 19:30:00', '1', 0, '60a3b0e647e19', 0),
-(119, 9, '60a3b13d45582', '2021-05-25', '', '0', 0, '60a3b13d4569e', 0),
-(120, 9, '60a3b14071e44', '2021-05-27', '', '0', 0, '60a3b14071fb3', 0),
-(121, 9, '60a3b1ddc10b9', '2021-05-19', '17:00:00 - 19:30:00', '1', 0, '60a3b1ddc121f', 0),
-(122, 9, '60a3b2037e203', '2021-05-21', '', '0', 0, '60a3b2037e37f', 0),
-(123, 98, '60a4b9b26cd28', '2021-05-18', '', '0', 1, 'cf45fc3caff3c63d6b36879b97106884', 0),
-(124, 98, '60a4bb8f408a8', '2021-05-20', '', '0', 1, '60eb18f03320edb2dc1ca6b236a58bcb', 0),
-(125, 34, '60a51c2fc3552', '2021-05-19', '17:00:00 - 19:00:00', '1', 5, 'b6a6e81bb9f187bd1b1b8a8d495809ea', 0),
-(126, 31, '60a51d5852b9a', '2021-05-19', '17:00:00 - 19:30:00', '1', 1, '10b86a779095b0fe16845196e7c5d366', 0),
-(127, 37, '60a51e2debe8a', '2021-05-20', '17:00:00 - 19:00:00', '1', 5, 'e518d072f486521d4a420969a9e5af28', 0),
-(132, 37, '60a61f9556dc1', '2021-05-19', '17:00:00 - 19:30:00', '1', 5, '79c8b2ab812c30854d18ce2517c3369d', 0),
-(133, 37, '60a62053e2abe', '2021-05-19', '19:30:00 - 22:00:00', '2', 5, '7f62428c53a50e3d954205008bcacfbc', 0),
-(134, 33, '60a621a690cea', '2021-05-19', '17:00:00 - 19:30:00', '1', 2, '96eef60125ce9cccf3ce71dfe729b25f', 0),
-(135, 42, '60a623967bf6d', '2021-05-20', '17:00:00 - 19:30:00', '1', 1, '063cab2cd2275a6f7b7d52b6f043a414', 0),
-(136, 37, '60a62bade92d3', '2021-05-20', '19:30:00 - 22:00:00', '2', 5, 'fc6418309632859dbd49922cdd39e881', 0),
-(137, 36, '60a62be6d40ec', '2021-05-20', '17:00:00 - 19:30:00', '1', 5, 'd4e1002dcb6b88327ee778f8fab8451c', 0),
-(138, 36, '60a62c6f2eb26', '2021-05-20', '19:30:00 - 22:00:00', '2', 5, '29d4093fd8aa54764726291d474aaace', 0),
-(139, 34, '60a62c89a042e', '2021-05-20', '17:00:00 - 19:30:00', '1', 5, '7aa036b0354bffbfabcbc03f834d2477', 0),
-(140, 34, '60a62ebf727f4', '2021-05-20', '19:30:00 - 22:00:00', '2', 5, '7244b7f3e934981835f33397ad9288eb', 0),
-(141, 41, '60a62ede6b86e', '2021-05-19', '19:30:00 - 22:00:00', '2', 1, '1360bc8c1c496b7db12ac97bbe309c1a', 0),
-(142, 41, '60a6307df2a14', '2021-05-19', '17:00:00 - 19:30:00', '1', 1, 'cdbce412e6f8032d8f69309141c97700', 0),
-(143, 26, '60a63096475c5', '2021-05-19', '19:30:00 - 22:00:00', '2', 1, '27a9508b3df6b1e1d15a7b5c9ef558c8', 0),
-(144, 33, '60a630e254428', '2021-05-19', '19:30:00 - 22:00:00', '2', 1, 'f3eaf222e30772e6bdd91afd7eabeaeb', 0),
-(145, 10, '60a64a48a766b', '2021-05-19', '19:30:00 - 22:00:00', '2', 3, '45bc6f41fb3f54e1b6b1a4723b374939', 0),
-(146, 37, '60a6523662b4d', '2021-05-21', '17:00:00 - 19:30:00', '1', 5, '7b8aee257de4855abbcba89051b8f82e', 0),
-(147, 37, '60a6568882976', '2021-05-21', '19:30:00 - 22:00:00', '2', 5, 'eae3d6f34edb0eabe8e4c41369b8ea76', 0),
-(148, 33, '60a656e129e54', '2021-05-21', '17:00:00 - 19:30:00', '1', 1, '0a3be51b393f0d22aa7f0177cc77a2a8', 0);
+(164, 54, '60abb4b0a202c', '2021-05-25', '17:00:00 - 19:30:00', '1', 2, '94549eec5051e239480ae07efccbc90d', 0),
+(165, 44, '60abb5c593324', '2021-05-25', '17:00:00 - 19:30:00', '1', 4, '2f0f78a40d024db5605603f53a6f67b2', 5),
+(166, 52, '60abb796d0cab', '2021-05-25', '17:00:00 - 19:30:00', '1', 2, '30f8c85971b224bdaea244a422230c0a', 0),
+(167, 46, '60ac10e71cfe6', '2021-05-27', '17:00:00 - 19:30:00', '1', 3, '613613f40fe0e28d16e7b20c519e31b6', 0),
+(168, 45, '60ac187965a5c', '2021-05-24', '17:00:00 - 19:30:00', '1', 5, '60ac187965bd5', 0),
+(169, 45, '60ac323f9f0a5', '2021-05-25', '17:00:00 - 19:30:00', '1', 0, '60ac323f9f1c2', 3),
+(170, 41, '60ac330f8aed7', '2021-05-24', '17:00:00 - 19:30:00', '1', 5, '60ac330f8b007', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `rsettings`
+--
+
+CREATE TABLE `rsettings` (
+  `sID` int(11) NOT NULL,
+  `sEinstellung` varchar(35) COLLATE utf8mb4_german2_ci NOT NULL,
+  `sWert` varchar(150) COLLATE utf8mb4_german2_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_german2_ci;
+
+--
+-- Daten für Tabelle `rsettings`
+--
+
+INSERT INTO `rsettings` (`sID`, `sEinstellung`, `sWert`) VALUES
+(1, 'tischplan', 'https://www.mertero.de/html/Reservierung/tischplan.jpg'),
+(2, 'farbe', 'rgba(255, 0, 255, 0.9)'),
+(3, 'modus', 'verschieben');
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `rspecial`
+--
+
+CREATE TABLE `rspecial` (
+  `spID` int(11) NOT NULL,
+  `spType` varchar(35) COLLATE utf8mb4_german2_ci NOT NULL,
+  `spName` varchar(30) COLLATE utf8mb4_german2_ci NOT NULL,
+  `spDate` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_german2_ci;
 
 -- --------------------------------------------------------
 
@@ -208,6 +244,11 @@ CREATE TABLE `rtable` (
   `tableMax` int(11) NOT NULL,
   `tableMin` int(11) NOT NULL,
   `tableCode` varchar(40) COLLATE utf8mb4_german2_ci NOT NULL,
+  `tablePlace` varchar(50) COLLATE utf8mb4_german2_ci NOT NULL,
+  `tableWidth` int(11) NOT NULL,
+  `tableHeight` int(11) NOT NULL,
+  `tableX` int(11) NOT NULL,
+  `tableY` int(11) NOT NULL,
   `tableActive` varchar(15) COLLATE utf8mb4_german2_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_german2_ci;
 
@@ -215,48 +256,62 @@ CREATE TABLE `rtable` (
 -- Daten für Tabelle `rtable`
 --
 
-INSERT INTO `rtable` (`tableID`, `tableType`, `tableMax`, `tableMin`, `tableCode`, `tableActive`) VALUES
-(1, 'one', 2, 1, 'gN3M0CTnm0eOR6nnx5dspw', 'open'),
-(2, 'one', 3, 1, '9wKVG6zjkkWsUqCcMPDAUg', 'open'),
-(3, 'one', 3, 1, '7qMzupQws0yfiHsQaNyvEA', 'open'),
-(8, 'one', 3, 1, 'Q9MA8CfFVUuTagANYJpBlg', 'open'),
-(9, 'row', 5, 3, 'JMeu8qzzD0HYoqcAnJQOxA', 'open'),
-(10, 'row', 6, 3, 'XVW3XZvJTkCIpABbILms6w', 'open'),
-(11, 'row', 6, 3, 'tKPjLVITWk2iYiFm9S5BkQ', 'open'),
-(12, 'row', 6, 3, 'k876dB47fUOC2HsB6XMzqQ', 'open'),
-(21, 'pillar', 5, 3, 'dVR3TrZ8NkKJRvwc7anVVA', 'open'),
-(22, 'pillar', 5, 3, 'zM8PFc083UCZ599yiM6XtA', 'open'),
-(23, 'pillar', 5, 3, 'yNbCvCcUl0qD9AcxySp6mA', 'open'),
-(24, 'pillar', 5, 3, 'qlTD0x5t9UySvl7OJC6CsA', 'open'),
-(25, 'one', 3, 1, 'f5xy6jhTzkmhUEuQzVg1Tw', 'open'),
-(26, 'one', 3, 1, 'XUdfQTfuEE2NUxBhEWovtg', 'open'),
-(27, 'one', 3, 1, 'xbkQ44b2d0qNAbrnVeT5HA', 'open'),
-(31, 'one', 4, 1, 'Kfw2nVFMlkWZhJ2MeyaUCw', 'open'),
-(32, 'one', 4, 1, 'P68Sx9O9ZUu85tmYBn6w6Q', 'open'),
-(33, 'one', 4, 1, 'b6EsC24FskeVaKF6Nwm6PA', 'open'),
-(34, 'left', 8, 5, 'zpJ09e69sECQodzWlnGacQ', 'open'),
-(35, 'one', 4, 1, '9Q8MbJT300a4u51lI1HCWg', 'open'),
-(36, 'right-bottom', 7, 5, 'GOwXG6bYrUyefLddYt3uhg', 'open'),
-(37, 'right', 7, 5, 'PnYzx4dNHEiRJeTE6zye8A', 'open'),
-(41, 'pillar', 4, 1, '9MBPz9kHvUiurUfC1fIeqg', 'open'),
-(42, 'pillar', 6, 1, 'Aifs0HuKHEyYP7YiUc6Msw', 'open'),
-(43, 'pillar', 4, 1, 'Rju8PkpzS0SNgWubWXBPXg', 'open'),
-(44, 'pillar', 6, 1, '3kpOoMtdxU2Vfk35ioHU0Q', 'open'),
-(45, 'pillar', 4, 1, 'QcuoWSAEwk6XqEQEKQFchQ', 'open'),
-(46, 'pillar', 6, 1, '9QwoL48I1UK9VbtEXFc1og', 'open'),
-(47, 'pillar', 4, 1, 'cVb6gpSnx0WT5fn2gRbfIg', 'open'),
-(48, 'pillar', 6, 1, 'Bzh9dxAGi0W0fLsn2Ac9wA', 'open'),
-(49, 'pillar', 4, 1, 'cvWMzXPl4UilvyJcVsUqqA', 'open'),
-(50, 'pillar', 6, 1, 'BbTipWuImEa53dluHCLvpw', 'open'),
-(51, 'one', 4, 1, 'YfYdqyCrH02p5AqCTSq6MQ', 'open'),
-(52, 'big', 5, 3, 'jecmM93s3EOjQmVe0aTXZg', 'open'),
-(53, 'one', 4, 1, 'xBccO5XaMkWntuS34hOCTw', 'open'),
-(54, 'big', 4, 3, 'lQXh61LY70aWeeS6G0DHfA', 'open'),
-(55, 'big', 5, 3, 'Svu97xQrrkOMllNdQFeBcg', 'open'),
-(56, 'big', 5, 3, 'lyQTRwARyUqNCcMIDerMlA', 'open'),
-(57, 'right-layed', 7, 5, '8Zp8QKBzn0mvkHPsIAEaSA', 'open'),
-(98, 'pillar', 10, 1, 'yJGSumzsqEGLainM1jCRJw', 'open'),
-(99, 'right', 10, 5, 'rRNLXwxp9Ea8c4WOkl5p9w', 'open');
+INSERT INTO `rtable` (`tableID`, `tableType`, `tableMax`, `tableMin`, `tableCode`, `tablePlace`, `tableWidth`, `tableHeight`, `tableX`, `tableY`, `tableActive`) VALUES
+(11, '', 10, 4, 'tKPjLVITWk2iYiFm9S5BkQ', 'alm', 150, 32, 1638, 374, 'open'),
+(12, '', 10, 4, 'k876dB47fUOC2HsB6XMzqQ', 'alm', 150, 32, 1638, 284, 'open'),
+(13, '', 10, 4, 'gN3M0CTnm0eOR6nnx5dspw', 'alm', 150, 32, 1637, 106, 'open'),
+(14, '', 10, 4, '9wKVG6zjkkWsUqCcMPDAUg', 'alm', 150, 32, 1637, 16, 'open'),
+(15, '', 10, 4, '7qMzupQws0yfiHsQaNyvEA', 'alm', 150, 32, 1430, 16, 'open'),
+(16, '', 10, 4, 'Q9MA8CfFVUuTagANYJpBlg', 'alm', 150, 32, 1430, 106, 'open'),
+(17, '', 10, 4, 'JMeu8qzzD0HYoqcAnJQOxA', 'alm', 150, 32, 1430, 257, 'open'),
+(18, '', 10, 4, 'XVW3XZvJTkCIpABbILms6w', 'alm', 35, 138, 1444, 410, 'open'),
+(21, '', 2, 1, 'dVR3TrZ8NkKJRvwc7anVVA', 'Terrasse', 35, 33, 1254, 625, 'open'),
+(22, '', 2, 1, 'zM8PFc083UCZ599yiM6XtA', 'Terrasse', 35, 33, 1133, 625, 'open'),
+(23, '', 2, 1, 'yNbCvCcUl0qD9AcxySp6mA', 'Terrasse', 35, 33, 1010, 625, 'open'),
+(24, '', 7, 4, 'qlTD0x5t9UySvl7OJC6CsA', 'Terrasse', 34, 98, 854, 682, 'open'),
+(25, '', 7, 4, 'f5xy6jhTzkmhUEuQzVg1Tw', 'Terrasse', 34, 98, 974, 682, 'open'),
+(26, '', 7, 4, 'XUdfQTfuEE2NUxBhEWovtg', 'Terrasse', 36, 98, 1092, 682, 'open'),
+(27, '', 4, 4, 'xbkQ44b2d0qNAbrnVeT5HA', 'Terrasse', 37, 98, 1211, 682, 'open'),
+(31, 'lounge', 8, 5, 'Kfw2nVFMlkWZhJ2MeyaUCw', 'Feuerstelle', 100, 180, 1310, 380, 'open'),
+(32, 'lounge', 5, 3, 'P68Sx9O9ZUu85tmYBn6w6Q', 'Feuerstelle', 100, 90, 1310, 220, 'open'),
+(33, 'lounge', 8, 5, 'b6EsC24FskeVaKF6Nwm6PA', 'Feuerstelle', 200, 90, 1212, 48, 'open'),
+(34, '', 10, 4, 'zpJ09e69sECQodzWlnGacQ', 'Feuerstelle', 160, 35, 982, 188, 'open'),
+(35, '', 14, 6, '9Q8MbJT300a4u51lI1HCWg', 'Feuerstelle', 197, 36, 982, 372, 'open'),
+(36, '', 14, 6, 'GOwXG6bYrUyefLddYt3uhg', 'Feuerstelle', 197, 36, 982, 490, 'open'),
+(41, 'lounge', 8, 5, '9MBPz9kHvUiurUfC1fIeqg', 'Loungebereich', 197, 91, 615, 5, 'open'),
+(42, 'lounge', 5, 3, 'Aifs0HuKHEyYP7YiUc6Msw', 'Loungebereich', 100, 90, 294, 5, 'open'),
+(43, 'lounge', 5, 3, 'Rju8PkpzS0SNgWubWXBPXg', 'Loungebereich', 100, 90, 100, 5, 'open'),
+(44, 'lounge', 6, 4, '3kpOoMtdxU2Vfk35ioHU0Q', 'Loungebereich', 99, 90, 101, 176, 'open'),
+(45, '', 4, 2, 'QcuoWSAEwk6XqEQEKQFchQ', 'Loungebereich', 80, 36, 306, 204, 'open'),
+(46, '', 4, 2, '9QwoL48I1UK9VbtEXFc1og', 'Loungebereich', 100, 90, 488, 175, 'open'),
+(47, '', 4, 2, 'cVb6gpSnx0WT5fn2gRbfIg', 'Loungebereich', 80, 36, 693, 203, 'open'),
+(51, '', 5, 2, 'YfYdqyCrH02p5AqCTSq6MQ', 'Markise', 40, 73, 728, 338, 'open'),
+(52, '', 5, 2, 'jecmM93s3EOjQmVe0aTXZg', 'Markise', 40, 73, 556, 339, 'open'),
+(53, '', 5, 2, 'xBccO5XaMkWntuS34hOCTw', 'Markise', 43, 75, 383, 336, 'open'),
+(54, '', 5, 2, 'lQXh61LY70aWeeS6G0DHfA', 'Markise2', 40, 73, 214, 338, 'open'),
+(55, '', 2, 1, 'Svu97xQrrkOMllNdQFeBcg', 'Markise', 40, 40, 214, 472, 'open'),
+(56, '', 2, 1, 'lyQTRwARyUqNCcMIDerMlA', 'Markise', 40, 38, 385, 471, 'open'),
+(57, '', 5, 2, '8Zp8QKBzn0mvkHPsIAEaSA', 'Markise', 40, 72, 555, 485, 'open'),
+(58, '', 5, 2, '8Zp8QKBzh0mvkHPsIAEaSA', 'Markise', 40, 75, 727, 483, 'open'),
+(61, 'hochtisch', 4, 2, '8Zp8QK2zn0mvkHPsIAEaSA', 'Unbekannt', 40, 38, 855, 490, 'open'),
+(62, 'hochtisch', 4, 2, '8Zp8QK2zn0mvkHPsIAEaS1', 'Unbekannt', 40, 38, 855, 387, 'open'),
+(63, 'hochtisch', 4, 2, '8Zp8QK2zn0mvkHPsIAEaSE', 'Loungebereich', 40, 35, 854, 204, 'open'),
+(71, '', 3, 2, '1Zp8QK2zn0mvkHPsIAEaSE', 'Restaurant', 37, 55, 836, 785, 'open'),
+(72, '', 2, 1, 'RZp8QK2zn0mvkHPsIAEaSE', 'Restaurant', 37, 55, 938, 785, 'open'),
+(73, '', 2, 1, 'RZp8QK2zn0mvkHPsIAEaTR', 'Restaurant', 37, 55, 1040, 785, 'open'),
+(74, '', 3, 2, 'RZp8QK2zn0mvkHPsIAEaa2', 'Restaurant', 38, 55, 1140, 785, 'open'),
+(75, '', 8, 4, 'RZp8QK2zn0mveWPsIAEaa2', 'Restaurant', 177, 34, 925, 870, 'open'),
+(76, '', 4, 2, 'RZp8QK2zn0mveWPsIAEaaq', 'Restaurant', 60, 32, 1120, 951, 'open'),
+(77, '', 4, 2, 'RZp8QK2zn0mveWPsIAEaaG', 'Restaurant', 60, 32, 1120, 1031, 'open'),
+(78, '', 2, 1, 'RZp8QK2zn0mveWPsIAEavA', 'Restaurant', 34, 32, 1035, 1031, 'open'),
+(79, '', 2, 1, 'RZp8QK2bH0mveWPsIAEavA', 'Restaurant', 34, 32, 1035, 951, 'open'),
+(81, '', 3, 2, 'RZp8fK2bH0mveWPsIAEav3', 'Restaurant', 34, 55, 483, 785, 'open'),
+(82, '', 3, 2, 'RZp8fK2bH0mveWPsIAEavt', 'Restaurant', 34, 55, 585, 785, 'open'),
+(83, '', 3, 2, 'RZp8fK2bH0mveWPsIAEav6', 'Restaurant', 37, 55, 685, 785, 'open'),
+(84, '', 2, 1, 'RZp8fK2bH0mveWPsIAEavm', 'Restaurant', 36, 32, 637, 870, 'open'),
+(85, '', 2, 1, 'AZp8fK2bH0mveWPsIAEav2', 'Restaurant', 36, 32, 530, 870, 'open'),
+(98, 'lounge', 8, 4, 'yJGSumzsqEGLainM1jCRJw', 'Eingang', 100, 180, 1775, 658, 'open'),
+(99, 'lounge', 10, 6, 'rRNLXwxp9Ea8c4WOkl5p9w', 'Eingang', 100, 180, 1775, 895, 'open');
 
 -- --------------------------------------------------------
 
@@ -300,17 +355,31 @@ CREATE TABLE `ruser` (
 --
 
 INSERT INTO `ruser` (`userID`, `userName`, `userPW`, `userIP`, `userActive`, `userPermission`, `userCookie`) VALUES
-(1, 'b32cb8284e95d0b29dc79c649a10d20c', 'b32cb8284e95d0b29dc79c649a10d20c', '', 1, '1', '78f2c92eb87789126c4f730b8f6e35d5');
+(1, 'b32cb8284e95d0b29dc79c649a10d20c', 'b32cb8284e95d0b29dc79c649a10d20c', '', 1, '1', 'ae242d2218b18bad561d7cbb81c7dc4d');
 
 --
 -- Indizes der exportierten Tabellen
 --
 
 --
+-- Indizes für die Tabelle `rblacklist`
+--
+ALTER TABLE `rblacklist`
+  ADD PRIMARY KEY (`bID`),
+  ADD UNIQUE KEY `bMail` (`bMail`),
+  ADD UNIQUE KEY `bTNR` (`bTNR`);
+
+--
 -- Indizes für die Tabelle `rclient`
 --
 ALTER TABLE `rclient`
   ADD PRIMARY KEY (`clientID`);
+
+--
+-- Indizes für die Tabelle `rdays`
+--
+ALTER TABLE `rdays`
+  ADD PRIMARY KEY (`daysID`);
 
 --
 -- Indizes für die Tabelle `rnoshow`
@@ -324,6 +393,18 @@ ALTER TABLE `rnoshow`
 --
 ALTER TABLE `rreserve`
   ADD PRIMARY KEY (`reserveID`);
+
+--
+-- Indizes für die Tabelle `rsettings`
+--
+ALTER TABLE `rsettings`
+  ADD PRIMARY KEY (`sID`);
+
+--
+-- Indizes für die Tabelle `rspecial`
+--
+ALTER TABLE `rspecial`
+  ADD PRIMARY KEY (`spID`);
 
 --
 -- Indizes für die Tabelle `rtable`
@@ -348,16 +429,40 @@ ALTER TABLE `ruser`
 --
 
 --
+-- AUTO_INCREMENT für Tabelle `rblacklist`
+--
+ALTER TABLE `rblacklist`
+  MODIFY `bID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT für Tabelle `rdays`
+--
+ALTER TABLE `rdays`
+  MODIFY `daysID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
 -- AUTO_INCREMENT für Tabelle `rnoshow`
 --
 ALTER TABLE `rnoshow`
-  MODIFY `nsID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `nsID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT für Tabelle `rreserve`
 --
 ALTER TABLE `rreserve`
-  MODIFY `reserveID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=149;
+  MODIFY `reserveID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=171;
+
+--
+-- AUTO_INCREMENT für Tabelle `rsettings`
+--
+ALTER TABLE `rsettings`
+  MODIFY `sID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT für Tabelle `rspecial`
+--
+ALTER TABLE `rspecial`
+  MODIFY `spID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT für Tabelle `rtime`

@@ -25,7 +25,7 @@ if(isset($_GET['getReservierungen'])){
 
 if(isset($_POST['confirmDay'])){
    // Wenn return true dann Restaurant am Tag geschlossen
-  if(checkDayActive($_POST['confirmDay'])){ echo '1'; return; } else { echo '0'; return; }
+  if(checkDayActive($_POST['confirmDay']) || checkEventOnDay($_POST['confirmDay'])){ echo '1'; return; } else { echo '0'; return; }
 }
 
 if(isset($_POST['getOverview']) && isset($_POST['oDate'])){
@@ -297,10 +297,7 @@ if(isset($_POST['getTableActive'])){
   $statement = "SELECT tableActive FROM rtable WHERE tableID = '$id' LIMIT 1";
   $query = $con -> query($statement);
   $query = $query->fetch_array(MYSQLI_ASSOC);
-  if($query['tableActive']){
-    echo $query['tableActive'];
-    return;
-  }
+  if($query['tableActive']){ echo $query['tableActive']; return; }
   echo "0";
   return;
 }
@@ -557,6 +554,13 @@ function checkDayActive($date) {
     return 0;
   }
   return 0;
+}
+function checkEventOnDay($date) {
+  $con = connect();
+  $query = $con->prepare("SELECT * FROM rspecial WHERE spDate = '$date'");
+  $query->execute(); $result = $query->get_result();
+  $row = $result->fetch_array(MYSQLI_ASSOC);
+  if(sizeof($row) >= 1){ return true; } return false;
 }
 
 function getFeiertage(){

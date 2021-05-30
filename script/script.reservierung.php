@@ -15,7 +15,7 @@ class Reservierung extends Overview {
   public function tableExists() {
     $db = new Overview();
     $con = $db->connectDatabase();
-    $query = $con->query("SELECT tableID FROM rTable WHERE tableID = '$this->tID'");
+    $query = $con->query("SELECT tableID FROM rtable WHERE tableID = '$this->tID'");
     if(mysqli_num_rows($query)==1){
       return true;
     }
@@ -25,7 +25,7 @@ class Reservierung extends Overview {
   public function loadReservierungenList() {
     $db = new Overview();
     $con = $db->connectDatabase();
-    $statement = "SELECT reserveID, reserveTime, reserveState FROM rReserve WHERE tableID='$this->tID' AND reserveDate='$this->rDate' ORDER BY reserveBlock ASC";
+    $statement = "SELECT reserveID, reserveTime, reserveState FROM rreserve WHERE tableID='$this->tID' AND reserveDate='$this->rDate' ORDER BY reserveBlock ASC";
     $query = $con->query($statement) or die();
     if($query){
       $data = array();
