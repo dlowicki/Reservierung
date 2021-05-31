@@ -27,4 +27,18 @@ if(isset($_POST['saveTisch'])){
     if($query === TRUE){ echo '1'; return; } echo '0'; return;
   } echo '0'; return;
 }
+
+if(isset($_POST['deleteTisch'])){
+  $id = $_POST['deleteTisch'];
+  $db = new Overview(); $con = $db->connectDatabase();
+  $query = $con->query("DELETE FROM rtable WHERE tableID = '$id'");
+  if($query === TRUE){ echo '1'; return; } echo '0'; return;
+}
+
+if(isset($_POST['addTisch'])){
+  $db = new Overview(); $con = $db->connectDatabase();
+  $uniq = md5(uniqid());
+  $query = $con->query("INSERT INTO rtable (tableID, tableType, tableMax, tableMin, tableCode, tablePlace, tableWidth, tableHeight, tableX, tableY, tableActive) VALUES (null,'','2','1','$uniq','','100','100','0','0','open')");
+  if($query === TRUE){ echo '1'; return; } echo '0'; return;
+}
 ?>

@@ -37,6 +37,8 @@
       .objektBox { width: 75%; height: auto; margin-top: 10px; margin-left: auto; margin-right: auto; }
       .objektBox h3 { text-align: center; }
       .objekt-data { display: flex;  font-size: 1.3rem; flex-direction: row; width: 100%; margin: 10px 0px 0px 0px; }
+      .objekt-data:first-of-type { display: flex; text-align: center; font-size: 1.3rem; width: 100%; margin: 10px 0px 0px 0px; }
+      .objekt-data:first-of-type button { margin-top: 0px; margin-bottom: 15px; }
       .objekt-data label { width: 65px; margin: 0px 10px 0px 10px; text-align: center; }
       .objekt-data input { width: 100px; outline: none; font-size: 1.3rem;  }
       .objektBox button { width: 100px; margin-left: auto; margin-right: auto; margin-top: 15px; padding: 5px; border: 1px solid black; cursor: pointer; }
@@ -96,13 +98,14 @@
         </div>
         <h5>Objekt</h5>
         <div class="objektBox">
+          <div class="objekt-data"><button id="button-add">Hinzufügen</button></div>
           <h3>Unbekannt</h3>
           <div class="objekt-data"><label>X</label><input type="number" id="obj-x" placeholder="X..."></div>
           <div class="objekt-data"><label>Y</label><input type="number" id="obj-y" placeholder="Y..."></div>
           <div class="objekt-data"><label>Width</label><input type="number" id="obj-width" placeholder="Width..."></div>
           <div class="objekt-data"><label>Height</label><input type="number" id="obj-height" placeholder="Height..."></div>
           <div class="objekt-data"><label>Place</label><input type="text" id="obj-place" placeholder="Place..."></div>
-          <div class="objekt-data"><button id="button-speichern">Speichern</button></div>
+          <div class="objekt-data"><button id="button-delete">Entfernen</button><button id="button-speichern">Speichern</button></div>
         </div>
         <h5>Hintergrund</h5>
         <div class="uploadBox">
@@ -180,6 +183,24 @@
         success: function(result) {
           if(result=='1'){ location.reload(); return; }
           alert('Tisch konnte nicht aktualisiert werden! \n Fehler: '+result); return;
+        }
+        });
+      });
+      $('#button-delete').click(() => {
+        var objID = $('.objektBox h3').text();
+        if(objID == "Unbekannt"){ alert('Bitte zuerst einen Tisch auswählen!'); return; }
+        if(confirm('Soll Tisch '+objID+' wirklich entfernt werden?')){
+          $.ajax({ url: "script/sync-tischplan.php", method: "POST", data: { deleteTisch:objID },
+          success: function(result) {
+            if(result=='1'){ location.reload(); return; } alert('Tisch konnte nicht entfernt werden! \n Fehler: '+result); return;
+          }
+          });
+        }
+      });
+      $('#button-add').click(()=>{
+        $.ajax({ url: "script/sync-tischplan.php", method: "POST", data: { addTisch:'true' },
+        success: function(result) {
+          if(result=='1'){ location.reload(); return; } alert('Tisch konnte nicht erstellt werden! \n Fehler: '+result); return;
         }
         });
       });
