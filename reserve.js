@@ -17,18 +17,14 @@ $(document).ready(function(){
     if(dateToSQL() > rc[0] && rc[0] != 'admin'){ viewCalendar(); return; }
   }
 
-  (async() => { await userCheck().then(function(result){ if(result == true){ $('.icon-user').css("color","green"); } }); })();
   // Lade Tische async mit Ampelsystem
   (async() => { await loadTables(localStorage.getItem('rCalendar').split(';')[0]); })();
 
   $(document).on('click','.table', function(){
     if($('.form-table').length <= 0){
-	    (async() => {
-  			var id = jQuery(this).attr("id").split("-")[1];
-  			await userCheck().then(function(result){
-  				if(result == false){ viewTable(id, localStorage.getItem('rCalendar').split(';')[0]); } else { window.location.href = "admin.php?reservierungen&table="+id+"&date="; }
-  			});
-		  })();
+      var id = jQuery(this).attr("id").split("-")[1];
+      var usercheck = userCheck();
+      if(usercheck == false){ viewTable(id, localStorage.getItem('rCalendar').split(';')[0]); } else { window.location.href = "admin.php?reservierungen&table="+id+"&date="; }
     }
   });
 
@@ -37,7 +33,7 @@ $(document).ready(function(){
 });
 
 
-async function userCheck() {
+/*async function userCheck() {
 	let result;
 	try {
 		var d = "";
@@ -49,7 +45,7 @@ async function userCheck() {
 	} catch(err){
 		console.log("Error " + err);
 	}
-}
+}*/
 
 async function loadTables(date) {
   let result;

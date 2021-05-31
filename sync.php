@@ -90,7 +90,38 @@ function loadAmpelFortable($tableID, $date) {
   return false;
 }
 
+if(isset($_POST['hubName']) && isset($_POST['hubSecure'])){
+  if(r($_POST['hubName']) == false && r($_POST['hubSecure']) == false){
+    $con = connect(); $name=$_POST['hubName']; $pw = $_POST['hubSecure'];
+    $query = $con->query("SELECT userName, userPW FROM ruser WHERE userName = '$name' AND userActive = '1'");
 
+    if($query){
+      foreach ($query as $key) {
+        if($key['userName'] == $name && $key['userPW'] == $pw){
+          $cookie = md5(uniqid());
+          $query2 = $con->query("UPDATE ruser SET userCookie = '$cookie' WHERE userName = '$name'");
+          if($query2===TRUE){
+            setcookie("rSession", $cookie, time()+86400, "/"); // Für einen Tag
+            echo "1";
+            return;
+          }
+          echo "0";
+          return;
+        }
+      }
+    }
+
+  }
+  echo "0";
+  return;
+}
+
+if(isset($_POST['userCheck'])){
+  $con = connect(); $cookieUser = $_POST['userCheck'];
+  $query = $con->query("SELECT userCookie FROM ruser WHERE userCookie = '$cookieUser'");
+  if($query){ foreach ($query as $key) { if($key['userCookie'] == $cookieUser) { echo md5($key['userCookie']); return; } } }
+  echo "0"; return;
+}
 
 if(isset($_POST['createReserve'])){
   $daten = $_POST['createReserve'];
@@ -146,43 +177,7 @@ if(isset($_POST['createReserve'])){
   } echo "0"; return;
 }
 
-if(isset($_POST['hubName']) && isset($_POST['hubSecure'])){
-  if(r($_POST['hubName']) == false && r($_POST['hubSecure']) == false){
-    $con = connect();
-    $query = $con->prepare("SELECT userName, userPW FROM ruser WHERE userName = ? AND userActive = '1'");
-    $query->bind_param('s',$_POST['hubName']);
-    $query->execute();
 
-    $result = $query->get_result();
-    $row = $result->fetch_array(MYSQLI_ASSOC);
-
-    if(sizeof($row) >= 1){
-      if($row['userName'] == $_POST['hubName'] && $row['userPW'] == $_POST['hubSecure']){
-        $cookie = md5(uniqid()); $n = $_POST['hubName'];
-        $query2 = $con->query("UPDATE ruser SET userCookie = '$cookie' WHERE userName = '$n'");
-        if($query2===TRUE){
-          setcookie("rSession", $cookie, time()+86400, "/"); // Für einen Tag
-          echo "1";
-          return;
-        }
-        echo "0";
-        return;
-      }
-    }
-
-  }
-  echo "0";
-  return;
-}
-
-if(isset($_POST['user'])){
-  $con = connect(); $cookieUser = $_POST['user'];
-  $query = $con->query("SELECT userCookie FROM ruser WHERE userCookie = '$cookieUser'");
-  if($query){
-    foreach ($query as $key => $value) { if($value == $cookieUser) { echo md5($row['userCookie']); return; } }
-   }
-  echo "0"; return;
-}
 
 if(isset($_POST['remove'])){
   $con = connect();

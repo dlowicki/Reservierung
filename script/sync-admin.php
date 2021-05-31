@@ -9,6 +9,9 @@ if(isAdmin() != true){ return; }
 * Mail und ID = Unique
 *
 */
+
+
+
 if(isset($_POST['nsAmount']) && isset($_POST['nsMail']) && isset($_POST['nsTNR']) && isset($_POST['nsTime']) && isset($_POST['nsID'])){
   $id = trim($_POST['nsID']); // Erhalte ID von POST (trim)
   $amount = trim($_POST['nsAmount']); // Erhalte Anzahl von POST (trim)

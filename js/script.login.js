@@ -1,23 +1,16 @@
 $(document).ready(()=>{
   // Überprüfe Login
-  (async() => { await userCheck().then(function(result){ if(result == true){ $('.icon-user').css("color","green"); } }); })();
+  if(userCheck() == CryptoJS.MD5(getCookie('rSession')).toString()){ $('.icon-user').css("color","green"); }
+
 
 });
 
 // UserCheck nochmal überprüfen. Daten mittels PHP abgleichen nicht Javascript weil unsicher manipulation
-async function userCheck() {
-	let result;
-	try {
-		var d = "";
-		var c = getCookie('rSession');
-		$.ajax({ url: "sync.php", method: "POST", data: { user: c }, success: function(result) {
-      if(d.toString() == CryptoJS.MD5(c).toString()){ return true; } return false;
-     }
-		});
-
-	} catch(err){
-		console.log("Error " + err);
-	}
+function userCheck() {
+var c = getCookie('rSession');
+var rs = "";
+rs = $.ajax({ url: "sync.php", method: "POST", async: false, data: { userCheck: c }, success: function(result) { rs = result.toString(); } });
+return rs.responseText;
 }
 
 function viewLogin() {
@@ -27,24 +20,18 @@ function viewLogin() {
 	$('#viewLogin').append('<i class="fa fa-times fa-2x" onClick="loginClose()"></i><i class="fa fa-user-circle fa-5x login-icon"></i>');
 
   if(getCookie("rSession") != ""){
-    try {
 	   $('#viewLogin').css("height","300px");
-	  (async() => {
-		const uc = await userCheck().then(function(result){
-			if(result == true){
-				$('#viewLogin').append('<h3>Bereits angemeldet</h3>');
-				var today = new Date();
-				var dd = String(today.getDate()).padStart(2, '0'); var mm = String(today.getMonth() + 1).padStart(2, '0'); var yyyy = today.getFullYear();
-				today = "'" + yyyy + "-" + mm + "-" + dd + "'";
-
-				$('#viewLogin').append('<button id="login-NoShow">Übersicht</button>');
-				$('#viewLogin').append('<button onClick="submitLogoff()">Abmelden</button>');
-			} else {
-				submitLogoff();
-			}
-		});
-	  })();
-    } catch(e){ console.log(e); }
+     var usercheck = userCheck();
+     if(usercheck == CryptoJS.MD5(getCookie('rSession')).toString()){
+       $('#viewLogin').append('<h3>Bereits angemeldet</h3>');
+       var today = new Date();
+       var dd = String(today.getDate()).padStart(2, '0'); var mm = String(today.getMonth() + 1).padStart(2, '0'); var yyyy = today.getFullYear();
+       today = "'" + yyyy + "-" + mm + "-" + dd + "'";
+       $('#viewLogin').append('<button id="login-NoShow">Übersicht</button>');
+       $('#viewLogin').append('<button onClick="submitLogoff()">Abmelden</button>');
+     } else {
+       submitLogoff();
+     }
   } else {
 	$('#viewLogin').append('<form id="form-login" onsubmit="event.preventDefault();"></form>');
 	$('#form-login').append('<input type="text" id="hubraumName" placeholder="Name..."><input type="password" id="hubraumSecure" placeholder="Passwort..."><input type="submit" onClick="submitLogin()" value="Login">');
@@ -59,10 +46,13 @@ function loginClose() {
 
 function submitLogin(){
   var n = $('#hubraumName').val(); var p = $('#hubraumSecure').val();
-  if(n.length >= 5 && p.length >= 7){
+  if(n.length >= 5 && p.length >= 5){
     $.ajax({
       url: "sync.php", method: "POST", data: { hubName: n, hubSecure: CryptoJS.MD5(p).toString() },
-      success: function(result) { /*location.reload();*/ loginClose(); }
+      success: function(result) {
+        if(result!='1'){ alert('Ein Fehler ist aufgetreten! \n'+result); }
+        location.reload(); loginClose(); return;
+      }
     });
   }
 }
