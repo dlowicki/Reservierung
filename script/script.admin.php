@@ -209,6 +209,30 @@ class Overview
     } return false;
   }
 
+
+  public function getUserData(){
+    $con = $this->connectDatabase();
+    $query = $con->query('SELECT * FROM ruser');
+    if($query){
+      $arr = array(); $r=0;
+      foreach ($query as $key) {
+        $arr[$r]['userID'] = $key['userID'];
+        $arr[$r]['userName'] = $key['userName'];
+        $arr[$r]['userPW'] = $key['userPW'];
+        $arr[$r]['userIP'] = $key['userIP'];
+        $arr[$r]['userActive'] = $key['userActive'];
+        $arr[$r]['userPermission'] = $key['userPermission'];
+        $arr[$r]['userCookie'] = $key['userCookie'];
+        $r++;
+      }
+      return $arr;
+    }
+    return false;
+  }
+
+
+
+
 }
 
 ?>

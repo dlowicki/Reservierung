@@ -273,12 +273,55 @@ require_once('sync.php');
                 echo '</div>';
               echo '</div>';
             echo '</div>';
+        } elseif(isset($_GET['rechte'])){
+          echo '<div class="rechte-container">';
+            $overview = new Overview();
+            $users = $overview->getUserData();
+
+            foreach ($users as $key) {
+              echo '<div class="rechte-data">';
+                echo '<p>'.$key["userName"].'</p>';
+                echo '<p>'.$key["userIP"].'</p>';
+                echo '<p> </p>';
+                if($key['userActive'] == '1'){
+                  echo '<label class="switch"><input type="checkbox" class="switch-user" id="switch-user-'.$key["userID"].'" checked><span class="slider round"></span></label>';
+                } else {
+                  echo '<label class="switch"><input type="checkbox" class="switch-user" id="switch-user-'.$key["userID"].'"><span class="slider round"></span></label>';
+                }
+                echo '<button id="button-abmelden" class="'.$key["userID"].'">User abmelden</button>';
+                echo '<button id="button-delete" class="'.$key["userID"].'">Löschen</button>';
+                echo '</div>';
+            }
+            echo '<button id="button-useradd">Neuer User</button>';
+          echo '</div>';
         }
 
         ?>
       </div>
     </div>
     <script type="text/javascript">
+    /* RECHTE USER */
+    $(document).on('change','.switch-user',function(){
+      var check = $(this).prop("checked"); var id = $(this).attr('id').split('-')[2];
+      if(check == false) { check = 0; } else { check=1; }
+      $.ajax({
+        url: "script/sync-admin.php",
+        method: "POST",
+        data: { userSwitch: id+';'+check},
+        success: function(result) {
+          if(result!="1"){ alert("Ein Fehler ist aufgetreten \n" + result); } return;
+        }
+      });
+    });
+    $(document).on('click','#button-abmelden',function(){
+      var id = $(this).attr('class');
+      $.ajax({
+        url: "script/sync-admin.php",
+        method: "POST",
+        data: { userAbmelden: id},
+        success: function(result) { if(result!="1"){ alert("Ein Fehler ist aufgetreten \n" + result); } return; }
+      });
+    });
 
     /* ZEITT */
     $(document).on('change','.arbeitstag input', function(){

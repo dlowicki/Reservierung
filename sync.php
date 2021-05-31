@@ -158,11 +158,10 @@ if(isset($_POST['hubName']) && isset($_POST['hubSecure'])){
 
     if(sizeof($row) >= 1){
       if($row['userName'] == $_POST['hubName'] && $row['userPW'] == $_POST['hubSecure']){
-        $cookie = md5(uniqid());
-        $n = $_POST['hubName'];
+        $cookie = md5(uniqid()); $n = $_POST['hubName'];
         $query2 = $con->query("UPDATE ruser SET userCookie = '$cookie' WHERE userName = '$n'");
         if($query2===TRUE){
-          setcookie("rSession", $cookie, time()+86400, "/"); // Für eine Stunde
+          setcookie("rSession", $cookie, time()+86400, "/"); // Für einen Tag
           echo "1";
           return;
         }
@@ -177,16 +176,11 @@ if(isset($_POST['hubName']) && isset($_POST['hubSecure'])){
 }
 
 if(isset($_POST['user'])){
-  $con = connect();
-  $query = $con->prepare("SELECT userCookie FROM ruser WHERE userCookie = ?");
-  $query->bind_param('s',$_POST['user']);
-
-  $query->execute();
-
-  $result = $query->get_result();
-  $row = $result->fetch_array(MYSQLI_ASSOC);
-
-  if(sizeof($row) >=1 ){ if($row['userCookie'] == $_POST['user']) { echo md5($row['userCookie']); return; } }
+  $con = connect(); $cookieUser = $_POST['user'];
+  $query = $con->query("SELECT userCookie FROM ruser WHERE userCookie = '$cookieUser'");
+  if($query){
+    foreach ($query as $key => $value) { if($value == $cookieUser) { echo md5($row['userCookie']); return; } }
+   }
   echo "0"; return;
 }
 
@@ -527,6 +521,7 @@ function getIP() {
   $userIP = isset($_SERVER['HTTP_CLIENT_IP']) ? $_SERVER['HTTP_CLIENT_IP'] : isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
   return $userIP;
 }
+// epvvZ3nmA2#HzbTe
  // verschlüsseln
 function encrypt($value, $key) { return openssl_encrypt($value, "AES-128-ECB", $key); }
 // entschlüsseln

@@ -17,6 +17,7 @@ $(document).ready(function(){
     if(dateToSQL() > rc[0] && rc[0] != 'admin'){ viewCalendar(); return; }
   }
 
+  (async() => { await userCheck().then(function(result){ if(result == true){ $('.icon-user').css("color","green"); } }); })();
   // Lade Tische async mit Ampelsystem
   (async() => { await loadTables(localStorage.getItem('rCalendar').split(';')[0]); })();
 

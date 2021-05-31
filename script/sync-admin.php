@@ -191,6 +191,19 @@ if(isset($_POST['updateReserveAmount']) && isset($_POST['amount'])){
   echo "0"; return;
 }
 
+/* RECHTE USER */
+if(isset($_POST['userSwitch'])){
+  $db = new Overview(); $con = $db->connectDatabase();
+  $exp = explode(';',$_POST['userSwitch']);
+  $query = $con->query("UPDATE ruser SET userActive = $exp[1] WHERE userID = $exp[0]");
+  if($query === TRUE){ echo '1'; return; } echo '0'; return;
+}
+if(isset($_POST['userAbmelden'])){
+  $db = new Overview(); $con = $db->connectDatabase(); $id = $_POST['userAbmelden'];
+  $query = $con->query("UPDATE ruser SET userCookie = '' WHERE userID = $id");
+  if($query === TRUE){ echo '1'; return; } echo '0'; return;
+}
+
 
 function isAdmin(){
   $db = new Overview();
@@ -384,5 +397,4 @@ function deleteSpecialDay($id){
   $query = $con->query("DELETE FROM rspecial WHERE spID = $id") or die();
   if($query === TRUE){ return true; } return false;
 }
-
 ?>

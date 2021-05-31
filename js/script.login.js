@@ -10,10 +10,11 @@ async function userCheck() {
 	try {
 		var d = "";
 		var c = getCookie('rSession');
-		result = $.ajax({ url: "sync.php", method: "POST", data: { user: c }, success: function(result) { d = result; }
+		$.ajax({ url: "sync.php", method: "POST", data: { user: c }, success: function(result) {
+      if(d.toString() == CryptoJS.MD5(c).toString()){ return true; } return false;
+     }
 		});
-		await new Promise((resolve, reject) => setTimeout(resolve, 100));
-		if(d.toString() == CryptoJS.MD5(c).toString()){ return true; } return false;
+
 	} catch(err){
 		console.log("Error " + err);
 	}
@@ -60,8 +61,8 @@ function submitLogin(){
   var n = $('#hubraumName').val(); var p = $('#hubraumSecure').val();
   if(n.length >= 5 && p.length >= 7){
     $.ajax({
-      url: "sync.php", method: "POST", data: { hubName: CryptoJS.MD5(n).toString(), hubSecure: CryptoJS.MD5(p).toString() },
-      success: function(result) { location.reload(); loginClose(); }
+      url: "sync.php", method: "POST", data: { hubName: n, hubSecure: CryptoJS.MD5(p).toString() },
+      success: function(result) { /*location.reload();*/ loginClose(); }
     });
   }
 }
