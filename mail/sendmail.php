@@ -5,16 +5,17 @@ require("phpmailer/PHPMailerAutoload.php");
 function sendMail($tableID, $datum, $blockTime, $anzahl, $to){
 	$mail = new PHPMailer;
 	//mertero123
-	
+
 	$mail->isSMTP();
-	$mail->Host = 'smtp.ionos.de';  					// Specify main and backup SMTP servers
+	//$mail->Host = 'smtp.ionos.de';  					// Specify main and backup SMTP servers
+	$mail->Host = 'mails.incoweb.de';
 	$mail->SMTPAuth = true;                           	// Enable SMTP authentication
-	$mail->Username = 'no-reply@mertero.de';     		// SMTP username
-	$mail->Password = 'mertero123';                     // SMTP password
+	$mail->Username = 'reservierung@hubraum-durlach.de';     		// SMTP username
+	$mail->Password = 'LeNTabeLog';                     // SMTP password
 	$mail->SMTPSecure = 'tls';                        	// Enable TLS encryption, `ssl` also accepted
 	$mail->Port = 587;                                	// TCP port to connect to
 
-	$mail->From = 'no-reply@mertero.de';
+	$mail->From = 'reservierung@hubraum-durlach.de';
 	$mail->FromName = 'HubRaum-Durlach';
 
 

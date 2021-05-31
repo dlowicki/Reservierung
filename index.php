@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservierung | Hubraum</title>
-    <!-- <link rel="stylesheet" href="css/table.css"> -->
     <link rel="stylesheet" href="css/change.css">
     <link rel="stylesheet" media="screen and (max-width: 700px)" href="css/reserve_small.css">
     <link rel="stylesheet" media="screen and (max-width: 1199px) and (min-width: 700px)" href="css/reserve_mid.css">
@@ -16,11 +15,6 @@
     <script src="fetch.js" charset="utf-8"></script>
     <script src="js/script.calendar.js"> </script>
     <script src="js/script.login.js"> </script>
-
-    <style media="screen">
-
-    </style>
-
   </head>
   <body>
     <!--
