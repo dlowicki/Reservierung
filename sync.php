@@ -357,6 +357,11 @@ function connect() {
   $username = "shop";
   $password = "123456";
   $db = "reservierung";
+  /*
+  $servername = "127.0.0.1:3306";
+$username = "w10072res";
+$password = "jHwsa2rr";
+$db = "w10072res";*/
 
   $conn = new mysqli($servername, $username, $password, $db); // Create connection
 
@@ -553,9 +558,10 @@ function checkEventOnDay($date) {
   if(sizeof($row) >= 1){ return true; } return false;
 }
 
+//https://reservierung.hubraum-durlach.de/script/load.feiertag.php
 function getFeiertage(){
   $arr = array();
-  $json = json_decode(file_get_contents('http://localhost:8012/Reservierung%20-%20Github/script/load.feiertag.php'));
+  $json = json_decode(file_get_contents('http://localhost/html/Reservierung/script/load.feiertag.php'));
   foreach ($json as $key => $value) { array_push($arr, $value->{'date'}); }
   return $arr;
 }

@@ -203,7 +203,8 @@ if(isset($_POST['userSwitch'])){
 }
 if(isset($_POST['userAbmelden'])){
   $db = new Overview(); $con = $db->connectDatabase(); $id = $_POST['userAbmelden'];
-  $query = $con->query("UPDATE ruser SET userCookie = '' WHERE userID = $id");
+  $uniq = md5(uniqid());
+  $query = $con->query("UPDATE ruser SET userCookie = '$uniq' WHERE userID = $id");
   if($query === TRUE){ echo '1'; return; } echo '0'; return;
 }
 

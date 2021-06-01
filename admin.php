@@ -282,17 +282,26 @@ require_once('sync.php');
               echo '<div class="rechte-data">';
                 echo '<p>'.$key["userName"].'</p>';
                 echo '<p>'.$key["userIP"].'</p>';
-                echo '<p> </p>';
                 if($key['userActive'] == '1'){
                   echo '<label class="switch"><input type="checkbox" class="switch-user" id="switch-user-'.$key["userID"].'" checked><span class="slider round"></span></label>';
                 } else {
                   echo '<label class="switch"><input type="checkbox" class="switch-user" id="switch-user-'.$key["userID"].'"><span class="slider round"></span></label>';
                 }
-                echo '<button id="button-abmelden" class="'.$key["userID"].'">User abmelden</button>';
-                echo '<button id="button-delete" class="'.$key["userID"].'">Löschen</button>';
+                echo '<div class="rechte-buttons">';
+                  echo '<button id="button-bearbeiten" class="'.$key["userID"].'">Bearbeiten</button>';
+                  echo '<button id="button-abmelden" class="'.$key["userID"].'">User abmelden</button>';
+                  echo '<button id="button-delete" class="'.$key["userID"].'">Löschen</button>';
+                echo '</div>';
                 echo '</div>';
             }
             echo '<button id="button-useradd">Neuer User</button>';
+
+          echo '</div>';
+          echo '<div id="viewBearbeiten">';
+            echo '<input type="text" id="bearbeiten-name">';
+            echo '<input type="text" id="bearbeiten-old">';
+            echo '<input type="text" id="bearbeiten-new">';
+            echo '<button id="bearbeiten-save">Speichern</button>';
           echo '</div>';
         }
 
@@ -321,6 +330,9 @@ require_once('sync.php');
         data: { userAbmelden: id},
         success: function(result) { if(result!="1"){ alert("Ein Fehler ist aufgetreten \n" + result); } return; }
       });
+    });
+    $(document).on('click','#button-bearbeiten',function(){
+      $('.rechte-container').append('<div id="viewBearbeiten"></div>');
     });
 
     /* ZEITT */

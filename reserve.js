@@ -1,9 +1,20 @@
+/*
+Zu beachten bei Update auf hubRaum
+sync.php getFeiertage() URL bearbeiten
+Update Datenbank sync.php und script.admin.php
+
+$servername = "127.0.0.1:3306";
+$username = "w10072res";
+$password = "jHwsa2rr";
+$db = "w10072res";
+*/
+
+
 $(document).ready(function(){
   // DEBUG
   //viewTable(98);
   //viewReserved('36',1,'2021-05-21','6');
   //viewError('test123');
-
 
   // Table Parameter for QR Code
   tc=getTableParameter();
@@ -211,102 +222,9 @@ $(document).on('change','#timeDate',function(event){
       }
     }
   });
-
-
-
 });
 
 
-
-
-/*
-function checkTimeFrom(t) {
-  $('#timeDuration').css("color","black");
-  $('#timeLabel').css("color","black");
-
-
-  // Reservierungen anzeigen lassen
-  //setTimeout(function(){ getReservierungen(t, $('#timeDate').val()); }, 100);
-  var duration = $('#timeDuration').val(); // 1=2:30 2=Ganztags
-  var tf = $("#timeFrom").val();
-  var da = $("#timeDate").val();
-  $.ajax({
-    url: "sync.php",
-    method: "POST",
-    data: { getTime: t, sndDate: da },
-    success: function(result) {
-      const startTime = "17:00"; const endTime = "21:30"; // rID | rDate | rS | rE | rD | cc = clientConfirm | cn = clientname | rState
-      var r = new Date().toString().split(" ");
-      var timeDate = new Date(r[0] + " " + r[1] + " " + r[2] + " " + r[3] + " " + tf + ":00"); // ausgewählte Zeit in Date
-      if(result != false){ // Wenn für Tag Reservierungen existieren
-        var d = JSON.parse(result);
-        var ueberschneidung = new Array();
-        for (var i = 0; i < d.length; i++) {
-          // Wenn Reservierung Datenbank GANZTAGS und INPUT GANZTAGS
-          if(d[i]['rD'] == "gz" && duration == 2){ $('#timeDuration').css("color","red"); return false; }
-          if(d[i]['rState'] == 3 || d[i]['rState'] == 4){ continue; }
-
-          dateStart = new Date(d[i]['rDate']+" "+d[i]['rS']); // Startzeit in Datenbank
-          dateEnd = new Date(d[i]['rDate']+" "+d[i]['rE']);   // Endzeit in Datenbank
-
-          // Wenn Reservierung Datebank 2:30 und INPUT GANZTAGS
-          if(d[i]['rD'] == "2:30" && duration == 2){
-            // Wenn Endzeit < INPUT Reservierungszeit
-            if(dateEnd.getHours()+":"+dateEnd.getMinutes()<timeDate.getHours()+":"+timeDate.getMinutes()){
-              continue;
-            }
-          }
-
-          tfH = timeDate.getHours()+2;      // ausgewählte Zeit +2
-          tfM = timeDate.getMinutes()+30;   // ausgewählte Zeit +30
-          if(tfM >= 60){                    // Wenn ausgewählte Zeit + 30 Minuten größer als 60
-            tfH = timeDate.getHours()+3;
-            tfM = timeDate.getMinutes()+30-60; if(tfM.toString().length == 1){ tfM = "0"+tfM; }
-          }
-
-          // Wenn Reservierung Datenbank GANZTAGS und INPUT 2:30
-          if(d[i]['rD'] == "gz" && duration == 1){
-            // ausgewählte Uhrzeit + 2:30 kleiner gleich Startzeit in Datenbank
-            if(tfH+":"+tfM >= dateStart.getHours()+":"+dateStart.getMinutes()){
-              ueberschneidung[i] = true;
-              continue;
-            }
-          }
-
-          // Ausgewählte Zeit >= Startzeit in Datenbank
-          if(timeDate.getHours()+":"+timeDate.getMinutes()>=dateStart.getHours()+":"+dateStart.getMinutes() && timeDate.getHours()+":"+timeDate.getMinutes()<=dateEnd.getHours()+":"+dateEnd.getMinutes()){
-              ueberschneidung[i] = true;
-              continue;
-          }
-        }
-
-        //console.log("Überschneidung: " + ueberschneidung);
-        switch (ueberschneidung.includes(true)) {
-          case true:
-            $('#timeFrom').css("color","red");
-            return;
-            break;
-          case false:
-            if(tf >= startTime && tf <= endTime){ // Wenn Zeit größer gleich startTime und kleiner gleich endTime
-              $('#timeFrom').css("color","green");
-            } else {
-              $('#timeFrom').css("color","red");
-            }
-            break;
-        }
-
-      } else { // Keine Reservierungen gefunden
-        if(tf >= startTime && tf <= endTime){ // Wenn Zeit größer gleich startTime und kleiner gleich endTime
-          $('#timeFrom').css("color","green");
-        } else {
-          $('#timeFrom').css("color","red");
-        }
-      }
-
-    }
-  });
-}
-*/
 function getReservierungen(tableID, date) {
   $('#container-information-content').empty();
   // 0 = Reserviert | 1 = Eingetroffen | 2 = Frühzeitig beendet | 3 = Abgesagt | 4 = NoShow | 5 = Abweichende Anzahl + Eingetroffen
@@ -362,61 +280,7 @@ function viewCoronaInfo() {
 
 
 
-/*function getTableACP(id) {
-  $.ajax({
-    url: "sync.php",
-    method: "POST",
-    data: { getTableActive: id},
-    success: function(result) {
-      var src = $('#acp-table img').attr("src").split("/");
-      var tid = "'"+id+"'";
-      if(result == "open"){
-        $('#acp-table img').attr("src",src[0] + "/open/" + src[2]);
-        $('#acp-table').append('<label class="switch"><input type="checkbox" onChange="updateTable('+tid+')" checked><span class="slider round"></span></label>');
-        return;
-      }
-      $('#acp-table img').attr("src",src[0] + "/closed/" + src[2]);
-      $('#acp-table').append('<label class="switch"><input type="checkbox" onChange="updateTable('+tid+')"><span class="slider round"></span></label>');
-    }
-  });
-}*/
 
-
-
-/*function getReservierungenACP(t){
-  $('#container-information-content').empty();
-  // 0 = Reserviert | 1 = Eingetroffen | 2 = Frühzeitig beendet | 3 = Abgesagt | 4 = NoShow
-  var colors = ['#4ea8de','#2b9348','#ee6c4d','#ba181b','#006d77'];
-  var dt = $('#acpInputDate').val();
-  $.ajax({
-    url: "sync.php",
-    method: "POST",
-    data: { getTime: t, sndDate: dt},
-    success: function(result) {
-      //console.log(result);
-      if(result != false){
-        var d = JSON.parse(result);
-        d.forEach((item, i) => {
-          var colorNum = item['rState'];
-          var cc = '"' + item['cc'] + '"';
-          if(item['rD'] == "gz"){
-            $('#container-information-content').append("<div class='information-box-acp' id='"+item['rID']+"' style='background-color: "+colors[colorNum]+"'>Reserviert<br>Bis 22 Uhr</div>");
-            return;
-          } else {
-            dateStart = new Date(item['rDate']+" "+item['rS']);
-            var dateStartMinutes = dateStart.toTimeString().slice(3, 5);
-            dateEnd = new Date(item['rDate']+" "+item['rE']);
-            var dateEndMinutes = dateEnd.toTimeString().slice(3, 5);
-            $('#container-information-content').append("<div class='information-box-acp' id='"+item['rID']+"' style='background-color: "+colors[colorNum]+"'>Reserviert<br>"+dateStart.getHours()+":"+dateStartMinutes+" Uhr bis "+dateEnd.getHours()+":"+dateEndMinutes+" Uhr</div>");
-          }
-        });
-      } else {
-          $('#container-information-content').empty();
-          $('#container-information-content').append("<div class='information-box-acp' style='background-color: "+colors[3]+"; margin-left:auto;margin-right:auto;'>Keine Reservierung gefunden</div>");
-      }
-    }
-  });
-}*/
 
 
 
@@ -532,53 +396,6 @@ function r(t){
   return true;
 }
 
-/*function acpSubmit(tID) {
-  // Wenn keine ID in INPUT HIDDEN ist
-  if(!$('#acpReserveID').val() && $('#acpSubmit').val() == "Bearbeiten"){ alert("Sie müssen eine Reservierung zum bearbeiten auswählen!"); return; }
-  (async() => {
-    const uc = await userCheck().then(function(result){
-    if(result == true){
-      var inputs = new Array();
-      var haushalt = new Array();
-      const type = $('#acpSubmit').val();
-      inputs[0] = $('#acpInputAmount').val();
-      inputs[1] = $('#acpInputDate').val();
-      inputs[2] = $('#acpInputTime').val();
-      inputs[3] = $('#acpInputDuration').val();
-      inputs[4] = $('#acpReserveID').val();
-      inputs[5] = $('#viewAdminTable h1').text().split(" ")[2];
-      for (var i = 1; i < 6; i++) {
-        const ci = $('.right-inputs-hh'+i+' .clientID').val();
-        const cv = $('.right-inputs-hh'+i+' .clientVorname').val();
-        const cn = $('.right-inputs-hh'+i+' .clientName').val();
-        const cm = $('.right-inputs-hh'+i+' .clientMail').val();
-        const ct = $('.right-inputs-hh'+i+' .clientTNR').val();
-        if(cv.length >= 3){
-          if(r(cv) == true && r(cn) == true && r(cm) == true && r(ct) == true){
-            haushalt[i-1] = cv + ";" + cn + ";" + cm + ";" + ct + ";" + ci;
-          }
-        }
-      }
-      inputs[6] = haushalt;
-      if(haushalt.length > 0){
-        $.ajax({
-          url: "sync.php", method: "POST", data: { acpReserve: inputs, acpSubmit: type },
-          success: function(result) {
-            console.log(result);
-            if(result == "1"){
-              location.reload();
-            } else {
-              alert("Ein Fehler ist aufgetreten!\n"+result);
-            }
-          }
-        });
-      }
-    } else {
-      submitLogoff();
-    }
-  });
-  })();
-}*/
 
 function viewError(text){
   if($('#viewError p').length <= 0){

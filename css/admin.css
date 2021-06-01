@@ -32,12 +32,37 @@ html,body {width: 100%;height: 100%;}
 .feiertag button:hover { color: white; border: 1px solid white; background-color: #e63946; }
 
 
-.rechte-container {border: 1px solid black;margin-left: auto; margin-right: auto; margin-top: 30px; padding: 15px;width: 50%;min-width: 350px;}
-.rechte-data { display: flex; flex-direction: row; font-size: 1.2rem; }
-.rechte-data p { padding: 5px; margin-left: 10px; margin-right: 10px; }
-.rechte-data button { margin-left: auto; border: 1px solid black; cursor: pointer; background-color: white; width: 150px; }
-.rechte-data button:last-of-type { border: 1px solid red; color: red; cursor: pointer;  background-color: white; width: 80px; }
+.rechte-container { border: 1px solid black;margin-left: auto; margin-right: auto; margin-top: 30px; padding: 15px; width: 50%; min-width: 750px;}
+.rechte-data { display: flex; flex-direction: row; font-size: 1.2rem; margin-top: 20px; }
+.rechte-data p { padding: 5px; width: 120px; margin-left: 10px; margin-right: 10px; }
+.rechte-buttons { margin-left: auto; }
+.rechte-buttons button { margin-right: 10px; border: 1px solid black; padding: 5px; cursor: pointer; background-color: white; width: 120px; transition: 0.5s; }
+.rechte-buttons button:hover { background-color: black; color: white; }
+.rechte-buttons button:last-of-type { border: 1px solid red; color: red; cursor: pointer;  background-color: white; transition: 0.5s; width: 80px; }
+.rechte-buttons button:last-of-type:hover { background-color: red; color: white;  }
 .rechte-container #button-useradd { padding: 5px; width: 100px; margin-left: 10px; cursor: pointer; margin-top: 15px; }
+
+#viewBearbeiten {
+  border: 1px solid darkgray;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 350px;
+  min-height: 350px;
+  padding-bottom: 30px;
+  margin-top: 2%;
+
+  z-index: 9;
+
+  font-family: sans-serif;
+  display: block;
+
+  -webkit-animation: fadein 0.5s; /* Safari, Chrome and Opera > 12.1 */
+ -moz-animation: fadein 0.5s; /* Firefox < 16 */
+  -ms-animation: fadein 0.5s; /* Internet Explorer */
+   -o-animation: fadein 0.5s; /* Opera < 12.1 */
+      animation: fadein 0.5s;
+}
 
 
 
