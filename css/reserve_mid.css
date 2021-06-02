@@ -30,8 +30,10 @@ body,html { margin:0; padding:0; height: 100%; width: 100%; }
 .calendar-inputs input { font-size: 1.5rem; padding: 0%; margin-bottom: 5%; margin-left: 5%; margin-right: 5%; width: 250px; }
 .calendar-inputs select { font-size: 1.5rem; padding: 0%; margin-bottom: 5%; margin-left: 5%; margin-right: 5%; width: 250px; }
 .calendar-buttons { margin-left: auto; margin-right: auto; margin-top: 5%; margin-bottom: 5%; width: 80%; height: auto;text-align: center; }
-.calendar-buttons button { width: 76%; font-size: 1.3rem; padding: 2% 2% 2% 2%; border: 2px solid darkgray; background-color: white; margin-top: 5%; margin-left: auto; margin-right: auto; cursor: default; }
-.calendar-buttons button:hover { cursor: pointer; }
+.calendar-buttons button { width: 76%; font-size: 1.3rem;transition: 0.5s;padding: 2% 2% 2% 2%; border: 2px solid darkgray; background-color: white; margin-top: 5%; margin-left: auto; margin-right: auto; cursor: default; }
+.calendar-buttons button:hover { cursor: pointer; color: white; background-color: green; border: 2px solid white; }
+#calendar-leave { width: 76%; max-width: 300px; font-size: 1rem; padding: 2% 2% 2% 2%; transition: 0.5s; border: 2px solid red; color:red; background-color: white; margin-top: 5%; margin-left: auto; margin-right: auto; cursor: default; }
+#calendar-leave:hover { cursor: pointer; color:white; background-color: red;}
 
 .loader { border: 16px solid #f3f3f3; border-top: 16px solid #3498db; border-radius: 50%; margin-left:auto; margin-right:auto; margin-top: 5%; width: 120px; height: 120px; animation: spin 2s linear infinite;}
 @keyframes spin {0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}
@@ -564,105 +566,28 @@ body,html { margin:0; padding:0; height: 100%; width: 100%; }
       animation: fadein 0.5s;
 }
 
-#viewTable::-webkit-scrollbar {
-  display: none;
-}
+#viewTable::-webkit-scrollbar {display: none;}
 
-#viewTable h1 {
-  text-align: center;
-  font-size: 2rem;
-  padding: 2% 2% 1% 2%;
-}
-
-.fa-times {
-  float: right;
-  padding: 0px 5px 0px 0px;
-  transition: 0.5s;
-}
-
-.fa-times:hover {
-  color: red;
-  cursor: pointer;
-}
-
-.form-table {
-  width: 100%;
-  height: auto;
-}
-
-.form-table h2 {
-  font-size: 1.5rem;
-  text-align: center;
-  padding: 10px;
-}
-
-.form-table-middle {
-  width: 77.5%;
-  height: 750px;
-  float: right;
-  display: flex;
-  flex-direction: column;
-}
+#viewTable h1 {text-align: center;font-size: 2rem;padding: 2% 2% 1% 2%;}
+.fa-times {float: right;padding: 0px 5px 0px 0px;transition: 0.5s;}
+.fa-times:hover {color: red;cursor: pointer;}
+.form-table {width: 100%;height: auto;}
+.form-table h2 {font-size: 1.5rem;text-align: center;padding: 10px;}
+.form-table-middle {width: 90%; margin-left: auto; margin-right: auto; height: auto; display: flex;flex-direction: column;}
 
 /* ViewTable Reservierungen BOX */
 
-#container-information {
-  width: 21%;
-  margin-left: 1%;
-  max-width: 100%;
-  height: 500px;
-  float: left;
-}
-#container-information-content {
-  background-color: white;
-  width: 100%;
-  height: 100%;
-  border-left: 1px solid darkgray;
-  border-right: 1px solid darkgray;
-  border-bottom: 1px solid darkgray;
-}
-#container-information h3 {
-  display: block;
-  width: 96%;
-  padding: 2%;
-  font-size: 120%;
-  font-weight: 400;
-  text-align: center;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  background-color: #f0efeb;
-  margin: 0%;
-  border: 1px solid darkgray;
-}
-
-.information-box {
-  width: 85%;
-  height: 50px;
-  padding: 10px;
-  text-align: left;
-  color: white;
-  transition: 0.5s;
-  margin-bottom: 2%;
-}
-
-.information-box-acp {
-  width: 20%;
-  min-width: 190px;
-  height: 30px;
-  padding: 10px;
-  text-align: center;
-  color: white;
-  transition: 0.5s;
-}
-
-.information-box-acp:hover {
-  cursor: pointer;
-}
+#container-information { width: 100%;max-width: 100%;margin-left: auto;margin-right: auto; margin-bottom: 40px; }
+#container-information-content {display: flex;flex-wrap: nowrap;background-color: white;width: 100%;height: 75px;border-left: 1px solid darkgray;border-right: 1px solid darkgray;border-bottom: 1px solid darkgray;}
+#container-information h3 {display: block;width: 98%;padding: 1%;font-weight: 400;text-align: center;border-top-left-radius: 10px;border-top-right-radius: 10px;background-color: #f0efeb;margin: 0%;border: 1px solid darkgray;}
+.information-box {width: 20%;min-width: 190px;padding: 0.5%;text-align: center;color: white;transition: 0.5s;font-size: 1.3rem;margin: 0% 0.5% 0% 0.5%;}
+.information-box-acp {width: 20%;min-width: 190px;height: 30px;padding: 10px;text-align: center;color: white;transition: 0.5s;}
+.information-box-acp:hover {cursor: pointer;}
 
 
 
 /* VIEWTABLE Tisch reservieren */
-.form-table-left {width: 100%;height: 350px;}
+.form-table-left {width: 100%; height: 500px; }
 .form-table-left ul {margin-left: auto;margin-right: auto;width: 315px;}
 .form-table-left p {width: 80%;margin-left: auto;margin-right: auto;font-size: 100%;text-align: center;}
 
@@ -698,7 +623,7 @@ body,html { margin:0; padding:0; height: 100%; width: 100%; }
 
 
 
-.form-table-submit {width: 77.5%;margin-left: auto;text-align: center;}
+.form-table-submit {width: 100%;margin-left: auto;text-align: center;}
 .form-table-submit input[type=submit] {outline: none;background-color: white;border: 1px solid black;padding: 0.5% 2% 0.5% 2%;margin-left: 5%;-webkit-transition: 0.5s;font-size: 1.0rem;width: 150px;text-align:center;}
 .form-table-submit input[type=submit]:hover {cursor: pointer;color: green;border: 1px solid green;}
 .form-table-submit input[type=button] {outline: none;background-color: white;border: 1px solid black;padding: 0.5% 2% 0.5% 2%;width: 150px;transition: 0.5s;margin-right: 5%;font-size: 1.0rem;}

@@ -442,25 +442,16 @@ body,html { margin:0; padding:0; height: 100%; width: 100%; }
 .calendar-inputs input {font-size: 1.5rem;padding: 0%;margin-left: 5%; margin-right: 5%;width: 250px;}
 .calendar-inputs select {font-size: 1.5rem;padding: 0%;margin-left: 5%; margin-right: 5%;width: 250px;}
 .calendar-buttons {margin-left: auto; margin-right: auto; margin-top: 5%; margin-bottom: 5%;width: 80%; height: auto;text-align: center;}
-.calendar-buttons button {font-size: 1.3rem;padding: 0.5% 2% 0.5% 2%; border: 2px solid darkgray;background-color: white;margin-left: 5%; margin-right: 5%; cursor: default;}
-.calendar-buttons button:hover { cursor: pointer; }
+.calendar-buttons button {font-size: 1.3rem;padding: 0.5% 2% 0.5% 2%;transition: 0.5s;border: 2px solid darkgray;background-color: white;margin-left: 5%; margin-right: 5%; cursor: default;}
+.calendar-buttons button:hover { cursor: pointer; color: white; background-color: green; border: 2px solid white; }
+#calendar-leave { font-size: 1rem; max-width: 280px; padding: 0.5% 2% 0.5% 2%;transition: 0.5s;border: 2px solid red;background-color: white;color:red;margin-left: 5%; margin-right: 5%; cursor: default; }
+#calendar-leave:hover { cursor: pointer; color:white; background-color: red;}
 
 /* viewError POPUP */
 
 #viewError {
-  position: absolute;
-  left: 20%;
-  right: 20%;
-  width: 60%;
-  height: auto;
-  padding: 10px;
-
-  margin-top: 5%;
-  margin-bottom: 1%;
-  z-index: 15;
-  padding-bottom: 20px;
-  font-family: sans-serif;
-  display: none;
+  position: absolute;left: 20%;right: 20%;width: 60%;height: auto;padding: 10px;
+  margin-top: 5%;margin-bottom: 1%;z-index: 15;padding-bottom: 20px;font-family: sans-serif;display: none;
 
   border: 2px solid red;
   background-color: white;
@@ -513,7 +504,7 @@ body,html { margin:0; padding:0; height: 100%; width: 100%; }
 
 /* ViewTable Reservierungen BOX */
 
-#container-information {width: 80%;max-width: 100%;margin-left: auto;margin-right: auto;}
+#container-information { width: 80%;max-width: 100%;margin-left: auto;margin-right: auto; margin-bottom: 40px; }
 #container-information-content {display: flex;flex-wrap: nowrap;background-color: white;width: 100%;height: 75px;border-left: 1px solid darkgray;border-right: 1px solid darkgray;border-bottom: 1px solid darkgray;}
 #container-information h3 {display: block;width: 98%;padding: 1%;font-weight: 400;text-align: center;border-top-left-radius: 10px;border-top-right-radius: 10px;background-color: #f0efeb;margin: 0%;border: 1px solid darkgray;}
 .information-box {width: 20%;min-width: 190px;padding: 0.5%;text-align: center;color: white;transition: 0.5s;font-size: 1.3rem;margin: 0% 0.5% 0% 0.5%;}
@@ -522,7 +513,7 @@ body,html { margin:0; padding:0; height: 100%; width: 100%; }
 
 /* VIEWTABLE Tisch reservieren */
 
-.form-table-left {width: 50%;margin-left: auto;margin-right: auto;}
+.form-table-left {width: 50%;margin-left: auto;margin-right: auto; }
 .form-table-left ul {width: 315px;margin-left: auto;margin-right: auto;}
 .form-table-left p {width: 80%;margin-left: auto;margin-right: auto;font-size: 100%;text-align: center;}
 .form-table-left-inputs {width: 525px;margin-left: auto;margin-right: auto;margin-top: 2%;display: flex;flex-wrap: nowrap;outline: none;}

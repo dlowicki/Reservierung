@@ -162,7 +162,7 @@ if(isset($_POST['createReserve'])){
         if($value){ // Wenn Wert von Haushalt existiert
           $exp = explode(";",$value);
           $cf = uniqid()."".uniqid();
-          $vorname = $exp[0]; $name = $exp[1]; $mail = $exp[2]; $tnr = $exp[3];
+          $vorname = trim($exp[0]); $name = trim($exp[1]); $mail = trim($exp[2]); $tnr = trim($exp[3]);
           // $cID,$rID,$tID,$vorname,$name,$mail,$adresse,$tnr,$cf
           $sqlStatement = "INSERT INTO rclient (clientID, reserveID, clientVorname, clientName, clientMail, clientTNR, clientDate, clientConfirm) VALUES ('$clientID','$rID','$vorname','$name','$mail','$tnr','$dateToday','$cf');";
           $query = $con -> query($sqlStatement) or die();
@@ -171,7 +171,7 @@ if(isset($_POST['createReserve'])){
         $count++;
       }
       // Clients wurden erfolgreich erstellt. Versende Mail
-      if(sendmail($table,$date, getTimeBlockTime($block),$amount, $mailTO)){ echo "1"; return; }
+      if(sendmail($table,$date, getTimeBlockTime($block),$amount, trim($mailTO))){ echo "1"; return; }
       echo "3"; return; // 3 = Reservierung angelegt aber E-Mail konnte nicht verschickt werden
     }
   } echo "0"; return;

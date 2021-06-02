@@ -12,7 +12,7 @@ $db = "w10072res";
 
 $(document).ready(function(){
   // DEBUG
-  //viewTable(98);
+  viewTable(98,localStorage.getItem('rCalendar').split(';')[0]);
   //viewReserved('36',1,'2021-05-21','6');
   //viewError('test123');
 
@@ -105,13 +105,15 @@ function viewTable(id, date) {
       } else {
         $('#viewTable').append('<h1>Tisch '+id+' <span style="color: red;">BELEGT</span></h1>');
       }
-	$('#viewTable .loader').remove();
+	     $('#viewTable .loader').remove();
       $('#viewTable').append("<form method='POST' class='form-table' onsubmit='event.preventDefault();'></form>");
-      $('.form-table').append("<div id='container-information'><h3>Reservierungen</h3><div id='container-information-content'></div></div>");
-      getReservierungen(d['tableID'], date);
+
       $('.form-table').append("<div class='form-table-middle'></div>");
       $('.form-table-middle').append("<div class='form-table-left'></div>");
       $('.form-table-middle').append("<div class='form-table-right'></div>");
+
+      $('.form-table-left').append("<div id='container-information'><h3>Reservierungen</h3><div id='container-information-content'></div></div>");
+      getReservierungen(d['tableID'], date);
 
       $('.form-table-left').append("<h2>Tisch reservieren</h2>");
       $('.form-table-left').append("<p>Damit ein Tisch reserviert werden kann werden folgende Daten benötigt</p>");
@@ -361,7 +363,7 @@ function viewReserved(table, blockID, date, amount){
   $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
     $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
     $('.container-reserve').append('<div id="viewReserved"></div>');
-    $('#viewReserved').append('<h2>Tisch '+table+' am '+date+' reserviert!</h2>');
+    $('#viewReserved').append('<h2>Tisch '+table+' am '+germanDateFormat(date)+' reserviert!</h2>');
     data.forEach((item, i) => {
       if(item['id'] == blockID){
         $('#viewReserved').append('<ul><li>Anzahl der Personen '+amount+'</li><li>Reserviert für '+item["start"]+' - '+item["end"]+' Uhr</li></ul>');
@@ -438,6 +440,7 @@ function getTableParameter() {
 }
 
 function dateToSQL() { return new Date().toISOString().slice(0, 10); }
+function germanDateFormat(date) { var spl = date.split('-'); return spl[2]+"."+spl[1]+"."+spl[0]; }
 function todayPlusSixWeeks() {
   var today = new Date();
   var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+(7*6));

@@ -28,7 +28,7 @@ function viewCalendar(){
   }
   $('#viewCalendar').append('<div class="calendar-buttons"></div>');
   var link = "'https://www.hubraum-durlach.de/'";
-  $('.calendar-buttons').append('<button onClick="window.location.href='+link+';">Reservierung verlassen</button><button id="calendar-confirm">Tisch auswählen</button>');
+  $('.calendar-buttons').append('<button id="calendar-confirm">Tisch auswählen</button><button id="calendar-leave" onClick="window.location.href='+link+';">Reservierung verlassen</button>');
   $('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
   $('#viewCalendar').css("display","block");
 }
@@ -44,7 +44,7 @@ $(document).on('click','#calendar-confirm',function(){
     success: function(result) {
       // Wenn result==1 Dann Tag nicht geöffnet bzw. Event an dem Tag
       if(result=="1"){
-        viewError('HubRaum hat am ' + date + ' nicht geöffnet!'); return;
+        viewError('HubRaum hat am ' + germanDateFormat(date) + ' nicht geöffnet!'); return;
       } else { // Restaurant hat am ausgewählten Tag geöffnet
         $.getJSON('script/load.feiertag.php',function(data){
           var check = true;
@@ -54,7 +54,7 @@ $(document).on('click','#calendar-confirm',function(){
             localStorage.setItem('rCalendar',date+';'+time); location.reload();
           } else {
             $('#calendar-date').css('background-color','#e63946');
-            viewError('HubRaum hat am ' + date + ' nicht geöffnet!');
+            viewError('HubRaum hat am ' + germanDateFormat(date) + ' nicht geöffnet!');
           }
         });
       }

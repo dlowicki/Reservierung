@@ -17,12 +17,14 @@ function viewLogin() {
 	$('#viewLogin').empty();
 	$('#viewLogin').css("display","block");
 	$('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
-	$('#viewLogin').append('<i class="fa fa-times fa-2x" onClick="loginClose()"></i><i class="fa fa-user-circle fa-5x login-icon"></i>');
+	$('#viewLogin').append('<i class="fa fa-times fa-2x" onClick="loginClose()"></i>');
+
 
   if(getCookie("rSession") != ""){
 	   $('#viewLogin').css("height","300px");
      var usercheck = userCheck();
      if(usercheck == CryptoJS.MD5(getCookie('rSession')).toString()){
+       $('#viewLogin').append('<i class="fa fa-user-circle fa-5x login-icon"></i>');
        $('#viewLogin').append('<h3>Bereits angemeldet</h3>');
        var today = new Date();
        var dd = String(today.getDate()).padStart(2, '0'); var mm = String(today.getMonth() + 1).padStart(2, '0'); var yyyy = today.getFullYear();
@@ -33,6 +35,7 @@ function viewLogin() {
        submitLogoff();
      }
   } else {
+  $('#viewLogin').append('<i class="fa fa-user-circle fa-5x login-icon"></i>');
 	$('#viewLogin').append('<form id="form-login" onsubmit="event.preventDefault();"></form>');
 	$('#form-login').append('<input type="text" id="hubraumName" placeholder="Name..."><input type="password" id="hubraumSecure" placeholder="Passwort..."><input type="submit" onClick="submitLogin()" value="Login">');
   }
