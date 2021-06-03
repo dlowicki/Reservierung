@@ -7,7 +7,7 @@ $(document).ready(()=>{
 
 // UserCheck nochmal überprüfen. Daten mittels PHP abgleichen nicht Javascript weil unsicher manipulation
 function userCheck() {
-var c = getCookie('rSession');
+var c = getCookie('rSession'); if(!c){ return ''; }
 var rs = "";
 rs = $.ajax({ url: "sync.php", method: "POST", async: false, data: { userCheck: c }, success: function(result) { rs = result.toString(); } });
 return rs.responseText;
@@ -18,7 +18,6 @@ function viewLogin() {
 	$('#viewLogin').css("display","block");
 	$('.container-reserve').css("background-color","rgba(100,100,100,0.3)");
 	$('#viewLogin').append('<i class="fa fa-times fa-2x" onClick="loginClose()"></i>');
-
 
   if(getCookie("rSession") != ""){
 	   $('#viewLogin').css("height","300px");
@@ -49,11 +48,11 @@ function loginClose() {
 
 function submitLogin(){
   var n = $('#hubraumName').val(); var p = $('#hubraumSecure').val();
-  if(n.length >= 5 && p.length >= 5){
+  if(n.length >= 2 && p.length >= 5){
     $.ajax({
       url: "sync.php", method: "POST", data: { hubName: n, hubSecure: CryptoJS.MD5(p).toString() },
       success: function(result) {
-        if(result!='1'){ alert('Ein Fehler ist aufgetreten! \n'+result); }
+        if(result!='1'){ alert('Ein Fehler ist aufgetreten! \nFehlercode: '+result); }
         location.reload(); loginClose(); return;
       }
     });

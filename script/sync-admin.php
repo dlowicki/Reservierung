@@ -188,10 +188,7 @@ if(isset($_POST['updateReserveDuration']) && isset($_POST['duration'])&& isset($
 }
 if(isset($_POST['updateReserveAmount']) && isset($_POST['amount'])){
   $rID = $_POST['updateReserveAmount']; $amount = $_POST['amount'];
-  if(updateReserveAmount($rID,$amount)){
-    echo "1"; return;
-  }
-  echo "0"; return;
+  if(updateReserveAmount($rID,$amount)){ echo "1"; return; } echo "0"; return;
 }
 
 /* RECHTE USER */
@@ -205,6 +202,26 @@ if(isset($_POST['userAbmelden'])){
   $db = new Overview(); $con = $db->connectDatabase(); $id = $_POST['userAbmelden'];
   $uniq = md5(uniqid());
   $query = $con->query("UPDATE ruser SET userCookie = '$uniq' WHERE userID = $id");
+  if($query === TRUE){ echo '1'; return; } echo '0'; return;
+}
+if(isset($_POST['userAdd'])){
+  $db = new Overview(); $con = $db->connectDatabase();
+  $uniq = md5('hubraum');
+  $query = $con->query("INSERT INTO ruser (userID,userName,userPW,userIP,userActive,userPermission,userCookie) VALUES (null,'hubraum','$uniq', '127.0.0.1','1','1','')");
+  if($query === TRUE){ echo '1'; return; } echo '0'; return;
+}
+if(isset($_POST['userDelete'])){
+  $id = $_POST['userDelete']; if(strlen($id) < 1){ echo '0'; return; }
+  $db = new Overview(); $con = $db->connectDatabase();
+  $query = $con->query("DELETE FROM ruser WHERE userID='$id'");
+  if($query === TRUE){ echo '1'; return; } echo '0'; return;
+}
+if(isset($_POST['userBearbeiten'])){
+  $db = new Overview(); $con = $db->connectDatabase();
+  $exp = explode(';',$_POST['userBearbeiten']);
+  if(sizeof($exp) != 4){ echo '0'; return; }
+  $id = $exp[0]; $un = $exp[1]; $pw_old = md5($exp[2]); $pw_new = md5($exp[3]);
+  $query = $con->query("UPDATE ruser SET userName='$un', userPW='$pw_new' WHERE userID='$id' AND userPW='$pw_old'");
   if($query === TRUE){ echo '1'; return; } echo '0'; return;
 }
 

@@ -280,7 +280,7 @@ require_once('sync.php');
 
             foreach ($users as $key) {
               echo '<div class="rechte-data">';
-                echo '<p>'.$key["userName"].'</p>';
+                echo '<p id="name-'.$key["userID"].'">'.$key["userName"].'</p>';
                 echo '<p>'.$key["userIP"].'</p>';
                 if($key['userActive'] == '1'){
                   echo '<label class="switch"><input type="checkbox" class="switch-user" id="switch-user-'.$key["userID"].'" checked><span class="slider round"></span></label>';
@@ -295,13 +295,6 @@ require_once('sync.php');
                 echo '</div>';
             }
             echo '<button id="button-useradd">Neuer User</button>';
-
-          echo '</div>';
-          echo '<div id="viewBearbeiten">';
-            echo '<input type="text" id="bearbeiten-name">';
-            echo '<input type="text" id="bearbeiten-old">';
-            echo '<input type="text" id="bearbeiten-new">';
-            echo '<button id="bearbeiten-save">Speichern</button>';
           echo '</div>';
         }
 
@@ -318,22 +311,56 @@ require_once('sync.php');
         method: "POST",
         data: { userSwitch: id+';'+check},
         success: function(result) {
-          if(result!="1"){ alert("Ein Fehler ist aufgetreten \n" + result); } return;
+          if(result!="1"){ alert("Ein Fehler ist aufgetreten \nFehlercode: " + result); } return;
         }
       });
     });
     $(document).on('click','#button-abmelden',function(){
       var id = $(this).attr('class');
       $.ajax({
-        url: "script/sync-admin.php",
-        method: "POST",
-        data: { userAbmelden: id},
-        success: function(result) { if(result!="1"){ alert("Ein Fehler ist aufgetreten \n" + result); } return; }
+        url: "script/sync-admin.php", method: "POST", data: { userAbmelden: id},
+        success: function(result) { if(result!="1"){ alert("Ein Fehler ist aufgetreten \nFehlercode: " + result); } location.reload(); return; }
       });
     });
     $(document).on('click','#button-bearbeiten',function(){
+      if($('#viewBearbeiten').length >= 1){ return; }
+      const id = $(this).attr('class'); var name = $('#name-'+id).text();
       $('.rechte-container').append('<div id="viewBearbeiten"></div>');
+      $('#viewBearbeiten').append('<i class="fa fa-times fa-2x" onClick="closeBearbeiten()"></i>');
+      $('#viewBearbeiten').append('<input type="text" id="bearbeiten-name-'+id+'" value="'+name+'" placeholder="Name...">');
+      $('#viewBearbeiten').append('<input type="password" id="bearbeiten-old-'+id+'" placeholder="Old Password">');
+      $('#viewBearbeiten').append('<input type="password" id="bearbeiten-new-'+id+'" placeholder="New Password">');
+      $('#viewBearbeiten').append('<button id="bearbeiten-save-'+id+'">Speichern</button>');
+      $('#viewBearbeiten').css('display','flex');
     });
+    function closeBearbeiten() { $('#viewBearbeiten').remove(); $('#viewBearbeiten').css('display','none'); }
+    $(document).on('click','#viewBearbeiten button', function(){
+      var id = $(this).attr('id').split('-')[2];
+      var name = $('#bearbeiten-name-'+id).val(); var pw_old = $('#bearbeiten-old-'+id).val(); var pw_new = $('#bearbeiten-new-'+id).val();
+      $.ajax({
+        url: "script/sync-admin.php", method: "POST", data: { userBearbeiten: id+";"+name+";"+pw_old+";"+pw_new},
+        success: function(result) { if(result!="1"){ alert("Ein Fehler ist aufgetreten \nFehlercode: " + result); } location.reload(); return; }
+      });
+    });
+    $(document).on('click','#button-useradd', function(){
+      $.ajax({
+        url: "script/sync-admin.php", method: "POST", data: { userAdd: 'true' },
+        success: function(result) { if(result!="1"){ alert("Ein Fehler ist aufgetreten \nFehlercode: " + result); } location.reload(); return; }
+      });
+    });
+    $(document).on('click','#button-delete', function(){
+      var id = $(this).attr('class');
+      if(confirm('Möchten Sie den Benutzer '+$('#name-'+id).text()+' wirklich löschen?')){
+        $.ajax({
+          url: "script/sync-admin.php", method: "POST", data: { userDelete: id },
+          success: function(result) { if(result!="1"){ alert("Ein Fehler ist aufgetreten \nFehlercode: " + result); } location.reload(); return; }
+        });
+      }
+    });
+
+    
+
+
 
     /* ZEITT */
     $(document).on('change','.arbeitstag input', function(){
@@ -345,7 +372,7 @@ require_once('sync.php');
       method: "POST",
       data: { arbeitstag: id+';'+valVON+'-'+valBIS+';'+check},
       success: function(result) {
-        if(result!="1"){ alert("Ein Fehler ist aufgetreten \n" + result); } return;
+        if(result!="1"){ alert("Ein Fehler ist aufgetreten \nFehlercode: " + result); } return;
       }
     });
   });
@@ -359,9 +386,12 @@ require_once('sync.php');
       data: { arbeitstag: id+';'+valVON+'-'+valBIS+";"+check},
       success: function(result) {
         console.log(result);
-        if(result!="1"){ alert("Ein Fehler ist aufgetreten \n" + result); } return;
+        if(result!="1"){ alert("Ein Fehler ist aufgetreten \nFehlercode: " + result); } return;
       }
     });
+  });
+  $(document).on('click','#bearbeiten-save',function(){
+
   });
   /* SPECIAL DAYS */
   $('.feiertage-filter i').click(()=>{
@@ -374,7 +404,7 @@ require_once('sync.php');
       method: "POST",
       data: { specialDay: beschreibung+";"+date+";"+type},
       success: function(result) {
-        if(result!="1"){ alert("Ein Fehler ist aufgetreten \n" + result); } else { window.location.href='admin.php?zeit=HubRaum' } return;
+        if(result!="1"){ alert("Ein Fehler ist aufgetreten \nFehlercode: " + result); } else { window.location.href='admin.php?zeit=HubRaum' } return;
       }
     });
   });
@@ -386,7 +416,7 @@ require_once('sync.php');
         method: "POST",
         data: { specialDayDelete: cl},
         success: function(result) {
-          if(result!="1"){ alert("Ein Fehler ist aufgetreten \n" + result); } else { window.location.href='admin.php?zeit=HubRaum' } return;
+          if(result!="1"){ alert("Ein Fehler ist aufgetreten \nFehlercode: " + result); } else { window.location.href='admin.php?zeit=HubRaum' } return;
         }
       });
     }
@@ -445,7 +475,7 @@ require_once('sync.php');
               $(".liste-content").load(" .liste-content > *");
               return;
             }
-            alert("Ein Fehler ist aufgetreten \n" + result);
+            alert("Ein Fehler ist aufgetreten \nFehlercode: " + result);
           }
         });
       }

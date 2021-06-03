@@ -43,19 +43,8 @@ html,body {width: 100%;height: 100%;}
 .rechte-container #button-useradd { padding: 5px; width: 100px; margin-left: 10px; cursor: pointer; margin-top: 15px; }
 
 #viewBearbeiten {
-  border: 1px solid darkgray;
-  width: 50%;
-  margin-left: auto;
-  margin-right: auto;
-  min-width: 350px;
-  min-height: 350px;
-  padding-bottom: 30px;
-  margin-top: 2%;
-
-  z-index: 9;
-
-  font-family: sans-serif;
-  display: block;
+border: 1px solid darkgray;width: 50%;margin-left: auto;margin-right: auto;min-width: 350px;min-height: 250px;padding-bottom: 30px;margin-top: 2%;
+z-index: 9;font-family: sans-serif;display: flex; flex-direction: column;
 
   -webkit-animation: fadein 0.5s; /* Safari, Chrome and Opera > 12.1 */
  -moz-animation: fadein 0.5s; /* Firefox < 16 */
@@ -63,100 +52,29 @@ html,body {width: 100%;height: 100%;}
    -o-animation: fadein 0.5s; /* Opera < 12.1 */
       animation: fadein 0.5s;
 }
-
+#viewBearbeiten i { text-align: right; margin-left: auto; width: 30px; padding-right: 10px; cursor: pointer; transition: 0.5s; }
+#viewBearbeiten i:hover { color: red; }
+#viewBearbeiten input { width: 280px; padding: 2px; margin-left: auto; margin-right: auto; margin-top: 10px; margin-bottom: 10px; font-size: 1.3rem; outline: none; }
+#viewBearbeiten button { width: 200px; margin-left: auto; margin-right: auto; margin-top: 30px; font-size: 1.2rem; padding: 5px; cursor: pointer; }
 
 
 
 /*VIEW OVERVIEW */
 /* Übersicht Overview Reservierungen */
 
-.ow-nav {
-  display: flex;
-  flex-wrap: nowrap;
-
-  padding: 2% 0% 2% 0%;
-  width: 40%;
-  min-width: 420px;
-  margin-left: auto;
-  margin-right: auto;
-  list-style: none;
-
-}
-
-.ow-nav li {
-  width: 40%;
-  font-size: 1.2rem;
-  padding: 2%;
-  margin-left: auto;
-  margin-right: auto;
-  transition: 0.5s;
-  text-align: center;
-}
-
-.ow-nav li:hover {
-  color: rgba(192,95,95,1);
-  cursor: pointer;
-}
-
-#oInputDate {
-  padding: 5px;
-  font-size: 1rem;
-  margin-top: 5%;
-  width: 10%;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.ow-nav-current {
-  color: rgba(192,95,95,1);
-}
-
-#ow-table-container {
-  width: 80%;
-  height: 50%;
-  margin-left: auto;
-  margin-right: auto;
-  overflow: auto;
-}
-
-#ow-table {
-  table-layout: fixed;
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-#ow-table tr {
-  width: 120px;
-  text-align: center;
-  transition: 0.5s;
-}
-#ow-table tr:hover {
-  background-color: rgba(192,95,95,0.8);
-  color: white;
-}
-
-#ow-table td {
-  font-size: 1rem;
-  padding: 5px;
-}
-
-#ow-table td:first-of-type {
-  display: flex;
-  flex-wrap: nowrap;
-}
-
-#ow-table td i {
-  margin-left: 5px;
-  margin-right: 5px;
-  transition: 0.5s;
-}
-
-#ow-table td i:hover {
-  cursor: pointer;
-  color: rgba(192,95,95,1);
-}
+.ow-nav {display: flex;flex-wrap: nowrap;padding: 2% 0% 2% 0%;width: 40%;min-width: 420px;margin-left: auto;margin-right: auto;list-style: none;}
+.ow-nav li {width: 40%;min-width: 130px;font-size: 1.2rem;padding: 2%;margin-left: auto;margin-right: auto;transition: 0.5s;text-align: center;}
+.ow-nav li:hover {color: rgba(192,95,95,1);cursor: pointer;}
+#oInputDate {padding: 5px;font-size: 1rem;margin-top: 5%;width: 10%;min-width: 150px;display: block;  margin-left: auto;margin-right: auto;}
+.ow-nav-current { color: rgba(192,95,95,1); }
+#ow-table-container {width: 80%;height: 50%;margin-left: auto;margin-right: auto;overflow: auto;}
+#ow-table {table-layout: fixed;width: 100%;margin-left: auto;margin-right: auto;}
+#ow-table tr {width: 120px;text-align: center;transition: 0.5s;}
+#ow-table tr:hover {background-color: rgba(192,95,95,0.8);color: white;}
+#ow-table td {font-size: 1rem;padding: 5px;}
+#ow-table td:first-of-type {display: flex;flex-wrap: nowrap;}
+#ow-table td i {margin-left: 5px;margin-right: 5px;transition: 0.5s;}
+#ow-table td i:hover {cursor: pointer;color: rgba(192,95,95,1);}
 
 
 
@@ -192,125 +110,31 @@ html,body {width: 100%;height: 100%;}
 
 /* NoShow Edit */
 
-
-.liste-edit-container {
-  background-color: rgba(192,95,95,1);
-  position: fixed;
-  width: 68%;
-  height: 200px;
-  text-align: center;
-  animation: fadein 0.5s;
-}
-
-.edit-form {
-  padding: 2%;
-}
-
-.edit-form input[type=text] {
-  font-size: 1.2rem;
-  margin-left: 2%;
-  margin-right: 2%;
-  text-align: center;
-}
-
-.edit-form input[type=number] {
-  width: 5%;
-  font-size: 1.2rem;
-  margin-left: 2%;
-  margin-right: 2%;
-  text-align: center;
-}
-
-.edit-container-bottom {
-  margin-top: 3%;
-}
-
-.edit-button {
-  margin: 0% 5% 0% 5%;
-  padding: 0.5% 2% 0.5% 2%;
-  font-size: 1.2rem;
-  background-color: transparent;
-  border: 1px solid white;
-  color: white;
-  transition: 0.5s;
-}
-
-.edit-button:hover {
- cursor: pointer;
- color: darkgray;
- border: 1px solid darkgray;
-}
-
-#delete-noShow:hover {
-  background-color: #e71d36;
-  color: white;
-}
-
-#liste-submit:hover {
-  background-color: #8ac926;
-  color: white;
-}
+.liste-edit-container {background-color: rgba(192,95,95,1);position: fixed;width: 68%;height: 200px;text-align: center;animation: fadein 0.5s;}
+.edit-form {padding: 2%;}
+.edit-form input[type=text] {font-size: 1.2rem;margin-left: 2%;margin-right: 2%;text-align: center;}
+.edit-form input[type=number] {width: 5%;font-size: 1.2rem;margin-left: 2%;margin-right: 2%;text-align: center;}
+.edit-container-bottom {margin-top: 3%;}
+.edit-button {margin: 0% 5% 0% 5%;padding: 0.5% 2% 0.5% 2%;font-size: 1.2rem;background-color: transparent;border: 1px solid white;color: white;transition: 0.5s;}
+.edit-button:hover {cursor: pointer;color: darkgray;border: 1px solid darkgray;}
+#delete-noShow:hover {background-color: #e71d36;color: white;}
+#liste-submit:hover {background-color: #8ac926;color: white;}
 
 
 /* Reservierungen */
 
 .rs-container { width: 100%; height: auto; }
-
-.rs-input-table {
-  width: 80%; max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  margin-top: 2%;
-}
-.rs-input-table h3 {
-  font-size: 1.8rem;
-}
-
-.rs-input-table input {
-  width: 180px;
-  height: 20px;
-  padding: 5px;
-  text-align: center;
-  margin-top: 2%;
-  margin-left:2%;
-  margin-right: 2%;
-  font-size: 1.2rem;
-  outline: none;
-}
+.rs-input-table {width: 80%; max-width: 500px;margin-left: auto;margin-right: auto;text-align: center;margin-top: 2%;}
+.rs-input-table h3 {font-size: 1.8rem;}
+.rs-input-table input {width: 180px;height: 20px;padding: 5px;text-align: center;margin-top: 2%;margin-left:2%;margin-right: 2%;font-size: 1.2rem;outline: none;}
 
 /* RESERVIERUNG LISTE */
 
 .rs-reservierung-list { width: 80%; margin-left: auto; margin-right: auto; margin-top: 2%; height: 500px; display: flex; flex-wrap: nowrap; }
-
-.rs-reservierung-list ul {
-  list-style: none;
-  height: 100%;
-  width: 80%; max-width: 500px;
-  background-color: rgba(192,95,95,1);
-  min-width: 150px;
-  margin-left: auto; margin-right: auto;
-  overflow: auto; z-index: 3;
-}
-
-.rs-reservierung-list ul button {
-  width: 100%;
-  padding: 5%;
-  margin: 0%;
-  outline none;
-  font-size: 1.1rem;
-  transition: 0.5s;
-  border: 0;
-}
+.rs-reservierung-list ul {list-style: none;height: 100%;width: 80%; max-width: 500px;background-color: rgba(192,95,95,1);min-width: 150px;margin-left: auto; margin-right: auto;overflow: auto; z-index: 3;}
+.rs-reservierung-list ul button {width: 100%;padding: 5%;margin: 0%;outline none;font-size: 1.1rem;transition: 0.5s;border: 0;}
 .rs-reservierung-list ul button:hover { cursor: pointer; background-color: #ced4da; }
-
-.rs-reservierung-list ul li {
-  width: 92%;
-  text-align: center;
-  padding: 4%;
-  transition: 0.5s;
-  color: white;
-}
+.rs-reservierung-list ul li {width: 92%;text-align: center;padding: 4%;transition: 0.5s;color: white;}
 
 .state0 { background-color: #4ea8de; }
 .state1 { background-color: #2b9348; }
@@ -319,34 +143,16 @@ html,body {width: 100%;height: 100%;}
 .state4 { background-color: #006d77; }
 .state5 { background-color: #7400b8; }
 
-.rs-reservierung-list ul li:hover {
-  cursor: pointer;
-  color: darkgray;
-}
+.rs-reservierung-list ul li:hover {cursor: pointer;color: darkgray;}
 .reservierung-list-current { font-weight: 800; }
 
 
 /* RESERVIERUNG HAUPT CONTAINER */
 
 
-.rs-list-edit-container {
-  background-color: rgba(192,95,95,0.6);
-  width: 70%; height: auto;
-  display: flex; flex-wrap: nowrap;
-  z-index: 2;
-  display: none;
-}
-
-.list-edit-reservierung {
-  width: 100%; height: auto;
-  display: flex; flex-wrap: wrap; flex-direction: column;
-}
-
-.list-edit-top {
-  width: 40%;
-  height: 100%;
-  text-align: center;
-}
+.rs-list-edit-container {background-color: rgba(192,95,95,0.6);width: 70%; height: auto;display: flex; flex-wrap: nowrap;z-index: 2;display: none;}
+.list-edit-reservierung {width: 100%; height: auto;display: flex; flex-wrap: wrap; flex-direction: column;}
+.list-edit-top {width: 40%;height: 100%;text-align: center;}
 .list-edit-top button {
   font-size: 1rem;
   outline: none;
@@ -369,11 +175,7 @@ html,body {width: 100%;height: 100%;}
 
 /* LIST EDIT BOTTOM */
 
-.list-edit-bottom {
-  width: 60%;
-  margin-top: 5%;
-  text-align: center;
-}
+.list-edit-bottom {width: 60%;margin-top: 5%;text-align: center;}
 
 .list-edit-bottom input {
   width: 50%;

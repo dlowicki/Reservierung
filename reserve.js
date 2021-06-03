@@ -7,12 +7,14 @@ $servername = "127.0.0.1:3306";
 $username = "w10072res";
 $password = "jHwsa2rr";
 $db = "w10072res";
+
+jk2R_6X
 */
 
 
 $(document).ready(function(){
   // DEBUG
-  viewTable(98,localStorage.getItem('rCalendar').split(';')[0]);
+  //viewTable(98,localStorage.getItem('rCalendar').split(';')[0]);
   //viewReserved('36',1,'2021-05-21','6');
   //viewError('test123');
 
@@ -29,7 +31,7 @@ $(document).ready(function(){
   }
 
   // Lade Tische async mit Ampelsystem
-  (async() => { await loadTables(localStorage.getItem('rCalendar').split(';')[0]); })();
+  (async() => { await loadTables(localStorage.getItem('rCalendar').split(';')[0],localStorage.getItem('rCalendar').split(';')[1]); })();
 
   $(document).on('click','.table', function(){
     if($('.form-table').length <= 0){
@@ -58,11 +60,11 @@ $(document).ready(function(){
 	}
 }*/
 
-async function loadTables(date) {
+async function loadTables(date, bs) {
   let result;
   try {
     var data = "";
-    $.ajax({ url: "sync.php", method: "POST", data: { loadTables: date }, success: function(result) {
+    $.ajax({ url: "sync.php", method: "POST", data: { loadTables: date+";"+bs }, success: function(result) {
 		$('#tischplan-svg').empty();
 		data = JSON.parse(result);
 		data.forEach((item, i) => {
@@ -72,9 +74,7 @@ async function loadTables(date) {
 		});
 	} });
     return true;
-  } catch (e) {
-    console.log("Error loadTables: " + e);
-  }
+  } catch (e) { console.log("Error loadTables: " + e); }
 }
 
 
@@ -95,7 +95,6 @@ function viewTable(id, date) {
     method: "POST",
     data: {loadTableID: id, loadTableDate: date},
     success: function(result) {
-		//console.log(result);
       var d = JSON.parse(result);
       var tID = "'"+d['tableID']+"'";
 
@@ -103,7 +102,7 @@ function viewTable(id, date) {
       if(d['tableActive'] == "open" && d['tableReserved'] == "open"){
         $('#viewTable').append('<h1>Tisch '+id+' <span style="color: green;">FREI</span></h1>');
       } else {
-        $('#viewTable').append('<h1>Tisch '+id+' <span style="color: red;">BELEGT</span></h1>');
+        $('#viewTable').append('<h1>Tisch '+id+' <span style="color: red;">RESERVIERT</span></h1>');
       }
 	     $('#viewTable .loader').remove();
       $('#viewTable').append("<form method='POST' class='form-table' onsubmit='event.preventDefault();'></form>");
@@ -244,7 +243,7 @@ function getReservierungen(tableID, date) {
             var colorNum = item['rState'];
             if(item['rT'].length > 0){
               var time = item['rT'].split(" - ");
-              $('#container-information-content').append("<div class='information-box' id='rsBlock"+item['rB']+"' style='background-color: "+colors[colorNum]+"'>Reserviert<br>"+time[0].slice(0,5)+" Uhr bis "+time[1].slice(0,5)+" Uhr</div>");
+              $('#container-information-content').append("<div class='information-box' id='rsBlock"+item['rB']+"' style='background-color: "+colors[colorNum]+"'>Reserviert<br>"+time[0].slice(0,5)+" Uhr - "+time[1].slice(0,5)+" Uhr</div>");
             }
           }
         });
@@ -323,6 +322,7 @@ function sendReserve(tID) {
     const amount = $('#amount').val(); if(r(amount)){ inputs[0] = amount; } else { return false; }
     const date = $('#timeDate').val(); if(r(date)==true && date >= getTodaySQLFormat() && date <= todayPlusSixWeeks()){ inputs[1] = date; } else { return false; }
     const timeBlock = $('#timeBlock').val(); if(r(timeBlock)){ inputs[2] = timeBlock; } else { return false; }
+
     inputs[3] = tID;
     for (var i = 1; i < 6; i++) {
       const cv = $('.right-inputs-hh'+i+' .clientVorname').val();
@@ -330,12 +330,16 @@ function sendReserve(tID) {
       const cm = $('.right-inputs-hh'+i+' .clientMail').val();
       const ct = $('.right-inputs-hh'+i+' .clientTNR').val();
       if(cv.length >= 1){
-        if(r(cv) == true && r(cn) == true && r(cm) == true && r(ct) == true){ haushalt[i-1] = cv + ";" + cn + ";" + cm + ";" + ct; }
+        if(r(cv) == true && r(cn) == true && r(cm) == true && r(ct) == true){
+          if(validatMail(cm)==false){ $('.right-inputs-hh'+i+' .clientMail').css('color','red'); return false; }
+          haushalt[i-1] = cv + ";" + cn + ";" + cm + ";" + ct;
+        }
       }
     }
     inputs[4] = haushalt;
     if(haushalt.length > 0){
 		const mailTO = $('.right-inputs-hh0 .clientMail').val();
+    console.log(inputs);
       $.ajax({
         url: "sync.php", method: "POST", data: { createReserve: inputs },
         success: function(result) {
@@ -348,16 +352,19 @@ function sendReserve(tID) {
               break;
             case "2":
               viewError('Die E-Mail oder Telefonnummer wurde auf die Blacklist gesetzt. Eine Reservierung ist nicht möglich!');
-			case "3":
-				console.log('Reservierung bestätigt');
-        tableClose();
-				viewError('Reservierung wurde erfolgreich durchgeführt. Es konnte keine E-Mail verschickt werden!');
-				viewReserved(tID,timeBlock,date,amount);
+			      case "3":
+				      console.log('Reservierung bestätigt');
+              tableClose();
+				      viewError('Reservierung wurde erfolgreich durchgeführt. Es konnte keine E-Mail verschickt werden!');
+      				viewReserved(tID,timeBlock,date,amount);
+            case "4":
+              viewError('Ein oder mehrere E-Mail Adressen sind nicht gültig!');
           }
         }
       });
     }
 }
+$(document).on('focus','.clientMail',function(){ $('.clientMail').css('color','black'); });
 
 function viewReserved(table, blockID, date, amount){
   $.getJSON('http://localhost/html/Reservierung/script/load.timeblock.php', function(data) {
@@ -397,6 +404,12 @@ function r(t){
   }
   return true;
 }
+
+function validatMail(input){
+  var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+  if (input.match(validRegex)) { return true; } return false;
+}
+
 
 
 function viewError(text){

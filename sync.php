@@ -3,7 +3,8 @@ require_once('mail/sendmail.php');
 require_once('script/script.admin.php');
 
 if(isset($_POST['loadTables'])){
-  $data = getTableData($_POST['loadTables']);
+  $exp = explode(';',$_POST['loadTables']);
+  $data = getTableData($exp[0],$exp[1]);
   echo json_encode($data);
   return;
 }
@@ -98,8 +99,8 @@ if(isset($_POST['hubName']) && isset($_POST['hubSecure'])){
     if($query){
       foreach ($query as $key) {
         if($key['userName'] == $name && $key['userPW'] == $pw){
-          $cookie = md5(uniqid());
-          $query2 = $con->query("UPDATE ruser SET userCookie = '$cookie' WHERE userName = '$name'");
+          $cookie = md5(uniqid()); $ip = getIP();
+          $query2 = $con->query("UPDATE ruser SET userCookie = '$cookie', userIP = '$ip' WHERE userName = '$name'");
           if($query2===TRUE){
             setcookie("rSession", $cookie, time()+86400, "/"); // Für einen Tag
             echo "1";
@@ -138,17 +139,20 @@ if(isset($_POST['createReserve'])){
   for ($i=0; $i < 5; $i++) { // Schleife, die 5 mal durchlaufen wird
     if(array_key_exists($i,$daten[4])==false){ continue; } // Wenn $i in array nicht existiert
     $exp = explode(";",$daten[4][$i]);
-    // Count gibt Wert 4 zurück, alle Felder ausgefüllt
+    // Wenn Anzahl von Count == 4 und alle splitts Längen größer als 0
 	if(count($exp) == 4){  if(strlen($exp[0])>0 && strlen($exp[1])>0 && strlen($exp[2])>0 && strlen($exp[3])>0){ $hhExist = true; } }
+  if(!filter_var($exp[2], FILTER_VALIDATE_EMAIL)){ echo '4'; return; }
   }
   // $hhExist == false, kein Haushalt wurde eingetragen
   if($hhExist == false){ echo "0"; return; }
 
 	//Überprüfe ob NoShow Eintrag vorhanden oder nicht
-	$nsClient = explode(";",$daten[4][0]);
+	$nsClient = explode(";",$daten[4][0]); // Erhalte E-Mail von Client0
 	$overview = new Overview();
+  // Wenn NoShow von client vorhanden dann return false mit echo 2
 	$noshow = $overview->getNoShowWithMailAndNumber($nsClient[2], $nsClient[3]);
 	if($noshow){ if($noshow['amount'] >= 2){ echo '2'; return false; } }
+
 	// checkReserveTime = Überprüfe ob Reservierung für Block bereits vorhanden | return false wenn belegt
   if(checkReserveTime($block,$date,$table)){
 	$clientID = uniqid(); $rCookie = md5(uniqid(rand (),true)); $mailTO = "";
@@ -207,12 +211,7 @@ if(isset($_POST['qrCode'])){
 
   $result = $query->get_result();
   $row = $result->fetch_array(MYSQLI_ASSOC);
-  if(isset($row)){
-    if(sizeof($row) >=1 ){
-        echo $row['tableID']; return;
-    }
-  }
-  echo "0"; return;
+  if(isset($row)){ if(sizeof($row) >=1 ){ echo $row['tableID']; return; } } echo "0"; return;
 }
 
 if(isset($_POST['changeReserve'])){
@@ -415,9 +414,8 @@ function getTimeBlocks() {
   return false;
 }
 
-
-
-function getTableData($date) {
+// Übergeben werden Datum und gesuchter Blocksatz
+function getTableData($date,$bs) {
   $con = connect();
   $query = $con -> query("SELECT * FROM rtable") or die();
   $data = array();
@@ -427,22 +425,23 @@ function getTableData($date) {
   if($date > $dateEnd){ return false; }
 
   if($query){
-    $c = 0;
-    $ampelTables = loadAmpelTables($date);
+    $c = 0; $ampelTables = loadAmpelTables($date); // Erhalte alle Tische und Blocksätze die am Datum belegt sind
     foreach ($query as $table) {
-      $data[$c]['tableID'] = $table['tableID']; $data[$c]['tableType'] = $table['tableType'];
+      $data[$c]['tableID'] = $table['tableID'];
+      $data[$c]['tableType'] = $table['tableType'];
       $data[$c]['tableMax'] = $table['tableMax']; $data[$c]['tableMin'] = $table['tableMin'];
-      $data[$c]['tableCode'] = $table['tableCode']; $data[$c]['tableActive'] = $table['tableActive'];
+      $data[$c]['tableCode'] = $table['tableCode'];
+      $data[$c]['tableActive'] = $table['tableActive'];
       $data[$c]['width'] = $table['tableWidth']; $data[$c]['height'] = $table['tableHeight'];
       $data[$c]['x'] = $table['tableX']; $data[$c]['y'] = $table['tableY'];
 
       // Wenn tableID in Array von ampelTables enthalten ist, dann sind Reservierungen für Tisch vorhanden
-      $ampelBlocks = 0;
+      $ampelBlocks = 0; $blockReserved = 0;
       foreach ($ampelTables as $key) {  // Für jeden Tisch im AmpelArray
         // Wenn der Tisch aus Datenbank in Array von Ampelsystem vorhanden, Anzahl abspeichern
-        if($key['table'] == $table['tableID']){ $ampelBlocks++; }
+        if($key['table'] == $table['tableID']){ $ampelBlocks++; if($key['block'] == $bs){ $blockReserved = 1; } }
       }
-      if($ampelBlocks >= 2){ $data[$c]['tableActive'] = "closed"; }
+      if($ampelBlocks >= 2 || $blockReserved == 1){ $data[$c]['tableActive'] = "closed"; }
 
       $c++;
     }
@@ -496,7 +495,7 @@ function getTableDataID($id, $date) {
 // Tote Reservierung = Reservierung existiert aber Client nicht in Datenbank
 function getTableReserveTime($tableID, $date) {
   $con = connect();
-  $p = "SELECT rreserve.reserveID,rreserve.reserveDate,rreserve.reserveTime,rreserve.reserveBlock,rreserve.reserveState,clientConfirm,clientName FROM rreserve INNER JOIN rclient ON rreserve.clientID=rclient.clientID WHERE rreserve.tableID = $tableID AND reserveDate = '$date' ORDER BY reserveBlock ASC";
+  $p = "SELECT rreserve.reserveID,rreserve.reserveDate,rreserve.reserveTime,rreserve.reserveBlock,rreserve.reserveState,clientConfirm,clientName FROM rreserve INNER JOIN rclient ON rreserve.clientID=rclient.clientID WHERE rreserve.tableID = $tableID AND reserveDate = '$date' AND (reserveState = 0 OR reserveState = 1 OR reserveState = 5) ORDER BY reserveBlock ASC";
   $query = $con -> query($p) or die();
   $data = array();
 
