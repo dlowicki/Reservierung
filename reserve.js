@@ -139,7 +139,7 @@ function viewTable(id, date) {
       $('#timeDate').data('before', date);
 
       $('.form-table-right').append("<h2>Registrierung zwecks Corona</h2>");
-      $('.form-table-right').append('<p>Damit ein Tisch bei uns reserviert werden kann, müssen wir den Anforderungen entsprechend die Daten einer Person bei uns abspeichern.<br>Bitte Denken Sie daran, dass bei mehreren Haushalten an einem Tisch, <b>pro Haushalt eine Kontakperson</b> registriert werden muss.<br>Die Daten werden <a href="#">Datenschutzkonform</a> abgespeichert</p');
+      $('.form-table-right').append('<p>Damit ein Tisch bei uns reserviert werden kann, müssen wir den Anforderungen entsprechend die Daten einer Person bei uns abspeichern.<br>Bitte Denken Sie daran, dass bei mehreren Haushalten an einem Tisch, <b>pro Haushalt eine Kontakperson</b> registriert werden muss.<br>Die Daten werden <a href="https://www.hubraum-durlach.de/impressum/">Datenschutzkonform</a> abgespeichert</p');
 
       $('.form-table-right').append("<div class='form-table-right-inputs'><ul class='table-right-inputs-nav'></ul><div class='table-right-inputs-con'></div></div>");
       $('.table-right-inputs-nav').append('<li class="right-input-nav" id="1" style="border-bottom:1px solid #c05f5f; color: #c05f5f">Haushalt 1</li><li class="right-input-nav" id="2">Haushalt 2</li><li class="right-input-nav" id="3">Haushalt 3</li><li class="right-input-nav" id="4">Haushalt 4</li><li class="right-input-nav" id="5">Haushalt 5</li>');
@@ -206,7 +206,9 @@ $(document).on('change','#timeDate',function(event){
     success: function(result) {
       // Wenn result==1 Dann Tag nicht geöffnet bzw. Event an dem Tag
       if(result=="1"){
-        viewError('HubRaum hat am ' + date + ' nicht geöffnet!'); $(this).val($(this).data('before')); return;
+        viewError('HubRaum hat am ' + germanDateFormat(date) + ' nicht geöffnet!');
+        $('#timeDate').css('background-color','#e63946');
+        $('#timeDate').val($('#timeDate').data('before')); return;
       } else { // Restaurant hat am ausgewählten Tag geöffnet
         $.getJSON('script/load.feiertag.php',function(data){
           var check = true;
@@ -216,8 +218,8 @@ $(document).on('change','#timeDate',function(event){
             tableClose(); viewTable(tisch, date);
           } else {
             $('#timeDate').css('background-color','#e63946');
-            viewError('HubRaum hat am ' + date + ' nicht geöffnet!');
-            $(this).val($(this).data('before')); return;
+            viewError('HubRaum hat am ' + germanDateFormat(date) + ' nicht geöffnet!');
+            $('#timeDate').val($('#timeDate').data('before')); /**/ return;
           }
         });
       }
@@ -399,10 +401,7 @@ function getTodaySQLFormat() {
 function r(t){
   const regex = "/[+_\:;\/*{}´^<>=&%$§#']+/gm";
   var m = regex.match(t, regex);
-  if(m !== null){
-    m.forEach((match, groupIndex) => { return false; });
-  }
-  return true;
+  if(m !== null){ m.forEach((match, groupIndex) => { return false; }); } return true;
 }
 
 function validatMail(input){

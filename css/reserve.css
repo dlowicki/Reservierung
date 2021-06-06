@@ -517,8 +517,9 @@ body,html { margin:0; padding:0; height: 100%; width: 100%; }
 .form-table-left p {width: 80%;margin-left: auto;margin-right: auto;font-size: 100%;text-align: center;}
 .form-table-left-inputs {width: 525px;margin-left: auto;margin-right: auto;margin-top: 2%;display: flex;flex-wrap: nowrap;outline: none;}
 .form-table-left-inputs select {font-size: 1.5rem;text-align-last:center;padding: 8px;border: 0px;}
-#amount {border-top-left-radius: 5px;border-bottom-left-radius: 5px;border-top: 1px solid darkgray;border-left: 1px solid darkgray;border-bottom: 1px solid darkgray;width: 85px;}
-.fa-users { background-color: white; position: absolute; margin-top: 15px; margin-left: 62px; }
+#amount {-moz-appearance: textfield; -webkit-appearance: none; appearance: none;border-top-left-radius: 5px;border-bottom-left-radius: 5px;border-top: 1px solid darkgray;border-left: 1px solid darkgray;border-bottom: 1px solid darkgray;width: 85px;}
+#amount::-ms-expand {display: none;}
+.fa-users { position: absolute; margin-top: 15px; margin-left: 62px; }
 #timeDuration {width: 130px;border-top-right-radius: 5px;border-bottom-right-radius: 5px;border-top: 1px solid darkgray;border-right: 1px solid darkgray;border-bottom: 1px solid darkgray;}
 .form-table-left-inputs input {font-size: 1.5rem;padding: 5px;border: 0px;}
 #timeDate {width: 190px;border-bottom: 1px solid darkgray;border-top: 1px solid darkgray;border-left: 1px solid darkgray;}
