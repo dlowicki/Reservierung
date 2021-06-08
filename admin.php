@@ -94,9 +94,15 @@ require_once('sync.php');
           }
 
         } elseif(isset($_GET['liste'])) {
-			$noshow = "'admin.php?liste=No-Show'"; $abwAnzahl = "'admin.php?liste=abwAnzahl'";
-			echo '<div class="liste-nav"><button onClick="window.location.href='.$noshow.'">No-Show</button><button onClick="window.location.href='.$abwAnzahl.'">Abw. Anzahl</button></div>';
-			$liste = $_GET['liste'];
+			$noshow = "'admin.php?liste=No-Show'"; $abwAnzahl = "'admin.php?liste=abwAnzahl'"; $liste = $_GET['liste'];
+      echo '<div class="liste-nav">';
+      if($liste == 'No-Show'){
+        echo '<button style="background-color: rgba(192,95,95,1); color: white; border: 1px solid white;" onClick="window.location.href='.$noshow.'">No-Show</button><button onClick="window.location.href='.$abwAnzahl.'">Abw. Anzahl</button>';
+      } else {
+        echo '<button onClick="window.location.href='.$noshow.'">No-Show</button><button style="background-color: rgba(192,95,95,1); color: white; border: 1px solid white;" onClick="window.location.href='.$abwAnzahl.'">Abw. Anzahl</button>';
+      }
+      echo '</div>';
+
 
 			echo '<div class="liste-container">';
 		    echo '<div class="liste-top">';
@@ -111,7 +117,6 @@ require_once('sync.php');
 						echo '<p class="ns-mail">'.$key["mail"].'</p>';
 						echo '<p class="ns-tnr">'.$key["tnr"].'</p>';
 						echo '<p class="ns-amount">'.$key["amount"].'</p>';
-						//echo '<p class="ns-time">'.$key["time"].'</p>';
 						echo '</li>';
 					}
 				} elseif($liste == 'abwAnzahl') {
@@ -358,7 +363,7 @@ require_once('sync.php');
       }
     });
 
-    
+
 
 
 

@@ -82,7 +82,8 @@ z-index: 9;font-family: sans-serif;display: flex; flex-direction: column;
 /* NoShow Liste */
 
 .liste-nav { text-align:center; width:100%; }
-.liste-nav button {width: 160px; padding: 5px; background-color: transparent; border: 1px solid black; font-size: 1.2rem; margin: 5% 5% 0% 5%; cursor: pointer; }
+
+.liste-nav button {width: 160px; padding: 5px; background-color: white; border: 1px solid black; font-size: 1.2rem; margin: 5% 5% 0% 5%; cursor: pointer; }
 
 .liste-container { width: 80%;margin-left: auto;margin-right:auto;height: auto;margin-top: 5%; }
 .liste-top { background-color: rgba(192,95,95,1);width: 100%;height: 50px;display: flex;flex-wrap: nowrap;color: white;border: 1px solid transparent; }
