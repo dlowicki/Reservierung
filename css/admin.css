@@ -77,7 +77,40 @@ z-index: 9;font-family: sans-serif;display: flex; flex-direction: column;
 #ow-table td i:hover {cursor: pointer;color: rgba(192,95,95,1);}
 
 
+/* ANALYSE DATEN */
 
+.analyse-container {
+  width: 100%;
+  height: auto;
+  margin-top: 15px;
+}
+
+.analyse-zeit {
+  width: 50%;
+  min-width: 550px;
+  margin-left: auto; margin-right: auto;
+  height: auto;
+  display: flex; flex-direction: row;
+  list-style: none;
+}
+.analyse-zeit li:first-of-type {border-top-left-radius: 10px; border-bottom-left-radius: 10px;}
+.analyse-zeit li:last-of-type { border-right: 1px solid darkgray;  width: 210px; border-top-right-radius: 10px; border-bottom-right-radius: 10px;}
+.analyse-zeit li { text-align: center; width: 90px; padding: 7.5px; font-size: 1.3rem;
+  border-top: 1px solid darkgray; border-left: 1px solid darkgray; border-bottom: 1px solid darkgray; transition: 0.5s; }
+.analyse-zeit li:hover { cursor: pointer; background-color: #a4133c; color: white; }
+.analyse-zeit input { height: 20px; font-size: 1.3rem; outline: none; border: 0; padding: 5px; }
+.analyse-zeit-current { color: white; background-color: #a4133c; }
+
+.analyse-data {width: 100%; min-width: 550px; height: auto;display: flex; flex-wrap: wrap; margin-top: 30px;}
+.analyse-box { width: 45%; border-bottom-right-radius: 10px; min-width: 550px; height: 400px; background-color: #f4acb7; margin-left: auto; margin-right: auto; margin-top: 20px; margin-bottom: 20px;}
+.analyse-box h2 { width: 100%; padding: 5px 0px 0px 5px; color: white; }
+
+#ChartWochentage { max-height: 350px; }
+#table-events { height: 200px; color: white; }
+#table-events h3 { text-align: center; font-size: 1.8rem; }
+.events-data { display: flex; flex-wrap: nowrap; font-size: 1.5rem; }
+#table-events label { margin-left: auto; margin-right: auto; margin-top: 30px; width: 150px; display: flex; flex-direction: row; }
+#table-events label p { margin-left: auto; }
 
 /* NoShow Liste */
 

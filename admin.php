@@ -3,6 +3,7 @@ require_once("script/script.admin.php");
 require_once("script/script.reservierung.php");
 require_once("script/sync-admin.php");
 require_once('sync.php');
+require_once('script/script.analyse.php');
 
 
 ?>
@@ -15,6 +16,8 @@ require_once('sync.php');
     <link rel="stylesheet" href="css/admin.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
     <script src="jquery.min.js" charset="utf-8"></script>
+    <script src="js/chart.min.js" charset="utf-8"></script>
+    <script src="js/script.analyse.js" charset="utf-8"></script>
   </head>
   <body>
     <div class="admin-container">
@@ -92,6 +95,197 @@ require_once('sync.php');
           } else {
             echo "<h2 style='width: 100%; text-align: center;'>Keine Daten vorhanden</h2>";
           }
+
+        } elseif(isset($_GET['analyse'])){
+          echo '<div class="analyse-container">';
+            echo '<ul class="analyse-zeit">';
+            $time = $_GET['analyse'];
+            if($time == 'Heute'){echo '<li class="analyse-zeit-current">Heute</li>';}else{echo '<li>Heute</li>';}
+            if($time == '1 Woche'){echo '<li class="analyse-zeit-current">1 Woche</li>';}else{echo '<li>1 Woche</li>';}
+            if($time == '1 Monat'){echo '<li class="analyse-zeit-current">1 Monat</li>';}else{echo '<li>1 Monat</li>';}
+            if($time != 'Heute' && $time != '1 Woche' && $time != '1 Monat'){
+              echo '<li class="analyse-zeit-current"><input type="date" value="'.$time.'" id="analyse-date"></li>';}else{echo '<li><input type="date" id="analyse-date"></li>';}
+            echo '</ul>';
+
+            echo '<div class="analyse-data">';
+              echo '<div id="chart-blockzeit" class="analyse-box">';
+                $blockzeiten = getAnalyseBlockzeiten($time);
+                if($blockzeiten != false){
+                  echo '<h2>Blockzeit - '.$time.'</h2>';
+                  echo '<canvas id="ChartBlockzeit"></canvas>';
+                } else {
+                  echo '<h2>Blockzeiten - Keine Daten gefunden</h2>';
+
+                }
+              echo '</div>';
+
+              echo '<div id="chart-reservierungen" class="analyse-box">';
+              $r = getAnalyseReservierungen();
+              if($r != false){
+                if(isset($r[0])){$m0=$r[0];}else{$m0=0;}
+                if(isset($r[1])){$m1=$r[1];}else{$m1=0;}
+                if(isset($r[2])){$m2=$r[2];}else{$m2=0;}
+                if(isset($r[3])){$m3=$r[3];}else{$m3=0;}
+                if(isset($r[4])){$m4=$r[4];}else{$m4=0;}
+                if(isset($r[5])){$m5=$r[5];}else{$m5=0;}
+                if(isset($r[6])){$m6=$r[6];}else{$m6=0;}
+                if(isset($r[7])){$m7=$r[7];}else{$m7=0;}
+                if(isset($r[8])){$m8=$r[8];}else{$m8=0;}
+                if(isset($r[9])){$m9=$r[9];}else{$m9=0;}
+                if(isset($r[10])){$m10=$r[10];}else{$m10=0;}
+                if(isset($r[11])){$m11=$r[11];}else{$m11=0;}
+                echo '<h2>Reservierungen - Jahr</h2>';
+                echo '<canvas id="ChartReservierungen"></canvas>';
+              }
+              echo '</div>';
+              echo '<div id="chart-wochentage" class="analyse-box">';
+                $tage = getAnalyseTage($time);
+                if(isset($tage[0])){$t0=$tage[0];}else{$t0=0;}
+                if(isset($tage[1])){$t1=$tage[1];}else{$t1=0;}
+                if(isset($tage[2])){$t2=$tage[2];}else{$t2=0;}
+                if(isset($tage[3])){$t3=$tage[3];}else{$t3=0;}
+                if(isset($tage[4])){$t4=$tage[4];}else{$t4=0;}
+                if(isset($tage[5])){$t5=$tage[5];}else{$t5=0;}
+                if(isset($tage[6])){$t6=$tage[6];}else{$t6=0;}
+                if($tage != false){
+                  echo '<h2>Wochentage - 1 Woche</h2>';
+                  echo '<canvas id="ChartWochentage"></canvas>';
+                } else {
+                  echo '<h2>Wochentage - Keine Daten gefunden</h2>';
+                }
+              echo '</div>';
+              echo '<div id="table-events" class="analyse-box">';
+                echo '<h2>Events - Heute</h2>';
+                echo '<h3 class="events-counter">112</h3>';
+                echo '<div class="events-data">';
+                  echo '<label>Hochzeiten <p class="events-counter">12</p></label>';
+                  echo '<label>Auftritte <p class="events-counter">30</p></label>';
+                  echo '<label>Partys <p class="events-counter">70</p></label>';
+                echo '</div>';
+              echo '</div>';
+              echo '<div id="chart-buttons" class="analyse-box">';
+                echo '<h2>Buttons - Heute</h2>';
+                echo '<canvas id="ChartButtons"></canvas>';
+              echo '</div>';
+            echo '</div>';
+          echo '</div>';
+
+          echo '<script>';
+          if($blockzeiten != false){
+            echo "if(document.getElementById('ChartBlockzeit')){
+              var ctx = document.getElementById('ChartBlockzeit').getContext('2d');
+              new Chart(ctx, {
+                type: 'bar',
+                data: {
+                  labels: ['17:00 - 19:30', '19:30 - 22:00'],
+                  datasets: [{
+                    label: 'Blockzeiten',
+                    data: [".$blockzeiten[0].", ".$blockzeiten[1]."],
+                    backgroundColor: [ 'rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)' ],
+                    borderColor: [ 'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)' ],
+                    borderWidth: 1
+                  }]
+                }, options: { scales: { y: { beginAtZero: true } }, indexAxis: 'y' }
+              });
+            }";
+          }
+
+          echo "if(document.getElementById('ChartReservierungen')){
+            var ctx = document.getElementById('ChartReservierungen').getContext('2d');
+            new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
+                datasets: [{
+                  label: 'Reservierungen',
+                  data: [$m0,$m1,$m2,$m3,$m4,$m5,$m6,$m7,$m8,$m9,$m10,$m11],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.5)','rgba(54, 162, 235, 0.5)','rgba(94, 62, 235, 0.5)','rgba(255, 159, 28, 0.5)','rgba(63, 55, 201, 0.5)','rgba(174, 217, 224, 0.5)',
+                    'rgba(247, 37, 133, 0.5)','rgba(15, 76, 92, 0.5)','rgba(222, 170, 255, 0.5)','rgba(46, 196, 182, 0.5)','rgba(170, 204, 0, 0.5)','rgba(0, 127, 95, 0.5)'
+                  ],
+                  borderColor: [
+                    'rgba(255, 99, 132, 1)','rgba(54, 162, 235, 1)','rgba(94, 62, 235, 1)','rgba(255, 159, 28, 1)','rgba(63, 55, 201, 1)','rgba(174, 217, 224, 1)',
+                    'rgba(247, 37, 133, 1)','rgba(15, 76, 92, 1)','rgba(222, 170, 255, 1)','rgba(46, 196, 182, 1)','rgba(170, 204, 0, 1)','rgba(0, 127, 95, 1)'
+                  ],
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+          }";
+          if($tage != false){
+            echo "var ctx2 = document.getElementById('ChartWochentage').getContext('2d');
+            new Chart(ctx2, {
+              type: 'doughnut',
+              data: {
+                labels: ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'],
+                datasets: [{
+                  label: '# of Votes',
+                  data: [$t0,$t1,$t2,$t3,$t4,$t5,$t6],
+                  backgroundColor: [
+                    'yellow', 'blue', 'red',
+                    'green', 'purple', 'lightblue',
+                    'orange'
+                  ],
+                  borderWidth: 1
+                }]
+              }
+            });";
+          }
+
+
+          echo 'const animationDuration=2000; const frameDuration=1000/60;
+          const totalFrames=Math.round(animationDuration/frameDuration);
+          const eoq = t => t*(2-t);
+          const animateCountUp = el => {
+            	let frame = 0;
+            	const countTo = parseInt( el.innerHTML, 10 );
+            	const counter = setInterval( () => {
+            		frame++;
+            		const progress = eoq( frame / totalFrames );
+            		const currentCount = Math.round( countTo * progress );
+            		if ( parseInt( el.innerHTML, 10 ) !== currentCount ) { el.innerHTML = currentCount; }
+            		if ( frame === totalFrames ) {clearInterval( counter );}
+            	}, frameDuration );
+            };
+            const countupEls = document.querySelectorAll( ".events-counter" );
+            countupEls.forEach( animateCountUp ); ';
+
+            echo "var ctx = document.getElementById('ChartButtons').getContext('2d');
+            new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: ['Eingetroffen', 'Freigegeben', 'Abgesagt', 'No-Show', 'Abw. Anzahl'],
+                datasets: [{
+                  label: 'Buttons',
+                  data: [34, 12, 2, 5, 1],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(94, 62, 235, 0.5)',
+                    'rgba(46, 138, 138, 0.5)', 'rgba(255, 138, 138, 0.5)'
+                  ],
+                  borderColor: [
+                    'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(94, 62, 235, 1)',
+                    'rgba(46, 138, 138, 1)', 'rgba(255, 138, 138, 1)'
+                  ],
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });";
+
+          echo '</script>';
 
         } elseif(isset($_GET['liste'])) {
 			$noshow = "'admin.php?liste=No-Show'"; $abwAnzahl = "'admin.php?liste=abwAnzahl'"; $liste = $_GET['liste'];
