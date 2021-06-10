@@ -150,4 +150,74 @@ function getAnalyseTage($type){
   return false;
 }
 
+
+function getAnalyseEvents($type){
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  $sql = "";
+  $dt = date("Y-m-d");
+  switch ($type) {
+    case 'Heute':
+      $sql = "SELECT spType FROM rspecial WHERE spDate = '$dt'";
+      break;
+    case '1 Woche':
+      $date = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")-7, date("Y")));
+      $sql = "SELECT spType FROM rspecial WHERE spDate < '$dt' and spDate > '$date'";
+      break;
+    case '1 Monat':
+      $date = date("Y-m-d", mktime(0, 0, 0, date("m")-1, date("d"), date("Y")));
+      $sql = "SELECT spType FROM rspecial WHERE spDate < '$dt' and spDate > '$date'";
+      break;
+  }
+  $query = $con->query($sql);
+
+  if($query){
+    $a=array(); $m0=1;$m1=1;$m2=1; $a[3]=0;
+    foreach ($query as $key) {
+      switch ($key['spType']) {
+        case 'Hochzeit': $a[0]=$m0++; $a[3]++; break;
+        case 'Party': $a[1]=$m1++; $a[3]++; break;
+        case 'Auftritt': $a[2]=$m2++; $a[3]++; break;
+      }
+    }
+    return $a;
+  }
+  return false;
+}
+
+function getAnalyseButtons($type){
+  $db = new Overview();
+  $con = $db->connectDatabase();
+  $sql = "";
+  $dt = date("Y-m-d");
+  switch ($type) {
+    case 'Heute':
+      $sql = "SELECT reserveState FROM rreserve WHERE reserveDate = '$dt'";
+      break;
+    case '1 Woche':
+      $date = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")-7, date("Y")));
+      $sql = "SELECT reserveState FROM rreserve WHERE reserveDate < '$dt' and reserveDate > '$date'";
+      break;
+    case '1 Monat':
+      $date = date("Y-m-d", mktime(0, 0, 0, date("m")-1, date("d"), date("Y")));
+      $sql = "SELECT reserveState FROM rreserve WHERE reserveDate < '$dt' and reserveDate > '$date'";
+      break;
+  }
+  $query = $con->query($sql);
+
+  if($query){
+    $a=array(); $m0=1;$m1=1;$m2=1;$m3=1;$m4=1;
+    foreach ($query as $key) {
+      switch ($key['reserveState']) {
+        case 1: $a[0]=$m0++; break;
+        case 2: $a[1]=$m1++; break;
+        case 3: $a[2]=$m2++; break;
+        case 4: $a[3]=$m3++; break;
+        case 5: $a[4]=$m4++; break;
+      }
+    }
+    return $a;
+  }
+  return false;
+}
 ?>

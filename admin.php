@@ -24,7 +24,7 @@ require_once('script/script.analyse.php');
       <div class="sidebar">
         <ul>
           <li><a href="?overview=Day<?php echo "&day=".date("Y-m-d"); ?>">Übersicht</a></li>
-          <li><a href="?analyse=HubRaum">Analyse</a></li>
+          <li><a href="?analyse=1%20Monat">Analyse</a></li>
           <li><a href="?liste=No-Show">Listen</a></li>
           <li><a href="?reservierungen=HubRaum">Reservierungen</a></li>
           <li><a href="?tische=HubRaum">Tischplan</a></li>
@@ -103,8 +103,12 @@ require_once('script/script.analyse.php');
             if($time == 'Heute'){echo '<li class="analyse-zeit-current">Heute</li>';}else{echo '<li>Heute</li>';}
             if($time == '1 Woche'){echo '<li class="analyse-zeit-current">1 Woche</li>';}else{echo '<li>1 Woche</li>';}
             if($time == '1 Monat'){echo '<li class="analyse-zeit-current">1 Monat</li>';}else{echo '<li>1 Monat</li>';}
-            if($time != 'Heute' && $time != '1 Woche' && $time != '1 Monat'){
-              echo '<li class="analyse-zeit-current"><input type="date" value="'.$time.'" id="analyse-date"></li>';}else{echo '<li><input type="date" id="analyse-date"></li>';}
+            /*if($time != 'Heute' && $time != '1 Woche' && $time != '1 Monat'){
+              echo '<li class="analyse-zeit-current"><input type="date" value="'.$time.'" id="analyse-date-from">';
+              echo '<input type="date" id="analyse-date-to"></li>';
+            }else{
+              echo '<li><input type="date" id="analyse-date-from"><input type="date" id="analyse-date-to"></li>';
+            }*/
             echo '</ul>';
 
             echo '<div class="analyse-data">';
@@ -148,24 +152,49 @@ require_once('script/script.analyse.php');
                 if(isset($tage[5])){$t5=$tage[5];}else{$t5=0;}
                 if(isset($tage[6])){$t6=$tage[6];}else{$t6=0;}
                 if($tage != false){
-                  echo '<h2>Wochentage - 1 Woche</h2>';
+                  echo '<h2>Wochentage - '.$time.'</h2>';
                   echo '<canvas id="ChartWochentage"></canvas>';
                 } else {
                   echo '<h2>Wochentage - Keine Daten gefunden</h2>';
                 }
               echo '</div>';
+
               echo '<div id="table-events" class="analyse-box">';
-                echo '<h2>Events - Heute</h2>';
-                echo '<h3 class="events-counter">112</h3>';
-                echo '<div class="events-data">';
-                  echo '<label>Hochzeiten <p class="events-counter">12</p></label>';
-                  echo '<label>Auftritte <p class="events-counter">30</p></label>';
-                  echo '<label>Partys <p class="events-counter">70</p></label>';
-                echo '</div>';
+                $events = getAnalyseEvents($time);
+                if($events != false){
+                  echo '<h2>Events - '.$time.'</h2>';
+                  echo '<h3 class="events-counter">';
+                  if(isset($events[3])){echo $events[3]; }else{echo '0'; }
+                  echo '</h3>';
+                  echo '<div class="events-data">';
+                    echo '<label>Hochzeiten <p class="events-counter">';
+                    if(isset($events[0])){echo $events[0]; }else{echo '0'; }
+                    echo '</p></label>';
+                    echo '<label>Auftritte <p class="events-counter">';
+                    if(isset($events[2])){echo $events[2]; }else{echo '0'; }
+                    echo '</p></label>';
+                    echo '<label>Partys <p class="events-counter">';
+                    if(isset($events[1])){echo $events[1]; }else{echo '0'; }
+                    echo '</p></label>';
+                  echo '</div>';
+                } else {
+                  echo '<h2>Events - Keine Daten gefunden</h2>';
+                }
               echo '</div>';
+
               echo '<div id="chart-buttons" class="analyse-box">';
-                echo '<h2>Buttons - Heute</h2>';
-                echo '<canvas id="ChartButtons"></canvas>';
+                $buttons = getAnalyseButtons($time);
+                if(isset($buttons[0])){$b0=$buttons[0];}else{$b0=0;}
+                if(isset($buttons[1])){$b1=$buttons[1];}else{$b1=0;}
+                if(isset($buttons[2])){$b2=$buttons[2];}else{$b2=0;}
+                if(isset($buttons[3])){$b3=$buttons[3];}else{$b3=0;}
+                if(isset($buttons[4])){$b4=$buttons[4];}else{$b4=0;}
+                if($buttons != false){
+                  echo '<h2>Buttons - '.$time.'</h2>';
+                  echo '<canvas id="ChartButtons"></canvas>';
+                } else {
+                    echo '<h2>Buttons - Keine Daten gefunden</h2>';
+                }
               echo '</div>';
             echo '</div>';
           echo '</div>';
@@ -229,9 +258,12 @@ require_once('script/script.analyse.php');
                   label: '# of Votes',
                   data: [$t0,$t1,$t2,$t3,$t4,$t5,$t6],
                   backgroundColor: [
-                    'yellow', 'blue', 'red',
-                    'green', 'purple', 'lightblue',
-                    'orange'
+                    'rgba(43, 147, 72, 0.5)', 'rgba(238, 108, 77, 0.5)', 'rgba(186, 24, 27, 0.5)',
+                    'rgba(0, 109, 119, 0.5)', 'rgba(116, 0, 184, 0.5)', 'rgba(238, 130, 238,0.5)', 'rgba(255, 255, 71, 0.5)'
+                  ],
+                  borderColor: [
+                    'rgba(43, 147, 72, 1)', 'rgba(238, 108, 77, 1)', 'rgba(186, 24, 27, 0.5)',
+                    'rgba(0, 109, 119, 1)', 'rgba(116, 0, 184, 1)','rgba(238, 130, 238,1)','rgba(255, 255, 71, 1)'
                   ],
                   borderWidth: 1
                 }]
@@ -239,24 +271,26 @@ require_once('script/script.analyse.php');
             });";
           }
 
+          if($events != false){
+            echo 'const animationDuration=2000; const frameDuration=1000/60;
+            const totalFrames=Math.round(animationDuration/frameDuration);
+            const eoq = t => t*(2-t);
+            const animateCountUp = el => {
+                let frame = 0;
+                const countTo = parseInt( el.innerHTML, 10 );
+                const counter = setInterval( () => {
+                  frame++;
+                  const progress = eoq( frame / totalFrames );
+                  const currentCount = Math.round( countTo * progress );
+                  if ( parseInt( el.innerHTML, 10 ) !== currentCount ) { el.innerHTML = currentCount; }
+                  if ( frame === totalFrames ) {clearInterval( counter );}
+                }, frameDuration );
+              };
+              const countupEls = document.querySelectorAll( ".events-counter" );
+              countupEls.forEach( animateCountUp ); ';
+          }
 
-          echo 'const animationDuration=2000; const frameDuration=1000/60;
-          const totalFrames=Math.round(animationDuration/frameDuration);
-          const eoq = t => t*(2-t);
-          const animateCountUp = el => {
-            	let frame = 0;
-            	const countTo = parseInt( el.innerHTML, 10 );
-            	const counter = setInterval( () => {
-            		frame++;
-            		const progress = eoq( frame / totalFrames );
-            		const currentCount = Math.round( countTo * progress );
-            		if ( parseInt( el.innerHTML, 10 ) !== currentCount ) { el.innerHTML = currentCount; }
-            		if ( frame === totalFrames ) {clearInterval( counter );}
-            	}, frameDuration );
-            };
-            const countupEls = document.querySelectorAll( ".events-counter" );
-            countupEls.forEach( animateCountUp ); ';
-
+          if($buttons != false){
             echo "var ctx = document.getElementById('ChartButtons').getContext('2d');
             new Chart(ctx, {
               type: 'bar',
@@ -264,14 +298,14 @@ require_once('script/script.analyse.php');
                 labels: ['Eingetroffen', 'Freigegeben', 'Abgesagt', 'No-Show', 'Abw. Anzahl'],
                 datasets: [{
                   label: 'Buttons',
-                  data: [34, 12, 2, 5, 1],
+                  data: [$b0, $b1, $b2, $b3, $b4],
                   backgroundColor: [
-                    'rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(94, 62, 235, 0.5)',
-                    'rgba(46, 138, 138, 0.5)', 'rgba(255, 138, 138, 0.5)'
+                    'rgba(43, 147, 72, 0.5)', 'rgba(238, 108, 77, 0.5)', 'rgba(186, 24, 27, 0.5)',
+                    'rgba(0, 109, 119, 0.5)', 'rgba(116, 0, 184, 0.5)'
                   ],
                   borderColor: [
-                    'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(94, 62, 235, 1)',
-                    'rgba(46, 138, 138, 1)', 'rgba(255, 138, 138, 1)'
+                    'rgba(43, 147, 72, 1)', 'rgba(238, 108, 77, 1)', 'rgba(186, 24, 27, 0.5)',
+                    'rgba(0, 109, 119, 1)', 'rgba(116, 0, 184, 1)'
                   ],
                   borderWidth: 1
                 }]
@@ -284,6 +318,8 @@ require_once('script/script.analyse.php');
                 }
               }
             });";
+          }
+
 
           echo '</script>';
 
