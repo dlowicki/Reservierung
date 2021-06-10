@@ -18,12 +18,12 @@ function getAnalyseBlockzeiten($type){
     case '1 Woche':
       $dt = date("Y-m-d");
       $date = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")-7, date("Y")));
-      $sql = "SELECT reserveBlock FROM rreserve WHERE reserveDate < '$dt' and reserveDate > '$date'";
+      $sql = "SELECT reserveBlock FROM rreserve WHERE reserveDate <= '$dt' and reserveDate >= '$date'";
       break;
     case '1 Monat':
       $dt = date("Y-m-d");
       $date = date("Y-m-d", mktime(0, 0, 0, date("m")-1, date("d"), date("Y")));
-      $sql = "SELECT reserveBlock FROM rreserve WHERE reserveDate < '$dt' and reserveDate > '$date'";
+      $sql = "SELECT reserveBlock FROM rreserve WHERE reserveDate <= '$dt' and reserveDate >= '$date'";
       break;
     default:
       $sql = "SELECT reserveBlock FROM rreserve WHERE reserveDate = '$type'";
@@ -107,44 +107,31 @@ function getAnalyseTage($type){
     case '1 Woche':
       $dt = date("Y-m-d");
       $date = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")-7, date("Y")));
-      $sql = "SELECT reserveDate FROM rreserve WHERE reserveDate < '$dt' and reserveDate > '$date'";
+      $sql = "SELECT reserveDate FROM rreserve WHERE reserveDate <= '$dt' and reserveDate >= '$date'";
       break;
     case '1 Monat':
       $dt = date("Y-m-d");
       $date = date("Y-m-d", mktime(0, 0, 0, date("m")-1, date("d"), date("Y")));
-      $sql = "SELECT reserveDate FROM rreserve WHERE reserveDate < '$dt' and reserveDate > '$date'";
+      $sql = "SELECT reserveDate FROM rreserve WHERE reserveDate <= '$dt' and reserveDate >= '$date'";
       break;
   }
   $query = $con->query($sql);
 
   if($query){
-    $a=array(); $m0=0;$m1=0;$m2=0;$m3=0;$m4=0;$m5=0;$m6=0;
+    $a=array(0,0,0,0,0,0,0); $m0=0;$m1=0;$m2=0;$m3=0;$m4=0;$m5=0;$m6=0;
     foreach ($query as $key) {
-      $wochentag = date('w', strtotime($key['reserveDate']));
+      $wochentag = date('N', strtotime($key['reserveDate']));
       switch ($wochentag) {
-        case '0':
-        $a[0]=$m0++;
-        break;
-        case '1':
-        $a[1]=$m1++;
-        break;
-        case '2':
-        $a[2]=$m2++;
-        break;
-        case '3':
-        $a[3]=$m3++;
-        break;
-        case '4':
-        $a[4]=$m4++;
-        break;
-        case '5':
-        $a[5]=$m5++;
-        break;
-        case '6':
-        $a[6]=$m6++;
-        break;
+        case '1': $m0++; break;
+        case '2': $m1++; break;
+        case '3': $m2++; break;
+        case '4': $m3++; break;
+        case '5': $m4++; break;
+        case '6': $m5++; break;
+        case '7': $m6++; break;
       }
     }
+	$a[0]=$m0;$a[1]=$m1;$a[2]=$m2;$a[3]=$m3;$a[4]=$m4;$a[5]=$m5;$a[6]=$m6;
     return $a;
   }
   return false;
@@ -162,11 +149,11 @@ function getAnalyseEvents($type){
       break;
     case '1 Woche':
       $date = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")-7, date("Y")));
-      $sql = "SELECT spType FROM rspecial WHERE spDate < '$dt' and spDate > '$date'";
+      $sql = "SELECT spType FROM rspecial WHERE spDate <= '$dt' and spDate >= '$date'";
       break;
     case '1 Monat':
       $date = date("Y-m-d", mktime(0, 0, 0, date("m")-1, date("d"), date("Y")));
-      $sql = "SELECT spType FROM rspecial WHERE spDate < '$dt' and spDate > '$date'";
+      $sql = "SELECT spType FROM rspecial WHERE spDate <= '$dt' and spDate >= '$date'";
       break;
   }
   $query = $con->query($sql);
@@ -196,11 +183,11 @@ function getAnalyseButtons($type){
       break;
     case '1 Woche':
       $date = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")-7, date("Y")));
-      $sql = "SELECT reserveState FROM rreserve WHERE reserveDate < '$dt' and reserveDate > '$date'";
+      $sql = "SELECT reserveState FROM rreserve WHERE reserveDate <= '$dt' and reserveDate >= '$date'";
       break;
     case '1 Monat':
       $date = date("Y-m-d", mktime(0, 0, 0, date("m")-1, date("d"), date("Y")));
-      $sql = "SELECT reserveState FROM rreserve WHERE reserveDate < '$dt' and reserveDate > '$date'";
+      $sql = "SELECT reserveState FROM rreserve WHERE reserveDate <= '$dt' and reserveDate >= '$date'";
       break;
   }
   $query = $con->query($sql);

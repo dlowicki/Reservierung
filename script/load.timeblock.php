@@ -1,7 +1,7 @@
 <?php
   require('../sync.php');
   $con = connect();
-  $query = $con->query('SELECT * FROM rTime WHERE timeActive = 1');
+  $query = $con->query('SELECT * FROM rtime WHERE timeActive = 1');
   if($query){
     $r=0; $arr=array();
     foreach ($query as $key) {

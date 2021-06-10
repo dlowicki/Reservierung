@@ -118,7 +118,7 @@ require_once('script/script.analyse.php');
                   echo '<h2>Blockzeit - '.$time.'</h2>';
                   echo '<canvas id="ChartBlockzeit"></canvas>';
                 } else {
-                  echo '<h2>Blockzeiten - Keine Daten gefunden</h2>';
+                  echo '<h2>Blockzeit - Keine Daten gefunden</h2>';
 
                 }
               echo '</div>';
@@ -210,7 +210,7 @@ require_once('script/script.analyse.php');
                   datasets: [{
                     label: 'Blockzeiten',
                     data: [".$blockzeiten[0].", ".$blockzeiten[1]."],
-                    backgroundColor: [ 'rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)' ],
+                    backgroundColor: [ 'rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)' ],
                     borderColor: [ 'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)' ],
                     borderWidth: 1
                   }]
