@@ -431,7 +431,7 @@ require_once('script/script.analyse.php');
           $tables = $overview->loadTables();
           echo '<div class="tische-container">';
 
-          echo '<div id="tische-panel">';
+          echo '<div class="tische-panel">';
             echo '<h2>Tisch Panel</h2>';
             $tAll = ''; $standorte = array();
             foreach ($tables as $key) { if($key['tableActive'] == 'open'){ $tAll = 'checked'; } if(!in_array($key['tablePlace'],$standorte)){ array_push($standorte,$key['tablePlace']); } }
@@ -455,20 +455,22 @@ require_once('script/script.analyse.php');
           echo '</div>';
 
 
-          echo '<table>';
-          echo '<tr><th>TischID</th><th>Min. Anzahl</th><th>Max. Anzahl</th><th>Standort</th></tr>';
-          foreach ($tables as $key) {
-            echo '<tr class="tische-row" id="'.$key["tableID"].'">';
-              echo '<td class="tische-label"><input type="text" id="tische-id" value="'.$key["tableID"].'"></td>';
-              echo '<td class="tische-label td-number"><input type="number" id="tische-min" value="'.$key["tableMin"].'"></td>';
-              echo '<td class="tische-label td-number"><input type="number" id="tische-max" value="'.$key["tableMax"].'"></td>';
-              echo '<td class="tische-label"><input type="text" id="tische-place" value="'.$key["tablePlace"].'"></td>';
-              if($key['tableActive'] == "open"){ echo '<td><label class="switch" id="'.$key["tableID"].'"><input type="checkbox" id="switch-table" checked><span class="slider round"></span></label></td>'; }
-              else { echo '<td><label class="switch" id="'.$key["tableID"].'"><input type="checkbox" id="switch-table"><span class="slider round"></span></label></td>'; }
-              echo '<td class="tische-label"><button>Speichern</button></td>';
-            echo '</tr>';
-          }
-          echo '</table>';
+            echo '<div class="tische-panel">';
+              echo '<h2>Tisch bearbeiten</h2>';
+              echo '<div class="tisch-input">';
+                echo '<select>';
+                  foreach ($tables as $key) { echo '<option value="'.$key["tableID"].'">'.$key["tableID"].'</option>'; }
+                echo '</select>';
+                echo '<input type="number" id="tisch-min">';
+                echo '<input type="number" id="tisch-max">';
+                echo '<input type="text" id="tisch-standort">';
+                echo '<label class="switch"><input type="checkbox" id="switch-standort"><span class="slider round"></span></label>';
+              echo '</div>';
+              echo '<div class="t-panel">';
+              echo '<button>Löschen</button><button id="t-bearbeiten">Speichern</button>';
+              echo '</div>';
+            echo '</div>';
+
           echo '</div>';
         } elseif(isset($_GET['zeit'])){
           echo '<div class="zeit-container">';
