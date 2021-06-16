@@ -327,9 +327,9 @@ require_once('script/script.analyse.php');
 			$noshow = "'admin.php?liste=No-Show'"; $abwAnzahl = "'admin.php?liste=abwAnzahl'"; $liste = $_GET['liste'];
       echo '<div class="liste-nav">';
       if($liste == 'No-Show'){
-        echo '<button style="background-color: rgba(192,95,95,1); color: white; border: 1px solid white;" onClick="window.location.href='.$noshow.'">No-Show</button><button onClick="window.location.href='.$abwAnzahl.'">Abw. Anzahl</button>';
+        echo '<button style="background-color: #006d77; color: white; border: 1px solid white;" onClick="window.location.href='.$noshow.'">No-Show</button><button onClick="window.location.href='.$abwAnzahl.'">Abw. Anzahl</button>';
       } else {
-        echo '<button onClick="window.location.href='.$noshow.'">No-Show</button><button style="background-color: rgba(192,95,95,1); color: white; border: 1px solid white;" onClick="window.location.href='.$abwAnzahl.'">Abw. Anzahl</button>';
+        echo '<button onClick="window.location.href='.$noshow.'">No-Show</button><button style="background-color: #006d77; color: white; border: 1px solid white;" onClick="window.location.href='.$abwAnzahl.'">Abw. Anzahl</button>';
       }
       echo '</div>';
 
