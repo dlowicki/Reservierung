@@ -10,26 +10,9 @@ html,body {width: 100%;height: 100%;}
 .main {width: 85%;height: 100%;}
 
 
-.zeit-container { width: 100%;height: auto; display: flex; flex-wrap: wrap;  }
-.arbeitstage-container {width: 350px; height: auto; padding: 10px; margin-left: 2%;margin-top: 2%;border: 2px solid rgba(192,95,95,0.8);}
-.arbeitstage-container h2 { width: 100%; height: auto; }
-.arbeitstag { margin-bottom: 2%; padding: 5px; }
-.arbeitstag h3 { padding: 5px; font-size: 1.5rem; }
-.arbeitstag input { margin-left: 2%; margin-right: 2%; width: 100px; font-size: 1.2rem; }
-.arbeitstag .switch { float: right; }
-
-.feiertage-container { width: 50%; min-width: 350px; height: 650px; margin-left: auto; margin-right: auto; margin-top: 2%; }
-.feiertage-filter { width: 100%; padding: 1.5% 0% 1.5% 0%; background-color: rgba(192,95,95,1); min-width: 400px; }
-.feiertage-filter input { font-size: 1.2rem; background-color: white; min-width: 80px; padding: 2px; width: 25%; margin-left: 2%; outline: none; border: none; }
-.feiertage-filter select { font-size: 1.2rem; background-color: white; width: 120px; margin-left: 2%; padding: 2px; }
-.feiertage-filter i { color: white; float: right; cursor: pointer; margin-top: -5px; margin-right: 2%; }
 
 
-.feiertage-data { display: flex; flex-direction: column; height: 90%; overflow: auto; padding-bottom: 10px; min-width: 400px; }
-.feiertag { height: auto; padding: 10px 20px 10px 20px; margin-top: 15px; margin-left: auto; margin-right: auto; border: 1px solid black; border-radius: 10px; width: 90%; min-height: 30px; display: flex; flex-direction: row; }
-.feiertag p { color: black; margin-right: auto; margin-left: auto; width: 100px; padding: 2px; font-size: 1.1rem; }
-.feiertag button { padding: 2px; width: 80px; background-color: transparent; color: #e63946; transition: 0.5s; border: 1px solid #e63946; cursor: pointer; }
-.feiertag button:hover { color: white; border: 1px solid white; background-color: #e63946; }
+
 
 
 .rechte-container { border: 1px solid black;margin-left: auto; margin-right: auto; margin-top: 30px; padding: 15px; width: 50%; min-width: 750px;}
@@ -183,7 +166,6 @@ z-index: 9;font-family: sans-serif;display: flex; flex-direction: column;
 
 /* RESERVIERUNG HAUPT CONTAINER */
 
-
 .rs-list-edit-container {background-color: rgba(192,95,95,0.6);width: 70%; height: auto;display: flex; flex-wrap: nowrap;z-index: 2;display: none;}
 .list-edit-reservierung {width: 100%; height: auto;display: flex; flex-wrap: wrap; flex-direction: column;}
 .list-edit-top {width: 40%;height: 100%;text-align: center;}
@@ -210,35 +192,10 @@ z-index: 9;font-family: sans-serif;display: flex; flex-direction: column;
 /* LIST EDIT BOTTOM */
 
 .list-edit-bottom {width: 60%;margin-top: 5%;text-align: center;}
-
-.list-edit-bottom input {
-  width: 50%;
-  min-width: 70px;
-  padding: 5px;
-  font-size: 1.2rem;
-  margin-left: auto; margin-right: auto; margin-top: 2%; margin-bottom: 2%;
-  text-align: center;
-}
-
-.list-edit-bottom select {
-  width: 80%;
-  min-width: 70px;
-  padding: 5px;
-  font-size: 1.2rem;
-  margin-left: auto; margin-right: auto;
-  text-align: center;
-}
-
-.list-edit-bottom input[type=time] {
-  width: 130px;
-}
-
-.edit-bottom-table {
-  width: 80%;
-  margin-top: 2%;
-  display: flex; flex-wrap: nowrap;
-  margin-left: auto; margin-right: auto;
-}
+.list-edit-bottom input {width: 50%;min-width: 70px;padding: 5px;font-size: 1.2rem;margin-left: auto; margin-right: auto; margin-top: 2%; margin-bottom: 2%;text-align: center;}
+.list-edit-bottom select {width: 80%;min-width: 70px;padding: 5px;font-size: 1.2rem;margin-left: auto; margin-right: auto;text-align: center;}
+.list-edit-bottom input[type=time] {width: 130px;}
+.edit-bottom-table {width: 80%;margin-top: 2%;display: flex; flex-wrap: nowrap;margin-left: auto; margin-right: auto;}
 .edit-bottom-table h3 { padding: 7px; width: 80%; }
 
 
@@ -267,16 +224,14 @@ z-index: 9;font-family: sans-serif;display: flex; flex-direction: column;
 
 /* Tische */
 
-.tische-container { width: 50%; min-width: 300px; height: 1000px; display: flex; flex-direction: row; flex-wrap: wrap; overflow: auto; }
-.tisch-konfig { background-color: yellow; height: 200px; width: 100%; min-width: 300px; }
-.tisch-konfig select { width: 75px; font-size: 1.5rem; margin: 5% 2% 0% 2%; }
-.tisch-konfig input[type=number] {width: 50px; font-size: 1.5rem; text-align: center; outline: none; margin: 5% 2% 0% 2%;  }
-.tisch-konfig input[type=text] {width: 150px; font-size: 1.5rem; outline: none; margin: 5% 2% 0% 2%;  }
+.tische-container { width: 50%;min-width: 450px;height: 1000px; display: flex; flex-direction: row; flex-wrap: wrap; overflow: auto; }
+.tisch-input { padding: 3%; display: flex; flex-direction: row; flex-wrap: wrap; width: 94%; }
+.tisch-input select { width: 75px; font-size: 1.5rem; margin-left: 5%; height: 30px; }
+.tisch-input input[type=number] {width: 75px; font-size: 1.5rem; text-align: center; outline: none;margin-left: 5%;  }
+.tisch-input input[type=text] {width: 150px; font-size: 1.5rem; outline: none;margin-left: 5%;  }
+.tisch-input label { margin-left: 5%; min-width: 60px;}
 
-.tisch-input { background-color: green; }
-.tisch-konfig button {margin: 5% 5% 5% 0%; font-size: 1.2rem;float:right;padding: 1% 5% 1% 5%;background-color:white;border: 1px solid black;cursor:pointer; }
-
-.tische-panel { width: 100%; height: 250px; margin-top: 5%; margin-left: 2.5%; margin-right: 2.5%; border: 1px solid black; }
+.tische-panel { width: 100%; height: 250px; margin-top: 2%; margin-left: 2.5%; margin-right: 2.5%; border:2px solid #006d77; }
 .tische-panel h2 { font-size: 2rem; padding: 5px; }
 .t-panel { width: 100%; margin-top: 25px; display: flex; flex-direction: row; }
 .t-panel label { margin-left: auto; margin-right: 5%; }
@@ -284,70 +239,50 @@ z-index: 9;font-family: sans-serif;display: flex; flex-direction: column;
 .t-panel select { margin-left: 5%; font-size: 1.3rem; outline: none; }
 .tische-panel button { display: block; margin-left: auto; width: 150px; font-size: 1.3rem; padding: 5px; margin-right: auto; cursor: pointer; }
 
+/* Tische / Öffnungszeiten / Events */
 
+.tisch-zeit-container { display: flex; flex-wrap: wrap; width: 100%; height: auto; }
+
+
+
+/* Öffnungszeiten */
+.zeit-container { width: 50%;min-width: 350px;height: 400px; display: flex; flex-wrap: wrap;  }
+.arbeitstage-container {min-width: 450px; height: auto; padding: 10px; margin-left: auto;margin-right: auto;margin-top: 2%;border: 2px solid #006d77;}
+.arbeitstage-container h2 { width: 100%; height: auto; }
+.arbeitstag { margin-bottom: 2%; padding: 5px; }
+.arbeitstag h3 { padding: 5px; font-size: 1.5rem; }
+.arbeitstag input { margin-left: 2%; margin-right: 2%; width: 100px; font-size: 1.2rem; }
+.arbeitstag .switch { float: right; }
+/* Feiertage */
+.feiertage-container { width: 95%; min-width: 650px; height: 250px; margin-left: 2.5%; margin-right: 2.5%; margin-top: 2%; }
+.feiertage-filter { width: 100%; padding: 1.5% 0% 1.5% 0%; background-color: #006d77; min-width: 400px; }
+.feiertage-filter input { font-size: 1.2rem; min-width: 80px; padding: 2px; width: 25%; margin-left: 2%; outline: none; border: none; }
+.feiertage-filter input[type=date] { width: 155px;}
+.feiertage-filter select { font-size: 1.2rem; background-color: white; width: 120px; margin-left: 2%; padding: 2px; }
+.feiertage-filter button { color: black; width: 120px;padding: 4px;text-align: center;float: right;font-size: 1.2rem;cursor: pointer;
+  margin-right: 2%; transition: 0.5s;background-color: #white;border-radius: 5px;outline: none; border: 0;}
+  .feiertage-filter button:hover { color: white; background-color: #06d6a0; }
+
+.feiertage-data { display: flex; flex-direction: column; height: 90%; overflow: auto; padding-bottom: 10px; min-width: 400px; }
+.feiertag { height: auto; padding: 5px 10px 5px 10px; margin-top: 10px; margin-left: auto; margin-right: auto; border: 1px solid #006d77; border-radius: 10px;
+  width: 95%; min-height: 30px; display: flex; flex-direction: row; }
+.feiertag p { color: black;  min-width: 100px; width: 25%;margin-left: 1%;padding: 2px; font-size: 1.1rem; }
+.feiertag button { margin-left: auto; padding: 2px; width: 80px; background-color: transparent; color: #e63946; transition: 0.5s; border: 1px solid #e63946; cursor: pointer; }
+.feiertag button:hover { color: white; border: 1px solid white; background-color: #e63946; }
 
 
 /* SWITCH */
 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 62px;
-  height: 34px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: red;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-input:checked + .slider {
-  background-color: green;
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px green;
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
-}
-
+.switch {position: relative;display: inline-block;width: 62px;height: 34px;}
+.switch input {opacity: 0;width: 0;height: 0;}
+.slider {position: absolute;cursor: pointer;top: 0;left: 0;right: 0;bottom: 0;background-color: red;-webkit-transition: .4s;transition: .4s;}
+.slider:before {position: absolute;content: "";height: 26px;width: 26px;left: 4px;bottom: 4px;background-color: white;-webkit-transition: .4s;transition: .4s;}
+input:checked + .slider {background-color: green;}
+input:focus + .slider {box-shadow: 0 0 1px green;}
+input:checked + .slider:before {-webkit-transform: translateX(26px);-ms-transform: translateX(26px);transform: translateX(26px);}
 /* Rounded sliders */
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
+.slider.round {border-radius: 34px;}
+.slider.round:before {border-radius: 50%;}
 
 
 @keyframes fadein {

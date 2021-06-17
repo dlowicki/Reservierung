@@ -27,8 +27,7 @@ require_once('script/script.analyse.php');
           <li><a href="?analyse=1%20Monat">Analyse</a></li>
           <li><a href="?liste=No-Show">Listen</a></li>
           <li><a href="?reservierungen=HubRaum">Reservierungen</a></li>
-          <li><a href="?tische=HubRaum">Tischplan</a></li>
-          <li><a href="?zeit=HubRaum">Öffnungszeiten</a></li>
+          <li><a href="?tische=HubRaum">Einstellungen</a></li>
           <li><a href="?rechte=HubRaum">Rechte</a></li>
           <li><a href="index.php">Verlassen</a></li>
         </ul>
@@ -429,31 +428,30 @@ require_once('script/script.analyse.php');
         } elseif(isset($_GET['tische'])){
           $overview = new Overview();
           $tables = $overview->loadTables();
-          echo '<div class="tische-container">';
+          echo '<div class="tisch-zeit-container">';
+            echo '<div class="tische-container">';
+              echo '<div class="tische-panel">';
+                echo '<h2>Tisch Panel</h2>';
+                $tAll = ''; $standorte = array();
+                foreach ($tables as $key) { if($key['tableActive'] == 'open'){ $tAll = 'checked'; } if(!in_array($key['tablePlace'],$standorte)){ array_push($standorte,$key['tablePlace']); } }
+                echo '<div class="t-panel"><h3>Alle Tische</h3><label class="switch"><input type="checkbox" id="switch-all" '.$tAll.'><span class="slider round"></span></label></div>';
+                echo '<div class="t-panel">';
+                  echo '<select id="t-standort">';
+                  for ($i=0; $i < sizeof($standorte); $i++) { echo '<option value="'.$standorte[$i].'">'.$standorte[$i].'</option>'; }
+                  echo '</select>';
+                  $checkPlace = $overview->checkPlaceActive($standorte[0]);
+                  if($checkPlace == 'open'){
+                    echo '<label class="switch"><input type="checkbox" id="switch-standort" checked><span class="slider round"></span></label>';
+                  } else {
+                    echo '<label class="switch"><input type="checkbox" id="switch-standort"><span class="slider round"></span></label>';
+                  }
 
-          echo '<div class="tische-panel">';
-            echo '<h2>Tisch Panel</h2>';
-            $tAll = ''; $standorte = array();
-            foreach ($tables as $key) { if($key['tableActive'] == 'open'){ $tAll = 'checked'; } if(!in_array($key['tablePlace'],$standorte)){ array_push($standorte,$key['tablePlace']); } }
-            echo '<div class="t-panel"><h3>Alle Tische</h3><label class="switch"><input type="checkbox" id="switch-all" '.$tAll.'><span class="slider round"></span></label></div>';
-            echo '<div class="t-panel">';
-              echo '<select id="t-standort">';
-              for ($i=0; $i < sizeof($standorte); $i++) { echo '<option value="'.$standorte[$i].'">'.$standorte[$i].'</option>'; }
-              echo '</select>';
-              $checkPlace = $overview->checkPlaceActive($standorte[0]);
-              if($checkPlace == 'open'){
-                echo '<label class="switch"><input type="checkbox" id="switch-standort" checked><span class="slider round"></span></label>';
-              } else {
-                echo '<label class="switch"><input type="checkbox" id="switch-standort"><span class="slider round"></span></label>';
-              }
-
-            echo '</div>';
-            echo '<div class="t-panel">';
-            $link = "'tischplan.php'";
-            echo '<button onClick="window.location.href='.$link.'">Tischplan</button><button id="t-speichern">Speichern</button>';
-            echo '</div>';
-          echo '</div>';
-
+                echo '</div>';
+                echo '<div class="t-panel">';
+                $link = "'tischplan.php'";
+                echo '<button onClick="window.location.href='.$link.'">Tischplan</button><button id="t-speichern">Speichern</button>';
+                echo '</div>';
+              echo '</div>';
 
             echo '<div class="tische-panel">';
               echo '<h2>Tisch bearbeiten</h2>';
@@ -461,18 +459,35 @@ require_once('script/script.analyse.php');
                 echo '<select>';
                   foreach ($tables as $key) { echo '<option value="'.$key["tableID"].'">'.$key["tableID"].'</option>'; }
                 echo '</select>';
-                echo '<input type="number" id="tisch-min">';
-                echo '<input type="number" id="tisch-max">';
-                echo '<input type="text" id="tisch-standort">';
-                echo '<label class="switch"><input type="checkbox" id="switch-standort"><span class="slider round"></span></label>';
+                echo '<input type="number" id="tisch-min" placeholder="MIN">';
+                echo '<input type="number" id="tisch-max" placeholder="MAX">';
+                echo '<input type="text" id="tisch-standort" placeholder="Standort">';
+                echo '<label class="switch"><input type="checkbox"><span class="slider round"></span></label>';
               echo '</div>';
               echo '<div class="t-panel">';
               echo '<button>Löschen</button><button id="t-bearbeiten">Speichern</button>';
               echo '</div>';
             echo '</div>';
 
-          echo '</div>';
-        } elseif(isset($_GET['zeit'])){
+            echo '<div class="feiertage-container">';
+              echo '<div class="feiertage-filter">';
+                echo '<input type="text" id="ft-name" placeholder="Beschreibung">';
+                echo '<input type="date" id="ft-date">';
+                echo '<select id="ft-select"><option>Hochzeit</option><option>Party</option><option>Auftritt</option></select>';
+                echo '<button>Hinzufügen</button>';
+              echo '</div>';
+
+              echo '<div class="feiertage-data">';
+              $specials = $overview->loadSpecialDays();
+                if($specials){
+                  foreach ($specials as $key) {
+                    echo '<div class="feiertag"><p>'.$key["type"].'</p><p>'.$key["date"].'</p><button id="ft-entfernen" class="ft-'.$key["id"].'">Entfernen</button></div>';
+                  }
+                }
+              echo '</div>';
+            echo '</div>';
+
+          echo '</div>'; // Ende von Tische Container
           echo '<div class="zeit-container">';
             echo '<div class="arbeitstage-container">';
               echo '<h2>Öffnungszeiten</h2>';
@@ -492,24 +507,11 @@ require_once('script/script.analyse.php');
                 }
               }
               echo '</div>';
-              echo '<div class="feiertage-container">';
-                echo '<div class="feiertage-filter">';
-                  echo '<input type="text" id="ft-name" placeholder="Beschreibung">';
-                  echo '<input type="date" id="ft-date">';
-                  echo '<select id="ft-select"><option>Hochzeit</option><option>Party</option><option>Auftritt</option></select>';
-                  echo '<i class="fas fa-calendar-plus fa-2x"></i>';
-                echo '</div>';
-
-                echo '<div class="feiertage-data">';
-                $specials = $overview->loadSpecialDays();
-                  if($specials){
-                    foreach ($specials as $key) {
-                      echo '<div class="feiertag"><p>'.$key["type"].'</p><p>'.$key["date"].'</p><button id="ft-entfernen" class="ft-'.$key["id"].'">Entfernen</button></div>';
-                    }
-                  }
-                echo '</div>';
-              echo '</div>';
             echo '</div>';
+
+
+
+          echo '</div>';
         } elseif(isset($_GET['rechte'])){
           echo '<div class="rechte-container">';
             $overview = new Overview();

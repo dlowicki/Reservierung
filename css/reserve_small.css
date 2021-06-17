@@ -518,13 +518,13 @@ body,html { margin:0; padding:0; height: 100%; width: 100%; }
 /*
 .form-table-left-inputs input[type=text] {min-width: 180px; width: 35%; max-width: 200px;padding: 1%;margin-left: auto;margin-right: auto;margin-top: 10px;margin-bottom: 10px;outline: none;font-size: 1.2rem;border-radius: 5px;border: 1px solid black;text-align: center;}
 */
-
 #amount {-moz-appearance: textfield; -webkit-appearance: none; appearance: none;border-top-right-radius: 10px;border-bottom-right-radius: 10px;margin-left: auto; margin-right: auto;width: 250px;margin-bottom: 1%;background-color: rgba(200,200,200,0.5);}
 #amount::-ms-expand {display: none;}
 .fa-users { position: absolute; margin-top: 25px; margin-left: 240px; }
-#timeDate { border-top-right-radius: 10px; border-bottom-right-radius: 10px; margin-left: auto; margin-right: auto;width: 240px;margin-bottom: 1%;}
-#timeBlock {border-top-right-radius: 10px;border-bottom-right-radius: 10px;margin-left: auto; margin-right: auto;width: 250px;margin-bottom: 1%;background-color: rgba(200,200,200,0.5);}
-
+#timeDate {-moz-appearance: textfield; -webkit-appearance: none; appearance: none; border-top-right-radius: 10px; border-bottom-right-radius: 10px; margin-left: auto; margin-right: auto;width: 240px;margin-bottom: 1%;}
+#timeDate::-ms-expand {display: none;}
+#timeBlock {-moz-appearance: textfield; -webkit-appearance: none; appearance: none;border-top-right-radius: 10px;border-bottom-right-radius: 10px;margin-left: auto; margin-right: auto;width: 250px;margin-bottom: 1%;background-color: rgba(200,200,200,0.5);}
+#timeBlock::-ms-expand {display: none;}
 
 
 
