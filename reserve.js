@@ -142,7 +142,7 @@ function viewTable(id, date) {
       $('.form-table-right').append('<p>Damit ein Tisch bei uns reserviert werden kann, müssen wir den Anforderungen entsprechend die Daten einer Person bei uns abspeichern.<br>Bitte Denken Sie daran, dass bei mehreren Haushalten an einem Tisch, <b>pro Haushalt eine Kontakperson</b> registriert werden muss.<br>Die Daten werden <a href="https://www.hubraum-durlach.de/impressum/">Datenschutzkonform</a> abgespeichert</p');
 
       $('.form-table-right').append("<div class='form-table-right-inputs'><ul class='table-right-inputs-nav'></ul><div class='table-right-inputs-con'></div></div>");
-      $('.table-right-inputs-nav').append('<li class="right-input-nav" id="1" style="border-bottom:1px solid #c05f5f; color: #c05f5f">Haushalt 1</li><li class="right-input-nav" id="2">Haushalt 2</li><li class="right-input-nav" id="3">Haushalt 3</li><li class="right-input-nav" id="4">Haushalt 4</li><li class="right-input-nav" id="5">Haushalt 5</li>');
+      $('.table-right-inputs-nav').append('<li class="right-input-nav" id="1" style="border:1px solid #c05f5f; color: #c05f5f">Haushalt 1</li><li class="right-input-nav" id="2">Haushalt 2</li><li class="right-input-nav" id="3">Haushalt 3</li><li class="right-input-nav" id="4">Haushalt 4</li><li class="right-input-nav" id="5">Haushalt 5</li>');
 
 
       for (var i = 0; i < 5; i++) {
@@ -175,9 +175,9 @@ function viewTable(id, date) {
 
 // Klick auf neuen Haushalt, neuen Haushalt anzeigen
 $(document).on("click",".right-input-nav", function(event){
-  $('.right-input-nav').css("border-bottom","1px solid darkgray");
+  $('.right-input-nav').css("border","1px solid darkgray");
   $('.right-input-nav').css("color","black");
-  $(this).css("border-bottom","1px solid #c05f5f");
+  $(this).css("border","1px solid #c05f5f");
   $(this).css("color","#c05f5f");
   var id = event.target.id;
   $('.hh').css("display","none");
