@@ -15,19 +15,26 @@ html,body {width: 100%;height: 100%;}
 
 
 
-.rechte-container { border: 1px solid black;margin-left: auto; margin-right: auto; margin-top: 30px; padding: 15px; width: 50%; min-width: 750px;}
-.rechte-data { display: flex; flex-direction: row; font-size: 1.2rem; margin-top: 20px; }
+.rechte-container {padding: 15px;height: auto;width: 50%;min-width: 750px;margin-top: 30px;overflow-y: auto;margin-left: auto;margin-right: auto;display: flex; flex-direction: row;}
+.rechte-container ol {list-style: none;width: 130px;min-height: 300px;height:auto;border-right: 2px solid #006d77;padding-right: 10px;}
+.rechte-container ol li { text-align: center;border-radius: 10px;font-size: 1.3rem; padding: 5px;transition: 0.5s;cursor: pointer; margin-bottom: 10px; }
+.rechte-container ol li:hover {background-color: #006d77; color: white;}
+.rechte-container-current { background-color: #006d77; color: white;}
+
+.rechte-data { display: none;flex-direction:column; width: 50%;min-height: 300px;font-size: 1.2rem; margin-left:auto;margin-right:auto; }
+.rechte-data li { display: flex; flex-direction: row; margin-bottom: 20px; }
 .rechte-data p { padding: 5px; width: 120px; margin-left: 10px; margin-right: 10px; }
-.rechte-buttons { margin-left: auto; }
-.rechte-buttons button { margin-right: 10px; border: 1px solid black; padding: 5px; cursor: pointer; background-color: white; width: 120px; transition: 0.5s; }
-.rechte-buttons button:hover { background-color: black; color: white; }
-.rechte-buttons button:last-of-type { border: 1px solid red; color: red; cursor: pointer;  background-color: white; transition: 0.5s; width: 80px; }
-.rechte-buttons button:last-of-type:hover { background-color: red; color: white;  }
-.rechte-container #button-useradd { padding: 5px; width: 100px; margin-left: 10px; cursor: pointer; margin-top: 15px; }
+.rechte-data button { margin-right: 10px; margin-top: 30px;font-size: 1rem;border: 1px solid black; padding: 5px; cursor: pointer; background-color: white; width: 150px; transition: 0.5s; }
+.rechte-data button:hover { background-color: black; color: white; }
+.rechte-data button:last-of-type { border: 1px solid red; color: red; cursor: pointer;  background-color: white; transition: 0.5s; width: 80px; }
+.rechte-data button:last-of-type:hover { background-color: red; color: white;  }
+.rechte-container #button-useradd { padding: 5px; width: 100px; margin-left: 15px;cursor: pointer; margin-top: 15px; }
 
 #viewBearbeiten {
-border: 1px solid darkgray;width: 50%;margin-left: auto;margin-right: auto;min-width: 350px;min-height: 250px;padding-bottom: 30px;margin-top: 2%;
-z-index: 9;font-family: sans-serif;display: flex; flex-direction: column;
+border: 1px solid darkgray;
+width: 50%;margin-left: auto;margin-right: auto;min-width: 350px;min-height: 250px;padding-bottom: 30px;margin-top: 2%;
+z-index: 9;font-family: sans-serif;display: flex; flex-direction: column;background-color: white;
+position: absolute;
 
   -webkit-animation: fadein 0.5s; /* Safari, Chrome and Opera > 12.1 */
  -moz-animation: fadein 0.5s; /* Firefox < 16 */
@@ -157,7 +164,7 @@ z-index: 9;font-family: sans-serif;display: flex; flex-direction: column;
 .state1 { background-color: #2b9348; }
 .state2 { background-color: #ee6c4d; }
 .state3 { background-color: #ba181b; }
-.state4 { background-color: #006d77; }
+.state4 { background-color: #03045e; }
 .state5 { background-color: #7400b8; }
 
 .rs-reservierung-list ul li:hover {cursor: pointer;color: darkgray;}
@@ -186,7 +193,7 @@ z-index: 9;font-family: sans-serif;display: flex; flex-direction: column;
 #bt-eingetroffen {background-color: #2b9348;}
 #bt-freigeben {background-color: #ee6c4d;}
 #bt-abgesagt {background-color: #ba181b;}
-#bt-noShow {background-color: #006d77;}
+#bt-noShow {background-color: #03045e;}
 #bt-abwAnzahl {background-color: #7400b8;}
 
 /* LIST EDIT BOTTOM */
@@ -232,7 +239,7 @@ z-index: 9;font-family: sans-serif;display: flex; flex-direction: column;
 .tisch-input label { margin-left: 5%; min-width: 60px;}
 
 .tische-panel { width: 100%; height: 250px; margin-top: 2%; margin-left: 2.5%; margin-right: 2.5%; border:2px solid #006d77; }
-.tische-panel h2 { font-size: 2rem; padding: 5px; }
+.tische-panel h2 { font-size: 2rem; padding: 5px;color:white;background-color:#006d77;}
 .t-panel { width: 100%; margin-top: 25px; display: flex; flex-direction: row; }
 .t-panel label { margin-left: auto; margin-right: 5%; }
 .t-panel h3 { width: 200px; font-size: 1.3rem; margin-left: 5%; }

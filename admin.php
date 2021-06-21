@@ -27,7 +27,7 @@ require_once('script/script.analyse.php');
           <li><a href="?analyse=1%20Monat">Analyse</a></li>
           <li><a href="?liste=No-Show">Listen</a></li>
           <li><a href="?reservierungen=HubRaum">Reservierungen</a></li>
-          <li><a href="?tische=HubRaum">Einstellungen</a></li>
+          <li><a href="?einstellungen=HubRaum">Einstellungen</a></li>
           <li><a href="?rechte=HubRaum">Rechte</a></li>
           <li><a href="index.php">Verlassen</a></li>
         </ul>
@@ -425,7 +425,7 @@ require_once('script/script.analyse.php');
             }
 
 
-        } elseif(isset($_GET['tische'])){
+        } elseif(isset($_GET['einstellungen'])){
           $overview = new Overview();
           $tables = $overview->loadTables();
           echo '<div class="tisch-zeit-container">';
@@ -464,8 +464,8 @@ require_once('script/script.analyse.php');
                 echo '<input type="text" id="tisch-standort" placeholder="Standort">';
                 echo '<label class="switch"><input type="checkbox"><span class="slider round"></span></label>';
               echo '</div>';
-              echo '<div class="t-panel">';
-              echo '<button>Löschen</button><button id="t-bearbeiten">Speichern</button>';
+              echo '<div class="t-panel" style="display: none;">';
+                echo '<button id="t-delete">Löschen</button><button id="t-bearbeiten">Speichern</button>';
               echo '</div>';
             echo '</div>';
 
@@ -517,23 +517,43 @@ require_once('script/script.analyse.php');
             $overview = new Overview();
             $users = $overview->getUserData();
 
-            foreach ($users as $key) {
-              echo '<div class="rechte-data">';
-                echo '<p id="name-'.$key["userID"].'">'.$key["userName"].'</p>';
-                echo '<p>'.$key["userIP"].'</p>';
-                if($key['userActive'] == '1'){
-                  echo '<label class="switch"><input type="checkbox" class="switch-user" id="switch-user-'.$key["userID"].'" checked><span class="slider round"></span></label>';
-                } else {
-                  echo '<label class="switch"><input type="checkbox" class="switch-user" id="switch-user-'.$key["userID"].'"><span class="slider round"></span></label>';
+            echo '<ol>';
+              for ($i=0; $i < sizeof($users); $i++) {
+                if($i==0){
+                  echo '<li id="user-'.$users[$i]["userID"].'" class="rechte-container-current">'.$users[$i]["userName"].'</li>';
+                  continue;
                 }
-                echo '<div class="rechte-buttons">';
-                  echo '<button id="button-bearbeiten" class="'.$key["userID"].'">Bearbeiten</button>';
-                  echo '<button id="button-abmelden" class="'.$key["userID"].'">User abmelden</button>';
-                  echo '<button id="button-delete" class="'.$key["userID"].'">Löschen</button>';
-                echo '</div>';
-                echo '</div>';
-            }
-            echo '<button id="button-useradd">Neuer User</button>';
+                echo '<li id="user-'.$users[$i]["userID"].'">'.$users[$i]["userName"].'</li>';
+              }
+              echo '<button id="button-useradd">Neuer User</button>';
+            echo '</ol>';
+
+              $check=0;
+              foreach ($users as $key) {
+                if($check==0){
+                  echo '<ul class="rechte-data user-'.$key["userID"].'" style="display: flex">';
+                } else {
+                  echo '<ul class="rechte-data user-'.$key["userID"].'" >';
+                }
+                  echo '<li><p>Benutzer: </p><p>'.$key["userName"].'</p></li>';
+                  echo '<li><p>IP-Adresse: </p><p>'.$key["userIP"].'</p></li>';
+                  echo '<li><p>Aktiviert: </p>';
+                  if($key['userActive'] == '1'){
+                    echo '<label class="switch"><input type="checkbox" class="switch-user" id="switch-user-'.$key["userID"].'" checked><span class="slider round"></span></label>';
+                  } else {
+                    echo '<label class="switch"><input type="checkbox" class="switch-user" id="switch-user-'.$key["userID"].'"><span class="slider round"></span></label>';
+                  }
+                  echo '</li>';
+                  echo '<li>';
+                    echo '<button id="button-bearbeiten" class="'.$key["userID"].'">Bearbeiten</button>';
+                    echo '<button id="button-abmelden" class="'.$key["userID"].'">User abmelden</button>';
+                    echo '<button id="button-delete" class="'.$key["userID"].'">Löschen</button>';
+                  echo '</li>';
+                echo '</ul>';
+                $check++;
+              }
+
+
           echo '</div>';
         }
 
@@ -542,6 +562,13 @@ require_once('script/script.analyse.php');
     </div>
     <script type="text/javascript">
     /* RECHTE USER */
+    $(document).on('click','.rechte-container ol li', function(){
+      const id = event.target.id;
+      $('.rechte-container ol li').removeClass('rechte-container-current');
+      $(this).addClass('rechte-container-current');
+      $('.rechte-data').css('display','none');
+      $('.'+id).css('display','flex');
+    });
     $(document).on('change','.switch-user',function(){
       var check = $(this).prop("checked"); var id = $(this).attr('id').split('-')[2];
       if(check == false) { check = 0; } else { check=1; }
@@ -629,9 +656,7 @@ require_once('script/script.analyse.php');
       }
     });
   });
-  $(document).on('click','#bearbeiten-save',function(){
 
-  });
   /* SPECIAL DAYS */
   $('.feiertage-filter i').click(()=>{
     var beschreibung = $('#ft-name').val(); if(beschreibung.length <= 0){ return false; }
@@ -1013,7 +1038,7 @@ require_once('script/script.analyse.php');
     });
 
     /* TISCHE */
-    $('.tische-row button').click(function(){
+    $('#t-bearbeiten').click(function(){
       var tableID = $(this).parent().parent().attr('id');
       var newTableID = $('#'+tableID+" #tische-id").val();
       var newMin = $('#'+tableID+" #tische-min").val();
