@@ -48,12 +48,12 @@ if(isset($_POST['specialDayDelete'])){
 // Tischplan
 if(isset($_POST['updateAdminTables'])){
   $exp = explode(';',$_POST['updateAdminTables']);
-  if(sizeof($exp) == 6){
-    $oldID=$exp[0];$newID=$exp[1];$min=$exp[2];$max=$exp[3];$place=$exp[4];$check=$exp[5];
+  if(sizeof($exp) == 5){
+    $oldID=$exp[0];$min=$exp[1];$max=$exp[2];$place=$exp[3];$check=$exp[4];
     if($check=='false'){$check="closed";}else{$check="open";}
     $db = new Overview();
     $con = $db->connectDatabase();
-    $query = $con->query("UPDATE rtable SET tablePlace='$place', tableMax=$max, tableMin=$min, tableID=$newID, tableActive='$check' WHERE tableID=$oldID");
+    $query = $con->query("UPDATE rtable SET tablePlace='$place', tableMax=$max, tableMin=$min, tableActive='$check' WHERE tableID=$oldID");
     if($query === TRUE){ echo '1'; return; } echo '0'; return;
   }
   echo '0'; return;
@@ -86,6 +86,18 @@ if(isset($_POST['loadStandort'])){
   $con = $db->connectDatabase();
   $query = $con->query("SELECT tableActive FROM rtable WHERE tablePlace = '$standort'");
   if($query == TRUE){ foreach ($query as $key) { if($key['tableActive'] == 'closed'){ echo 'closed'; return; } } echo 'open'; return; }
+  echo '0'; return;
+}
+if(isset($_POST['loadTischSelected'])){
+  $id = $_POST['loadTischSelected'];
+  $db = new Overview(); $con = $db->connectDatabase();
+  $query = $con->query("SELECT tableMin, tableMax, tablePlace, tableActive FROM rtable WHERE tableID = '$id'");
+  if($query == TRUE){
+    foreach ($query as $key) {
+      echo $key['tableMin'].";".$key['tableMax'].";".$key['tablePlace'].";".$key['tableActive'];
+      return;
+    }
+  }
   echo '0'; return;
 }
 

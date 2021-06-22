@@ -418,6 +418,8 @@ require_once('script/script.analyse.php');
 
                   echo '</div>';
                 echo '</div>';
+              } else {
+                echo '<h4>Tisch wurde nicht gefunden!</h4>';
               }
 
             } else {
@@ -456,15 +458,16 @@ require_once('script/script.analyse.php');
             echo '<div class="tische-panel">';
               echo '<h2>Tisch bearbeiten</h2>';
               echo '<div class="tisch-input">';
-                echo '<select>';
+                echo '<select id="tisch-select">';
+                  echo '<option></option>';
                   foreach ($tables as $key) { echo '<option value="'.$key["tableID"].'">'.$key["tableID"].'</option>'; }
                 echo '</select>';
                 echo '<input type="number" id="tisch-min" placeholder="MIN">';
                 echo '<input type="number" id="tisch-max" placeholder="MAX">';
                 echo '<input type="text" id="tisch-standort" placeholder="Standort">';
-                echo '<label class="switch"><input type="checkbox"><span class="slider round"></span></label>';
+                echo '<label class="switch"><input type="checkbox" id="tisch-switch-select"><span class="slider round"></span></label>';
               echo '</div>';
-              echo '<div class="t-panel" style="display: none;">';
+              echo '<div class="t-panel" id="t-panel-select" style="display: none;">';
                 echo '<button id="t-delete">Löschen</button><button id="t-bearbeiten">Speichern</button>';
               echo '</div>';
             echo '</div>';
@@ -795,6 +798,16 @@ require_once('script/script.analyse.php');
     /* Reservierung RS Liste */
 
     $('.rs-reservierung-list li').click(function(){
+      if($(this).hasClass('reservierung-list-current')){
+        $('.rs-reservierung-list>ul>li.reservierung-list-current').removeClass('reservierung-list-current');
+        $(".rs-list-edit-container").width(); // trigger a DOM reflow
+        $(".rs-list-edit-container").addClass("css-animation-left");
+        setTimeout(function(){
+          $(".rs-list-edit-container").removeClass("css-animation-left");
+          $(".rs-list-edit-container").css('display','none');
+        },1000);
+        return;
+      }
       $('.rs-reservierung-list>ul>li.reservierung-list-current').removeClass('reservierung-list-current');
       $(this).addClass('reservierung-list-current');
 
@@ -815,8 +828,8 @@ require_once('script/script.analyse.php');
             var d = JSON.parse(result);
 
             // TABLE DATA
-            if(d[0]['tableActive'] == "open"){ $('#switch-table').attr("checked","true"); $('.edit-bottom-table h3').css('color','#006400'); }
-            else { $('.edit-bottom-table h3').css('color','#f94144'); $('.edit-bottom-table h3').text('Tisch gesperrt'); }
+            if(d[0]['tableActive'] == "open"){ $('#switch-table').attr("checked","true"); }
+            else { $('.edit-bottom-table h3').css('color','#f94144'); }
             $('.switch').attr("id",d[0]['tableID']);
 
             // FRONT DATA
@@ -865,9 +878,7 @@ require_once('script/script.analyse.php');
         data: { setTableActive: id, value: check},
         success: function(result) {
           console.log(result);
-          if(result){
-            if(check == false){ $('.edit-bottom-table h3').text('Tisch gesperrt'); $('.edit-bottom-table h3').css('color','#f94144');
-          } else { $('.edit-bottom-table h3').text('Tisch aktiv'); $('.edit-bottom-table h3').css('color','#006400'); }
+          if(result){if(check == false){ $('.edit-bottom-table h3').text('Tisch gesperrt');} else { $('.edit-bottom-table h3').text('Tisch aktiv');}
             return;
           }
           }
@@ -890,21 +901,11 @@ require_once('script/script.analyse.php');
       }
 
       switch (buttonType) {
-        case "bt-eingetroffen":
-          dataType = "1";color = "#2b9348";
-          break;
-        case "bt-freigeben":
-          dataType = "2";color = "#ee6c4d";
-          break;
-        case "bt-abgesagt":
-          dataType = "3";color = "#ba181b";
-          break;
-        case "bt-noShow":
-          dataType = "4";color = "#006d77";
-          break;
-        case "bt-abwAnzahl":
-          dataType = "5";color = "#7400b8";
-          break;
+        case "bt-eingetroffen": dataType = "1";color = "#2b9348"; break;
+        case "bt-freigeben": dataType = "2";color = "#ee6c4d"; break;
+        case "bt-abgesagt": dataType = "3";color = "#ba181b"; break;
+        case "bt-noShow": dataType = "4";color = "#006d77"; break;
+        case "bt-abwAnzahl": dataType = "5";color = "#7400b8"; break;
       }
 
       $.ajax({
@@ -1001,8 +1002,7 @@ require_once('script/script.analyse.php');
     });
 
 
-    /* Change Buttons FRONT DATA */
-
+    /* Change Timeblock and Amount at Reserve Table */
     $('#rs-block').change(function(){
       var rsBlock = $(this).val().split('-')[1]; var rsTime = $('#block-'+rsBlock).text();
       var rID = $('.reservierung-list-current').attr('id');
@@ -1018,12 +1018,9 @@ require_once('script/script.analyse.php');
         }
       });
     });
-
-
     $('#rs-amount').change(function(){
       var rAmount = $(this).val();
       var rID = $('.reservierung-list-current').attr('id');
-
       $.ajax({
         url: "script/sync-admin.php",
         method: "POST",
@@ -1038,18 +1035,47 @@ require_once('script/script.analyse.php');
     });
 
     /* TISCHE */
-    $('#t-bearbeiten').click(function(){
-      var tableID = $(this).parent().parent().attr('id');
-      var newTableID = $('#'+tableID+" #tische-id").val();
-      var newMin = $('#'+tableID+" #tische-min").val();
-      var newMax = $('#'+tableID+" #tische-max").val();
-      var newPlace = $('#'+tableID+" #tische-place").val();
-      var newCheck = $('#'+tableID+" #switch-table").prop("checked");
+    $(document).on('change','#tisch-select',function(){
+      const val = event.target.value;
+      if(val.length <= 0){
+        $('#t-panel-select').css('display','none');
+        $('#tisch-min').val("");
+        $('#tisch-max').val("");
+        $('#tisch-standort').val("");
+        return;
+      }
+
+      $('#tisch-switch-select').prop('checked', false);
       $.ajax({
         url: "script/sync-admin.php",
         method: "POST",
-        data: { updateAdminTables: tableID+";"+newTableID+";"+newMin+";"+newMax+";"+newPlace+";"+newCheck},
-        success: function(result) { if(result == "0"){ alert('Ein Fehler ist aufgetreten! \nBitte Daten überprüfen bei Tisch '+tableID); } return; }
+        data: { loadTischSelected: val},
+        success: function(result) {
+            if(result != "0"){
+              var spl = result.split(";");
+              $('#tisch-min').val(spl[0]);
+              $('#tisch-max').val(spl[1]);
+              $('#tisch-standort').val(spl[2]);
+              $('#tisch-switch-select').prop('checked');
+              if(spl[3]=='open'){ $('#tisch-switch-select').prop('checked', true); }
+              $('.t-panel').css('display','flex'); return;
+            }
+           alert('Ein Fehler ist aufgetreten! \nBitte Daten überprüfen bei Tisch '+val);
+           return;
+         }
+      });
+    });
+    $('#t-bearbeiten').click(function(){
+      var tableID = $('#tisch-select').val();
+      var newMin = $('#tisch-min').val();
+      var newMax = $('#tisch-max').val();
+      var newPlace = $('#tisch-standort').val();
+      var newCheck = $('#tisch-switch-select').prop("checked");
+      $.ajax({
+        url: "script/sync-admin.php",
+        method: "POST",
+        data: { updateAdminTables: tableID+";"+newMin+";"+newMax+";"+newPlace+";"+newCheck},
+        success: function(result) { if(result == "0"){ alert('Ein Fehler ist aufgetreten! \nBitte Daten überprüfen bei Tisch '+tableID+'\n'+result); } return; }
       });
     });
     $('#t-speichern').click(()=>{
@@ -1058,7 +1084,7 @@ require_once('script/script.analyse.php');
         url: "script/sync-admin.php",
         method: "POST",
         data: { tischPanel: all+";"+stCheck+";"+st},
-        success: function(result) { if(result == "0"){ alert('Ein Fehler ist aufgetreten! \nBitte Daten überprüfen bei Tisch '+tableID); } location.reload(); return; }
+        success: function(result) { if(result == "0"){ alert('Ein Fehler ist aufgetreten! \nBitte Daten überprüfen bei Tisch '+tableID+'\n'+result); } location.reload(); return; }
       });
     });
     $(document).on('change','#t-standort',function(event){

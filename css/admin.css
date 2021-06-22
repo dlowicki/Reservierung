@@ -9,7 +9,50 @@ html,body {width: 100%;height: 100%;}
 .sidebar ul li a:hover {background-color: #264653;cursor: pointer;}
 .main {width: 85%;height: 100%;}
 
+/* NoShow Edit */
+.liste-edit-container {background-color: #006d77;position: fixed;width: 68%;height: 200px;text-align: center;animation: fadein 0.5s;}
+.edit-form {padding: 2%;}
+.edit-form input[type=text] {font-size: 1.2rem;margin-left: 2%;margin-right: 2%;text-align: center;}
+.edit-form input[type=number] {width: 5%;font-size: 1.2rem;margin-left: 2%;margin-right: 2%;text-align: center;}
+.edit-container-bottom {margin-top: 3%;}
+.edit-button {margin: 0% 5% 0% 5%;padding: 0.5% 2% 0.5% 2%;font-size: 1.2rem;background-color: transparent;border: 1px solid white;color: white;transition: 0.5s;}
+.edit-button:hover {cursor: pointer;color: darkgray;border: 1px solid darkgray;}
+#delete-noShow:hover {background-color: #e71d36;color: white;}
+#liste-submit:hover {background-color: #8ac926;color: white;}
 
+/* NoShow Liste */
+.liste-nav { text-align:center; width:100%; }
+.liste-nav button {width: 160px; padding: 5px; background-color: white; transition: 0.5s; border: 1px solid black; font-size: 1.2rem; margin: 5% 5% 0% 5%; cursor: pointer; }
+.liste-nav button:hover { background-color: #006d77; color: white; }
+
+.liste-container { width: 80%;margin-left: auto;margin-right:auto;height: auto;margin-top: 5%; }
+.liste-top { background-color: #006d77; width: 100%;height: 50px;display: flex;flex-wrap: nowrap;color: white;border: 1px solid transparent; }
+.liste-top h2 { font-size: 2rem;padding: 5px;font-weight: lighter; }
+.liste-top i { padding: 5px;margin-left: auto; transition: 0.5s; }
+.liste-top i:hover { cursor: pointer; color: #d9ed92; }
+.liste-content {width: 100%;height: 30vw;max-height: 500px;min-height: 300px;overflow: auto;border-left: 1px solid #006d77;border-bottom: 1px solid #006d77;border-right: 1px solid #006d77;list-style: none;}
+.liste-content li {display: flex;flex-direction: row;font-size: 1.2rem;transition: 0.5s;border-bottom: 1px solid #006d77;cursor: pointer;width: 100%;}
+.liste-content li:hover { background-color: #264653; color: white; }
+.liste-content li p {display: block;width: 100px;padding: 5px;margin-left: auto; margin-right: auto;overflow: hidden;}
+.liste-content li p:first-of-type {width: 200px;}
+
+@media only screen and (max-width: 735px) {
+  .main { width: 95%; margin-left: auto; margin-right:auto;}
+  .admin-container { flex-wrap: wrap; flex-direction: column;min-width: 595px;}
+  .sidebar { width: 100%; height: 320px;}
+  .sidebar ul { padding: 0%; width: 80%; margin-left: auto; margin-right: auto; }
+  .sidebar ul li { margin-top: 10px; }
+  .sidebar ul li:first-of-type { border: 0px; }
+  .sidebar ul li a { padding: 5px; font-size: 1.2rem; }
+
+  .liste-edit-container {background-color: #006d77;position: fixed;width: 95%;height: 200px;text-align: center;animation: fadein 0.5s;}
+  .edit-form input[type=text] {font-size: 1.2rem;text-align: center;width: 80%;margin-bottom: 2%;}
+  .edit-form input[type=number] {width: 100px;font-size: 1.2rem;margin-left: 2%;margin-right: 2%;text-align: center;}
+  .edit-button {margin: 2% 5% 0% 5%;padding: 0.5% 2% 0.5% 2%;font-size: 1.2rem;background-color: transparent;border: 1px solid white;color: white;transition: 0.5s;}
+
+  .liste-container {width: 100%;}
+
+}
 
 
 
@@ -69,19 +112,8 @@ position: absolute;
 
 /* ANALYSE DATEN */
 
-.analyse-container {
-  width: 100%;
-  height: auto;
-  margin-top: 15px;
-}
-
-.analyse-zeit {
-  width: 320px;
-  margin-left: auto; margin-right: auto;
-  height: auto;
-  display: flex; flex-direction: row;
-  list-style: none;
-}
+.analyse-container {width: 100%;height: auto;margin-top: 15px;}
+.analyse-zeit {width: 320px;margin-left: auto; margin-right: auto;height: auto;display: flex; flex-direction: row;list-style: none;}
 .analyse-zeit li:first-of-type {border-top-left-radius: 10px; border-bottom-left-radius: 10px;}
 .analyse-zeit li:last-of-type { border-right: 1px solid darkgray; border-top-right-radius: 10px; border-bottom-right-radius: 10px;}
 .analyse-zeit li { text-align: center; width: 90px; padding: 7.5px; font-size: 1.3rem;
@@ -101,48 +133,11 @@ position: absolute;
 #table-events label { margin-left: auto; margin-right: auto; margin-top: 30px; width: 150px; display: flex; flex-direction: row; }
 #table-events label p { margin-left: auto; }
 
-/* NoShow Liste */
-
-.liste-nav { text-align:center; width:100%; }
-
-.liste-nav button {width: 160px; padding: 5px; background-color: white; transition: 0.5s; border: 1px solid black; font-size: 1.2rem; margin: 5% 5% 0% 5%; cursor: pointer; }
-.liste-nav button:hover { background-color: #006d77; color: white; }
-
-.liste-container { width: 80%;margin-left: auto;margin-right:auto;height: auto;margin-top: 5%; }
-.liste-top { background-color: #006d77; width: 100%;height: 50px;display: flex;flex-wrap: nowrap;color: white;border: 1px solid transparent; }
-.liste-top h2 { font-size: 2rem;padding: 5px;font-weight: lighter; }
-.liste-top i { padding: 5px;margin-left: auto; transition: 0.5s; }
-.liste-top i:hover { cursor: pointer; color: #d9ed92; }
-
-.liste-content {
-  width: 100%;
-  height: 30vw;
-  max-height: 500px;
-  min-height: 300px;
-  overflow: auto;
-  border-left: 1px solid #006d77;
-  border-bottom: 1px solid #006d77;
-  border-right: 1px solid #006d77;
-  list-style: none;
-}
-
-.liste-content li {display: flex;flex-direction: row;font-size: 1.2rem;transition: 0.5s;border-bottom: 1px solid #006d77;cursor: pointer;width: 100%;}
-.liste-content li:hover { background-color: #264653; color: white; }
-.liste-content li p {display: block;width: 150px;padding: 5px;margin-left: auto; margin-right: auto;overflow: hidden;}
 
 
 
-/* NoShow Edit */
 
-.liste-edit-container {background-color: #006d77;position: fixed;width: 68%;height: 200px;text-align: center;animation: fadein 0.5s;}
-.edit-form {padding: 2%;}
-.edit-form input[type=text] {font-size: 1.2rem;margin-left: 2%;margin-right: 2%;text-align: center;}
-.edit-form input[type=number] {width: 5%;font-size: 1.2rem;margin-left: 2%;margin-right: 2%;text-align: center;}
-.edit-container-bottom {margin-top: 3%;}
-.edit-button {margin: 0% 5% 0% 5%;padding: 0.5% 2% 0.5% 2%;font-size: 1.2rem;background-color: transparent;border: 1px solid white;color: white;transition: 0.5s;}
-.edit-button:hover {cursor: pointer;color: darkgray;border: 1px solid darkgray;}
-#delete-noShow:hover {background-color: #e71d36;color: white;}
-#liste-submit:hover {background-color: #8ac926;color: white;}
+
 
 
 /* Reservierungen */
@@ -150,12 +145,13 @@ position: absolute;
 .rs-container { width: 100%; height: auto; }
 .rs-input-table {width: 80%; max-width: 500px;margin-left: auto;margin-right: auto;text-align: center;margin-top: 2%;}
 .rs-input-table h3 {font-size: 1.8rem;}
+.rs-container h4 {font-size: 1.5rem; text-align: center;margin-top: 5%;}
 .rs-input-table input {width: 180px;height: 20px;padding: 5px;text-align: center;margin-top: 2%;margin-left:2%;margin-right: 2%;font-size: 1.2rem;outline: none;}
 
 /* RESERVIERUNG LISTE */
 
 .rs-reservierung-list { width: 80%; margin-left: auto; margin-right: auto; margin-top: 2%; height: 500px; display: flex; flex-wrap: nowrap; }
-.rs-reservierung-list ul {list-style: none;height: 100%;width: 80%; max-width: 500px;background-color: rgba(192,95,95,1);min-width: 150px;margin-left: auto; margin-right: auto;overflow: auto; z-index: 3;}
+.rs-reservierung-list ul {list-style: none;height: 100%;width: 80%; max-width: 500px;background-color: #006d77;min-width: 150px;margin-left: auto; margin-right: auto;overflow: auto; z-index: 3;}
 .rs-reservierung-list ul button {width: 100%;padding: 5%;margin: 0%;outline none;font-size: 1.1rem;transition: 0.5s;border: 0;}
 .rs-reservierung-list ul button:hover { cursor: pointer; background-color: #ced4da; }
 .rs-reservierung-list ul li {width: 92%;text-align: center;padding: 4%;transition: 0.5s;color: white;}
@@ -173,7 +169,7 @@ position: absolute;
 
 /* RESERVIERUNG HAUPT CONTAINER */
 
-.rs-list-edit-container {background-color: rgba(192,95,95,0.6);width: 70%; height: auto;display: flex; flex-wrap: nowrap;z-index: 2;display: none;}
+.rs-list-edit-container {background-color: #006d77;width: 70%; height: auto;display: flex; flex-wrap: nowrap;z-index: 2;display: none;}
 .list-edit-reservierung {width: 100%; height: auto;display: flex; flex-wrap: wrap; flex-direction: column;}
 .list-edit-top {width: 40%;height: 100%;text-align: center;}
 .list-edit-top button {
@@ -203,17 +199,15 @@ position: absolute;
 .list-edit-bottom select {width: 80%;min-width: 70px;padding: 5px;font-size: 1.2rem;margin-left: auto; margin-right: auto;text-align: center;}
 .list-edit-bottom input[type=time] {width: 130px;}
 .edit-bottom-table {width: 80%;margin-top: 2%;display: flex; flex-wrap: nowrap;margin-left: auto; margin-right: auto;}
-.edit-bottom-table h3 { padding: 7px; width: 80%; }
-
-
+.edit-bottom-table h3 { padding: 7px; width: 80%; color: white; }
 
 /* LIST EDIT HH */
 
-.list-edit-hh { width: 96%; height: auto; /*background-color: rgba(192,95,95,1);*/ padding: 2%; margin-top: 5%; }
-.list-edit-hh .fa-user-minus { float: right; margin: 2% 0% 0% 0%; color: white; cursor: pointer; transition: 0.5s; }
+.list-edit-hh { width: 96%; height: auto; text-align: center;padding: 2%; margin-top: 5%;}
+.list-edit-hh .fa-user-minus { float: right; margin: 10px 0px -40px 0px; color: white; cursor: pointer; transition: 0.5s; }
 .fa-user-minus:hover { color: red; }
-#hh-number { width: 50%; padding: 2px; font-size: 1.2rem; margin-left: 24%; margin-right: 25%; display: block; text-align: center; }
-.edit-hh { width: 100%; height: auto; text-align: center; }
+#hh-number { width: 100px; padding: 2px; font-size: 1.2rem;margin-left:auto;margin-right:auto;display:block;text-align:center; }
+.edit-hh { width: 80%; height: auto; text-align: center;margin-left:auto;margin-right:auto;}
 .edit-hh input { width: 70%; font-size: 1.2rem; padding: 2px; margin: 1% 0% 1% 0%; }
 
 #submit-clients {
@@ -324,32 +318,22 @@ input:checked + .slider:before {-webkit-transform: translateX(26px);-ms-transfor
 .css-animation-right {
   animation: fadeInLeft 1s;
 }
-
-@keyframes fadeInLeft {
-    from { opacity: 0; transform: translateX(-50px); }
-    to   { opacity: 1; transform: translateX(0); }
+.css-animation-left {
+  animation: fadeInRight 1s;
 }
 
+@keyframes fadeInLeft { from { opacity: 0; transform: translateX(-50px); }to{ opacity: 1; transform: translateX(0); }}
 /* Firefox < 16 */
-@-moz-keyframes fadeInLeft {
-  from { opacity: 0; transform: translateX(-50px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
+@-moz-keyframes fadeInLeft {from { opacity: 0; transform: translateX(-50px); }to{ opacity: 1; transform: translateX(0); }}
 /* Safari, Chrome and Opera > 12.1 */
-@-webkit-keyframes fadeInLeft {
-  from { opacity: 0; transform: translateX(-50px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
+@-webkit-keyframes fadeInLeft {from { opacity: 0; transform: translateX(-50px); }to{ opacity: 1; transform: translateX(0); }}
 /* Internet Explorer */
-@-ms-keyframes fadeInLeft {
-  from { opacity: 0; transform: translateX(-50px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
+@-ms-keyframes fadeInLeft {from { opacity: 0; transform: translateX(-50px); }to{ opacity: 1; transform: translateX(0); }}
 /* Opera < 12.1 */
-@-o-keyframes fadeInLeft {
-  from { opacity: 0; transform: translateX(-50px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
+@-o-keyframes fadeInLeft {from { opacity: 0; transform: translateX(-50px); }to{ opacity: 1; transform: translateX(0); }}
+
+@keyframes fadeInRight { from { opacity: 1; transform: translateX(0px); }to{ opacity: 0; transform: translateX(-50px); }}
+@-moz-keyframes fadeInRight {from { opacity: 1; transform: translateX(0px); }to{ opacity: 0; transform: translateX(-50px); }}
+@-webkit-keyframes fadeInRight {from { opacity: 1; transform: translateX(0px); }to{ opacity: 0; transform: translateX(-50px); }}
+@-ms-keyframes fadeInRight {from { opacity: 1; transform: translateX(0px); }to{ opacity: 0; transform: translateX(-50px); }}
+@-o-keyframes fadeInRight {from { opacity: 1; transform: translateX(0px); }to{ opacity: 0; transform: translateX(-50px); }}
