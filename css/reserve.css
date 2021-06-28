@@ -244,7 +244,7 @@ body,html { margin:0; padding:0; height: 100%; width: 100%; }
    -o-animation: fadein 0.5s; /* Opera < 12.1 */
       animation: fadein 0.5s;
 }
-#viewError button {float: right;padding: 5px 10px 5px 10px;margin: 5% 5% 0% 0%;background-color: white;border: 1px solid black;}
+#viewError button {float: right;padding: 5px 10px 5px 10px;margin: 5% 5% 0% 0%;background-color: white;border: 1px solid black;cursor:pointer;}
 #viewError p { font-size: 1.2rem; }
 
 

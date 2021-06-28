@@ -2,6 +2,15 @@
 require_once('mail/sendmail.php');
 require_once('script/script.admin.php');
 
+/*
+$servername = "127.0.0.1:3306";
+$username = "w10072res";
+$password = "jHwsa2rr";
+$db = "w10072res";
+
+jk2R_6X
+*/
+
 if(isset($_POST['loadTables'])){
   $exp = explode(';',$_POST['loadTables']);
   $data = getTableData($exp[0],$exp[1]);

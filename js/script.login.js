@@ -28,7 +28,7 @@ function viewLogin() {
        var today = new Date();
        var dd = String(today.getDate()).padStart(2, '0'); var mm = String(today.getMonth() + 1).padStart(2, '0'); var yyyy = today.getFullYear();
        today = "'" + yyyy + "-" + mm + "-" + dd + "'";
-       $('#viewLogin').append('<button id="login-NoShow">Übersicht</button>');
+       $('#viewLogin').append('<button onClick="submitAdmin()">Übersicht</button>');
        $('#viewLogin').append('<button onClick="submitLogoff()">Abmelden</button>');
      } else {
        submitLogoff();
@@ -60,6 +60,7 @@ function submitLogin(){
 }
 
 function submitLogoff() { setCookie("rSession","",-1); location.reload(); }
+function submitAdmin() { window.location.href="admin.php?overview=Day&day="+(new Date().toISOString().slice(0, 10)); }
 
 function getCookie(cname) {
   var name = cname + "=";

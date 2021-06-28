@@ -661,7 +661,7 @@ require_once('script/script.analyse.php');
   });
 
   /* SPECIAL DAYS */
-  $('.feiertage-filter i').click(()=>{
+  $('.feiertage-filter button').click(()=>{
     var beschreibung = $('#ft-name').val(); if(beschreibung.length <= 0){ return false; }
     var date = $('#ft-date').val(); if(date.length < 10 || date == 'tt.mm.jjjj' || date == null){ return false; }
     var type = $('#ft-select').val(); if(type.length <= 0){ return false; }
@@ -671,7 +671,7 @@ require_once('script/script.analyse.php');
       method: "POST",
       data: { specialDay: beschreibung+";"+date+";"+type},
       success: function(result) {
-        if(result!="1"){ alert("Ein Fehler ist aufgetreten \nFehlercode: " + result); } else { window.location.href='admin.php?zeit=HubRaum' } return;
+        if(result!="1"){ alert("Ein Fehler ist aufgetreten \nFehlercode: " + result); } else { window.location.href='admin.php?einstellungen=HubRaum' } return;
       }
     });
   });
@@ -683,7 +683,7 @@ require_once('script/script.analyse.php');
         method: "POST",
         data: { specialDayDelete: cl},
         success: function(result) {
-          if(result!="1"){ alert("Ein Fehler ist aufgetreten \nFehlercode: " + result); } else { window.location.href='admin.php?zeit=HubRaum' } return;
+          if(result!="1"){ alert("Ein Fehler ist aufgetreten \nFehlercode: " + result); } else { window.location.href='admin.php?einstellungen=HubRaum' } return;
         }
       });
     }

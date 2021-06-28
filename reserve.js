@@ -2,13 +2,6 @@
 Zu beachten bei Update auf hubRaum
 sync.php getFeiertage() URL bearbeiten
 Update Datenbank sync.php und script.admin.php
-
-$servername = "127.0.0.1:3306";
-$username = "w10072res";
-$password = "jHwsa2rr";
-$db = "w10072res";
-
-jk2R_6X
 */
 
 
@@ -46,19 +39,6 @@ $(document).ready(function(){
 });
 
 
-/*async function userCheck() {
-	let result;
-	try {
-		var d = "";
-		var c = getCookie('rSession');
-		result = $.ajax({ url: "sync.php", method: "POST", data: { user: c }, success: function(result) { d = result; }
-		});
-		await new Promise((resolve, reject) => setTimeout(resolve, 100));
-		if(d.toString() == CryptoJS.MD5(c).toString()){ return true; } return false;
-	} catch(err){
-		console.log("Error " + err);
-	}
-}*/
 
 async function loadTables(date, bs) {
   let result;
@@ -269,15 +249,6 @@ function viewTablewithCode(tc) {
 }
 
 
-
-function viewCoronaInfo() {
-  $('#viewCoronaInfo').css("display","block");
-  $('#viewCoronaInfo').append("<h3>Informationen für Corona</h3><p>Bitte Denken Sie daran, dass bei mehreren Haushalten an einem Tisch, pro Haushalt eine Kontakperson registriert werden muss.<br><br>Vielen Dank für ihr Verständnis!</p>");
-  setTimeout(function(){
-    $('#viewCoronaInfo').css("display","none");
-    $('#viewCoronaInfo').empty();
-  }, 5000);
-}
 
 
 

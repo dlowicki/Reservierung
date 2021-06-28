@@ -3,16 +3,18 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservierung | Hubraum</title>
+    <title>Reservierung | hubRaum Durlach</title>
+	  <link rel="icon" type="image/png"  href="https://www.hubraum-durlach.de/wp-content/uploads/2015/08/Unbenannt-3.png">
+    <!-- Style -->
     <link rel="stylesheet" href="css/change.css">
     <link rel="stylesheet" media="screen and (max-width: 700px)" href="css/reserve_small.css">
     <link rel="stylesheet" media="screen and (max-width: 1199px) and (min-width: 700px)" href="css/reserve_mid.css">
     <link rel="stylesheet" media="screen and (min-width: 1200px)" href="css/reserve.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+    <!-- Javascript -->
     <script src="script/md5.js"></script>
     <script src="jquery.min.js" charset="utf-8"></script>
     <script src="reserve.js" charset="utf-8"></script>
-    <script src="fetch.js" charset="utf-8"></script>
     <script src="js/script.calendar.js"> </script>
     <script src="js/script.login.js"> </script>
   </head>
@@ -30,17 +32,6 @@
     Icon für Personenanzahl
     DESIGN ändern 1120 pixel
     -->
-
-    <?php
-    if(isset($_GET['change'])){
-      $change = $_GET['change'];
-      if(strlen($change) >= 1 && strlen($change) <= 15){
-        echo "<div id='viewChangeReserve' class='$change'> </div>";
-        return;
-      }
-    }
-    ?>
-
     <div id="viewError"></div>
     <div id="viewTable"></div>
     <div id="viewLogin"></div>
