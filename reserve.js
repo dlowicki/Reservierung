@@ -20,11 +20,12 @@ $(document).ready(function(){
   } else {
     // Wenn Tag in localStorage kleiner als Tag heute
     var rc = localStorage.getItem('rCalendar').split(';');
-    if(dateToSQL() > rc[0] && rc[0] != 'admin'){ viewCalendar(); return; }
+    if(dateToSQL() > rc[0]){ viewCalendar(); return; }
+    if(rc[0].length!=10 || rc[1].length!=1 || (rc[2].length!=2&&rc[2].length!=1)){ viewCalendar(); return; }
   }
 
   // Lade Tische async mit Ampelsystem
-  (async() => { await loadTables(localStorage.getItem('rCalendar').split(';')[0],localStorage.getItem('rCalendar').split(';')[1]); })();
+  (async() => { await loadTables(localStorage.getItem('rCalendar').split(';')[0],localStorage.getItem('rCalendar').split(';')[1],localStorage.getItem('rCalendar').split(';')[2]); })();
 
   $(document).on('click','.table', function(){
     if($('.form-table').length <= 0){
@@ -40,11 +41,11 @@ $(document).ready(function(){
 
 
 
-async function loadTables(date, bs) {
+async function loadTables(date, bs, amount) {
   let result;
   try {
     var data = "";
-    $.ajax({ url: "sync.php", method: "POST", data: { loadTables: date+";"+bs }, success: function(result) {
+    $.ajax({ url: "sync.php", method: "POST", data: { loadTables: date+";"+bs+";"+amount }, success: function(result) {
 		$('#tischplan-svg').empty();
 		data = JSON.parse(result);
 		data.forEach((item, i) => {

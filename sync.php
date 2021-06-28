@@ -13,7 +13,7 @@ jk2R_6X
 
 if(isset($_POST['loadTables'])){
   $exp = explode(';',$_POST['loadTables']);
-  $data = getTableData($exp[0],$exp[1]);
+  $data = getTableData($exp[0],$exp[1],$exp[2]);
   echo json_encode($data);
   return;
 }
@@ -424,7 +424,7 @@ function getTimeBlocks() {
 }
 
 // Übergeben werden Datum und gesuchter Blocksatz
-function getTableData($date,$bs) {
+function getTableData($date,$bs,$amount) {
   $con = connect();
   $query = $con -> query("SELECT * FROM rtable") or die();
   $data = array();
@@ -451,7 +451,8 @@ function getTableData($date,$bs) {
         if($key['table'] == $table['tableID']){ $ampelBlocks++; if($key['block'] == $bs){ $blockReserved = 1; } }
       }
       if($ampelBlocks >= 2 || $blockReserved == 1){ $data[$c]['tableActive'] = "closed"; }
-
+      // Wenn MAX ANZAHL kleiner als AMOUNT und MIN ANZAHL GRÖßER ALS AMOUNT = deaktivieren
+      if($table['tableMax'] < $amount || $table['tableMin'] > $amount){ $data[$c]['tableActive'] = "closed"; }
       $c++;
     }
     return $data;
