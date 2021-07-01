@@ -1,6 +1,6 @@
 <?php
 require_once('mail/sendmail.php');
-require_once('script/script.admin.php');
+require_once('class/class.admin.php');
 
 /*
 $servername = "127.0.0.1:3306";
@@ -11,12 +11,6 @@ $db = "w10072res";
 jk2R_6X
 */
 
-if(isset($_POST['loadTables'])){
-  $exp = explode(';',$_POST['loadTables']);
-  $data = getTableData($exp[0],$exp[1],$exp[2]);
-  echo json_encode($data);
-  return;
-}
 
 if(isset($_POST['loadTableID']) && isset($_POST['loadTableDate'])){
   $data = getTableDataID($_POST['loadTableID'], $_POST['loadTableDate']);
@@ -55,6 +49,11 @@ if(isset($_POST['loadAmpel'])){
   echo json_encode(loadAmpelTables($date));
 }
 
+function getTischplan($type){
+  $con = connect();
+  $query = $con->query("SELECT sWert FROM rsettings WHERE sEinstellung='$type'");
+  if($query){ foreach ($query as $ke) { return $ke['sWert']; } }
+}
 
 function loadAmpelTables($date) {
   $con = connect();
@@ -424,7 +423,7 @@ function getTimeBlocks() {
 }
 
 // Übergeben werden Datum und gesuchter Blocksatz
-function getTableData($date,$bs,$amount) {
+/*function getTableData($date,$bs,$amount) {
   $con = connect();
   $query = $con -> query("SELECT * FROM rtable") or die();
   $data = array();
@@ -458,7 +457,7 @@ function getTableData($date,$bs,$amount) {
     return $data;
   }
   return false;
-}
+}*/
 
 function getTableDataID($id, $date) {
   $con = connect();
@@ -473,7 +472,7 @@ function getTableDataID($id, $date) {
     foreach ($queryTime as $keyTime) { $timeData[$count]['timeStart'] = $keyTime['timeStart']; $timeData[$count]['timeEnd'] = $keyTime['timeEnd']; $count++; }
     foreach ($queryTable as $table) { // Tisch mit TischID erhalten
       $data['tableID'] = $table['tableID'];
-      $data['tableType'] = $table['tableType'];
+      $data['tableName'] = $table['tableName'];
       $data['tableMax'] = $table['tableMax'];
       $data['tableMin'] = $table['tableMin'];
       $data['tableCode'] = $table['tableCode'];

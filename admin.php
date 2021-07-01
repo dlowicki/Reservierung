@@ -1,6 +1,6 @@
 <?php
-require_once("script/script.admin.php");
-require_once("script/script.reservierung.php");
+require_once("class/class.admin.php");
+require_once("class/class.reservierung.php");
 require_once("script/sync-admin.php");
 require_once('sync.php');
 require_once('script/script.analyse.php');

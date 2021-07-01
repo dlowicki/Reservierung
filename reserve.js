@@ -12,20 +12,49 @@ $(document).ready(function(){
   //viewError('test123');
 
   // Table Parameter for QR Code
-  tc=getTableParameter();
-  if(tc != false){ viewTablewithCode(tc); }
+  /*tc=getTableParameter();
+  if(tc != false){ viewTablewithCode(tc); }*/
 
-  if(localStorage.getItem('rCalendar') === null){
-    viewCalendar(); return;
-  } else {
+
+
+
+
+  if(localStorage.getItem('rCalendar') === null)
+  {
+    viewCalendar();
+    return;
+  }
+  else
+  {
     // Wenn Tag in localStorage kleiner als Tag heute
     var rc = localStorage.getItem('rCalendar').split(';');
-    if(dateToSQL() > rc[0]){ viewCalendar(); return; }
-    if(rc[0].length!=10 || rc[1].length!=1 || (rc[2].length!=2&&rc[2].length!=1)){ viewCalendar(); return; }
+    if(dateToSQL() > rc[0])
+    {
+      viewCalendar();
+      return;
+    }
+    if(rc[0].length!=10 || rc[1].length!=1 || (rc[2].length!=2&&rc[2].length!=1))
+    {
+      viewCalendar();
+      return;
+    }
   }
+
+  if(rc[2] > 2)
+  {
+    $('.container-tischplan').css('background-image', 'url(tischplan.jpg)');
+  }
+   else
+  {
+    $('.container-tischplan').css('background-image', 'url(tischplan2.jpg)');
+  }
+
+
+
 
   // Lade Tische async mit Ampelsystem
   (async() => { await loadTables(localStorage.getItem('rCalendar').split(';')[0],localStorage.getItem('rCalendar').split(';')[1],localStorage.getItem('rCalendar').split(';')[2]); })();
+
 
   $(document).on('click','.table', function(){
     if($('.form-table').length <= 0){
@@ -41,11 +70,13 @@ $(document).ready(function(){
 
 
 
-async function loadTables(date, bs, amount) {
+
+
+async function loadTables(d, b, a) {
   let result;
   try {
     var data = "";
-    $.ajax({ url: "sync.php", method: "POST", data: { loadTables: date+";"+bs+";"+amount }, success: function(result) {
+    $.ajax({ url: "script/load.tables.php", method: "GET", data: { date: d, bz: b, amount: a }, success: function(result) {
 		$('#tischplan-svg').empty();
 		data = JSON.parse(result);
 		data.forEach((item, i) => {
@@ -55,7 +86,10 @@ async function loadTables(date, bs, amount) {
 		});
 	} });
     return true;
-  } catch (e) { console.log("Error loadTables: " + e); }
+  } catch (e)
+  {
+    console.log("Error loadTables: " + e);
+  }
 }
 
 
@@ -77,7 +111,7 @@ function viewTable(id, date) {
     data: {loadTableID: id, loadTableDate: date},
     success: function(result) {
       var d = JSON.parse(result);
-      var tID = "'"+d['tableID']+"'";
+      var tID = "'"+d['tableName']+"'";
 
       // Wenn Tisch aktiv ist und Reservierung nicht vorhanden, Tisch FREI andernfalls BELEGT
       if(d['tableActive'] == "open" && d['tableReserved'] == "open"){

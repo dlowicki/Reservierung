@@ -6,7 +6,7 @@ body,html { margin:0; padding:0; height: 100%; width: 100%; }
 .container-header i:hover { color: darkgray; cursor: pointer; }
 .icon-user { float: right; border-radius: 20px; }
 .container-reserve { width: 1900px; height:1080px; }
-.container-tischplan { width: 100%; height: 100%; background-image: url('../tischplan.jpg'); background-size: 100% 100%; image-rendering: pixelated; }
+.container-tischplan { width: 100%; height: 100%; background-size: 100% 100%; image-rendering: pixelated; }
 .table:hover { cursor: pointer; }
 .table { z-index: 4; position: absolute; }
 
@@ -21,12 +21,7 @@ body,html { margin:0; padding:0; height: 100%; width: 100%; }
   #viewLogin {
     border: 1px solid darkgray;background-color: white;position: fixed;right: 50%;margin-right:-150px;width: 300px;min-height: 350px;padding-bottom: 30px;margin-top: 2%;
 	z-index: 9;font-family: sans-serif;display: none;
-
-    -webkit-animation: fadein 0.5s; /* Safari, Chrome and Opera > 12.1 */
-   -moz-animation: fadein 0.5s; /* Firefox < 16 */
-    -ms-animation: fadein 0.5s; /* Internet Explorer */
-     -o-animation: fadein 0.5s; /* Opera < 12.1 */
-        animation: fadein 0.5s;
+    -webkit-animation: fadein 0.5s; -moz-animation: fadein 0.5s; -ms-animation: fadein 0.5s; -o-animation: fadein 0.5s; animation: fadein 0.5s;
   }
 }
 

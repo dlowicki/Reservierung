@@ -1,5 +1,5 @@
 <?php
-require_once("script.admin.php");
+require_once("../class/class.admin.php");
 
 if(!isset($_COOKIE['rSession'])){ return; }
 if(isAdmin() != true){ return; }
